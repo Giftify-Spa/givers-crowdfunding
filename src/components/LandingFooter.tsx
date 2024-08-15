@@ -1,4 +1,4 @@
-import { ActionIcon, Container, createStyles, Group, rem, Stack, Text } from '@mantine/core';
+import { ActionIcon, Container, createStyles, Group, Image, rem, Stack, Text } from '@mantine/core';
 import {
     IconBrandFacebook,
     IconBrandInstagram,
@@ -118,6 +118,7 @@ const useStyles = createStyles((theme) => ({
         },
     },
 }));
+
 interface FooterLinksProps {
     data: {
         title: string;
@@ -155,33 +156,63 @@ const LandingFooter = ({ data }: FooterLinksProps) => {
                 <div className={classes.logo}>
                     <Stack align="flex-start">
                         <BrandName size={40} />
-                        <Text size="sm">Givers es un sitio web de financiación colectiva que te permite recaudar dinero para cualquier cosa que te importe. 
-                            Desde causas y eventos personales hasta proyectos 
+                        {/* <Text size="sm">Givers es un sitio web de financiación colectiva que te permite recaudar dinero para cualquier cosa que te importe.
+                            Desde causas y eventos personales hasta proyectos
                             y más.
-                        </Text>
+                        </Text> */}
                     </Stack>
                 </div>
                 <div className={classes.groups}>{groups}</div>
             </Container>
-            <Container className={classes.afterFooter} size="lg">
-                <Text size="sm">
-                    © {new Date().getFullYear()} Givers. Todos los derechos reservados.
-                </Text>
+            <Container className={classes.afterFooter} size="xl">
+                <div
+                    style={{
+                        backgroundColor: '#08857f',
+                        flex: 0.75,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
+                    }}
+                >
+                    <div style={{ flex: '1 1 100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Image
+                            src="https://www.kairapp.com/wp-content/uploads/2023/09/Logos-corfo-01-1024x151.png"
+                            alt="Corfo"
+                            style={{ width: '100%', height: 'auto', maxWidth: '720px', maxHeight: '100px' }} />
+                    </div>
+                </div>
 
-                <Group spacing={0} className={classes.social} position="right" noWrap>
-                    <ActionIcon size="lg" component="a" href="#" target="_blank">
-                        <IconBrandTwitter size="20" stroke={2} />
-                    </ActionIcon>
-                    <ActionIcon size="lg" component="a" href="#" target="_blank">
-                        <IconBrandFacebook size="20" stroke={2} />
-                    </ActionIcon>
-                    <ActionIcon size="lg" component="a" href="#" target="_blank">
-                        <IconBrandInstagram size="20" stroke={2} />
-                    </ActionIcon>
-                    <ActionIcon size="lg" component="a" href="#" target="_blank">
-                        <IconBrandLinkedin size="20" stroke={2} />
-                    </ActionIcon>
-                </Group>
+                <div
+                    style={{
+                        backgroundColor: '#ff7f4d',
+                        flex: 0.25,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                        width: '100%',
+                    }}
+                >
+                    <Text size="sm" color='white' align='center' weight={'700'}>
+                        Buscanos en nuestras redes sociales
+                    </Text>
+                    <Group spacing={0} className={classes.social} position="center" noWrap>
+                        <ActionIcon size="lg" component="a" href="#" target="_blank">
+                            <IconBrandTwitter color='white' size="20" stroke={1.5} />
+                        </ActionIcon>
+                        <ActionIcon size="lg" component="a" href="#" target="_blank">
+                            <IconBrandFacebook color='white' size="20" stroke={1.5} />
+                        </ActionIcon>
+                        <ActionIcon size="lg" component="a" href="#" target="_blank">
+                            <IconBrandInstagram color='white' size="20" stroke={1.5} />
+                        </ActionIcon>
+                        <ActionIcon size="lg" component="a" href="#" target="_blank">
+                            <IconBrandLinkedin color='white' size="20" stroke={1.5} />
+                        </ActionIcon>
+                    </Group>
+                </div>
             </Container>
         </footer>
     );

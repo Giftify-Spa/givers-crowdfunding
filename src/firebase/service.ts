@@ -15,7 +15,8 @@ import {
   getDoc,
   getDocs,
   where,
-  GeoPoint
+  GeoPoint,
+  limit as firestorelimit
 } from "firebase/firestore";
 
 import axios from 'axios';
@@ -142,16 +143,21 @@ export const getFoundations = async () => {
 
     const querySnapshot = await getDocs(q);
 
-    const foundations = [];
-
-    for (const doc of querySnapshot.docs) {
-      const { name, country, city, address, fono, responsible } = doc.data();
+    const foundationPromises = querySnapshot.docs.map(async (doc) => {
+      const {
+        name,
+        country,
+        city,
+        address,
+        fono,
+        responsible
+      } = doc.data();
 
       // Obtain Responsible
       const responsibleDoc = await getDoc(responsible);
       const responsibleData = responsibleDoc.exists() ? responsibleDoc.data() as User : null;
 
-      foundations.push({
+      return {
         id: doc.id,
         name,
         country,
@@ -160,27 +166,25 @@ export const getFoundations = async () => {
         fono,
         responsibleName: responsibleData.name,
         responsibleEmail: responsibleData.email
-        // ...doc.data(),
-      });
-    }
+      };
+    });
 
+    const foundations = await Promise.all(foundationPromises);
     return foundations;
   } catch (error) {
     console.error("Error getting documents: ", error);
+    return [];
   }
 }
 
-export const getCampaigns = async () => {
+export const getCampaigns = async (limit: number) => {
   try {
-    const q = query(collection(FirebaseDB, "campaigns"),
-      where("status", "==", true));
-
+    const q = query(collection(FirebaseDB, "campaigns"), where("status", "==", true), firestorelimit(limit));
     const querySnapshot = await getDocs(q);
 
-    const campaigns = [];
-
-    for (const doc of querySnapshot.docs) {
-      const { name,
+    const campaignsPromises = querySnapshot.docs.map(async (doc) => {
+      const {
+        name,
         description,
         initDate,
         endDate,
@@ -191,17 +195,16 @@ export const getCampaigns = async () => {
         donorsCount,
         multimedia,
         foundation,
-        createdBy } = doc.data();
+        createdBy
+      } = doc.data();
 
-      // Obtain Foundation Data
-      const foundationDoc = await getDoc(foundation);
+      // Obtener datos de Foundation y User en paralelo
+      const [foundationDoc, userDoc] = await Promise.all([getDoc(foundation), getDoc(createdBy)]);
+
       const foundationData = foundationDoc.exists() ? foundationDoc.data() as Foundation : null;
-
-      // Obtain User Data
-      const userDoc = await getDoc(createdBy);
       const userData = userDoc.exists() ? userDoc.data() as User : null;
 
-      campaigns.push({
+      return {
         id: doc.id,
         name,
         description,
@@ -215,12 +218,14 @@ export const getCampaigns = async () => {
         multimedia,
         foundation: foundationData,
         createdBy: userData
-        // ...doc.data(),
-      });
-    }
+      };
+    });
+
+    const campaigns = await Promise.all(campaignsPromises);
     return campaigns;
   } catch (error) {
     console.error("Error getting documents: ", error);
+    return [];
   }
 }
 
@@ -230,7 +235,8 @@ export const getCampaign = async (id: string) => {
     const docSnapshot = await getDoc(docRef);
 
     if (docSnapshot.exists()) {
-      const { name,
+      const {
+        name,
         description,
         initDate,
         endDate,
@@ -243,18 +249,18 @@ export const getCampaign = async (id: string) => {
         foundation,
         category,
         responsible,
-        createdAt } = docSnapshot.data();
+        createdAt
+      } = docSnapshot.data();
 
-      // Obtain Foundation Data
-      const foundationDoc = await getDoc(foundation);
+      // Obtener datos de Foundation, User y Category en paralelo
+      const [foundationDoc, userDoc, categoryDoc] = await Promise.all([
+        getDoc(foundation),
+        getDoc(responsible),
+        getDoc(category)
+      ]);
+
       const foundationData = foundationDoc.exists() ? foundationDoc.data() as Foundation : null;
-
-      // Obtain User Data
-      const userDoc = await getDoc(responsible);
       const userData = userDoc.exists() ? userDoc.data() as User : null;
-
-      // Obtain Category Data
-      const categoryDoc = await getDoc(category);
       const categoryData = categoryDoc.exists() ? categoryDoc.data() as Category : null;
 
       return {
@@ -276,9 +282,11 @@ export const getCampaign = async (id: string) => {
       };
     } else {
       console.error("No such document!");
+      return null;
     }
   } catch (error) {
-    console.error("Error getting documents: ", error);
+    console.error("Error getting document: ", error);
+    return null;
   }
 }
 

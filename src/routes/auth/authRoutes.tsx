@@ -1,14 +1,14 @@
 import { Navigate } from "react-router-dom";
 import LoginPage from "../../pages/auth/Login";
 import RegisterPage from "../../pages/auth/Register";
-import { CampaignDetailsPage, CampaignsPage } from "../../pages";
+import { CampaignDetailsPage, HomeLanding  } from "../../pages";
 
 
 
 export const authRoutes = [
     {
         path: "",
-        element: <CampaignsPage />
+        element: <HomeLanding />
     },
     {
         path: "login",

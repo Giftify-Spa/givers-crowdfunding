@@ -1,8 +1,6 @@
-import { Box, BoxProps, Container, Flex, Select, SimpleGrid, Stack, TextInput, Title, TitleProps } from "@mantine/core";
+import { Box, BoxProps, Container, createStyles, Flex, rem, Select, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
 import { CampaignCard } from "../components";
-import { Helmet } from "react-helmet";
 import { useMediaQuery } from "@mantine/hooks";
-import GiversLayoutGuest from "../layout/GiversLayoutGuest";
 import { useEffect, useState } from "react";
 import { getCampaigns } from "../firebase/service";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -21,20 +19,37 @@ const CampaignsPage = (): JSX.Element => {
         py: matchesMobile ? 16 : 24
     }
 
-    const titleProps: TitleProps = {
-        size: 32,
-        weight: 700,
-        mb: "lg",
-        transform: 'capitalize',
-        sx: { lineHeight: '40px' }
-    }
+
+    const useStyles = createStyles((theme) => ({
+        title: {
+            fontWeight: 800,
+            fontSize: rem(36),
+            letterSpacing: rem(-1),
+            paddingLeft: theme.spacing.md,
+            paddingRight: theme.spacing.md,
+            color: theme.black,
+            textAlign: 'center',
+
+            [theme.fn.smallerThan('md')]: {
+                fontSize: rem(48),
+            },
+
+            [theme.fn.smallerThan('sm')]: {
+                fontSize: rem(28),
+                textAlign: 'left',
+                fontWeight: 800,
+                padding: 0,
+                marginLeft: theme.spacing.md,
+            },
+        },
+    }));
 
 
     useEffect(() => {
 
         const chargedCampaigns = async () => {
             try {
-                const response = await getCampaigns();
+                const response = await getCampaigns(3);
                 return response;
             } catch (error) {
                 console.error("Error getting documents: ", error);
@@ -57,43 +72,50 @@ const CampaignsPage = (): JSX.Element => {
 
     }, []);
 
+    const { classes } = useStyles();
     const items = campaigns.map(c => (<CampaignCard key={c.id} data={c} showActions={true} />))
 
     return (
-        <GiversLayoutGuest>
-            <Helmet>
-                <title>Descubra campañas para financiar</title>
-            </Helmet>
-            {
-                loading ? (
-                    <LoadingSpinner />
-                ) : (
-                    <Box>
-                        <Container size="lg">
-                            <Stack>
-                                <Box {...boxProps}>
-                                    <Title {...titleProps} align="center">Descubra campañas para financiar</Title>
-                                </Box>
-                                <Flex
-                                    justify="space-between"
-                                    gap={{ base: 'sm', sm: 'lg' }}
-                                    direction={{ base: 'column-reverse', sm: 'row' }}
-                                >
-                                    <TextInput placeholder="buscar campaña..." sx={{ width: 500 }} />
-                                    <Flex align="center" gap="sm" justify={{ base: 'space-between', sm: 'flex-start' }}>
-                                        <Select
-                                            label=""
-                                            placeholder="campaigns in"
-                                            defaultValue=""
-                                            data={[
-                                                { value: '10', label: 'show: 10' },
-                                                { value: '25', label: 'show: 25' },
-                                                { value: '50', label: 'show: 50' },
-                                                { value: '100', label: 'show: 100' },
-                                            ]}
-                                        />
-                                    </Flex>
-                                </Flex>
+        <Box
+            sx={{
+                ...boxProps.sx,
+                width: '100vw',
+                position: 'relative',
+                left: '50%',
+                right: '50%',
+                marginLeft: '-50vw',
+                marginRight: '-50vw',
+                backgroundColor: '#FFF',
+            }}
+        >
+            <Container size="lg">
+                <Stack>
+                    <Box {...boxProps}>
+                        <Title className={classes.title} align="center">Campañas que inspiran</Title>
+                        <Flex
+                            justify="space-between"
+                            gap={{ base: 'sm', sm: 'lg' }}
+                            direction={{ base: 'column-reverse', sm: 'row' }}
+                        >
+                            <TextInput placeholder="buscar campaña..." sx={{ width: 500 }} />
+                            <Flex align="center" gap="sm" justify={{ base: 'space-between', sm: 'flex-start' }}>
+                                <Select
+                                    label=""
+                                    placeholder="campaigns in"
+                                    defaultValue=""
+                                    data={[
+                                        { value: '10', label: 'show: 10' },
+                                        { value: '25', label: 'show: 25' },
+                                        { value: '50', label: 'show: 50' },
+                                        { value: '100', label: 'show: 100' },
+                                    ]}
+                                />
+                            </Flex>
+                        </Flex>
+                        {
+                            loading ? (
+                                <LoadingSpinner />
+                            ) : (
                                 <div className="animate__animated animate__fadeIn animate__fast">
                                     <SimpleGrid
                                         cols={3}
@@ -106,12 +128,12 @@ const CampaignsPage = (): JSX.Element => {
                                         {items}
                                     </SimpleGrid>
                                 </div>
-                            </Stack >
-                        </Container >
-                    </Box >
-                )
-            }
-        </GiversLayoutGuest >
+                            )
+                        }
+                    </Box>
+                </Stack >
+            </Container >
+        </Box >
     );
 };
 

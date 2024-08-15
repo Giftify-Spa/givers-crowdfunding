@@ -8,6 +8,7 @@ import SignupPage from "./auth/Register.tsx";
 import DashboardAdminPage from './DashboardAdmin.tsx';
 import DashboardClientPage from './DashboardClient.tsx';
 import CreateCampaignPage from "./admin/CreateCampaign.tsx";
+import HomeLanding from './HomeLanding';
 
 export {
     Error404Page,
@@ -19,5 +20,6 @@ export {
     SignupPage,
     DashboardAdminPage,
     DashboardClientPage,
-    CreateCampaignPage
+    CreateCampaignPage,
+    HomeLanding
 }

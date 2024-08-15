@@ -28,6 +28,8 @@ import {
 import * as yup from 'yup';
 import { Campaign } from '../interfaces/Campaign';
 
+import { useNavigate } from 'react-router-dom';
+
 interface IProps extends Pick<DrawerProps, 'opened' | 'onClose' | 'size'> {
     campaign?: Campaign
     iconSize: number
@@ -70,6 +72,8 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
         });
     }
 
+    const navigate = useNavigate();
+
     const isValidForm = async (): Promise<boolean> => {
         try {
             await validationDonationSchema.validate(formValues, { abortEarly: false });
@@ -86,12 +90,21 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
 
     const onCreateDonation = async () => {
 
-        const isValid = isValidForm();
-        if(!isValid){
-            console.log('Formulario enviado');
-            // Call API
-            // window.location.href = import.meta.env.VITE_API_URL_TRANSBANK_CREATE2 as string;
-        }
+        
+        navigate('/transbank/request');
+        
+        // try {
+        //     const response = await axios.get<any, any>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_DEV_LOCAL as string);
+            
+        //     console.log(response);
+            
+        //     return (
+        //         <TransbankRequest token_ws={response.token_ws}  url_pago={response.url_pago}/>
+        //     )
+
+        // } catch (error) {
+        //     console.error('Error al llamar a la API', error);
+        // }
     }
     return (
         <Drawer
@@ -125,13 +138,13 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                         {...paperProps}
                     >
                         <Stack sx={{ width: '100%' }}>
-                            <TextInput 
-                                label="Correo electrónico" 
+                            <TextInput
+                                label="Correo electrónico"
                                 placeholder="Correo electrónico"
                                 value={formValues.email}
                                 onChange={handleChange}
                                 error={errorMessages.email}
-                                required    
+                                required
                             />
                             <Group grow>
                                 <TextInput

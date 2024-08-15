@@ -20,12 +20,14 @@ const GiversLayoutGuest = ({ children }) => {
                 styles={{
                     main: {
                         background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[1],
+                        padding: '0px',
+                        minHeight: '100vh',
+                        margin: '0px',
                     },
                 }}
                 navbarOffsetBreakpoint="sm"
                 asideOffsetBreakpoint="sm"
-                navbar={<></>}
-                header={<AppNavbarGuest />}
+                navbar={<AppNavbarGuest />}
                 footer={<LandingFooter data={[data]} />}
             >
                 {children}

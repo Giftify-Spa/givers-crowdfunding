@@ -7,6 +7,8 @@ import { GiversRouter } from "./givers/GiversRouter";
 import RoleProtectedRoute from "./RoleProtectedRoute";
 import { clientRoutes } from "./client/clientRoutes";
 import { adminRoutes } from "./admin/adminRoutes";
+import { TransbankRouter } from "./transbank/TransbankRouter";
+import { transbankRoutes } from "./transbank/transbankRoutes";
 // import CheckingAuth from "../ui/components/CheckingAuth";
 
 // import { useCheckAuth } from "../hooks/useCheckAuth";
@@ -43,6 +45,16 @@ const router = createBrowserRouter([
         ),
         children: adminRoutes,
         errorElement: <><h2>ERROR</h2></>
+    },
+
+
+    // Transbank Routes
+    {
+        path: "/transbank/*",
+        element: <TransbankRouter />,
+        children: transbankRoutes,
+        errorElement: <><h2>ERROR</h2></>
+
     }
 ]);
 

@@ -5,6 +5,7 @@ import {
     ActionIcon,
     Anchor,
     Box,
+    BoxProps,
     Button,
     Card,
     Container,
@@ -88,6 +89,11 @@ const CampaignDetailsPage = (): JSX.Element => {
         fetchData();
     }, [id]);
 
+    const boxProps: BoxProps = {
+        mt: 24,
+        mb: 0,
+        py: 48
+    }
 
     if (user) {
         return (
@@ -95,9 +101,9 @@ const CampaignDetailsPage = (): JSX.Element => {
                 <Helmet>
                     <title>{campaign?.name}</title>
                 </Helmet>
-                <Box>
+                <Box {...boxProps}>
                     {campaign ? <Container size="lg">
-                        <BackButton mb="md" />
+                        <BackButton mt="xl" />
                         <Grid>
                             <Grid.Col lg={8}>
                                 <Stack>
@@ -251,9 +257,9 @@ const CampaignDetailsPage = (): JSX.Element => {
             <Helmet>
                 <title>{campaign?.name}</title>
             </Helmet>
-            <Box>
+            <Box  {...boxProps}>
                 {campaign ? <Container size="lg">
-                    <BackButton mb="md" />
+                    <BackButton mt="xl" />
                     <Grid>
                         <Grid.Col lg={8}>
                             <Stack>
