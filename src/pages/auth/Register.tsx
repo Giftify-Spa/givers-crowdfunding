@@ -1,6 +1,8 @@
 import {
     Anchor,
     Button,
+    Box,
+    BoxProps,
     Container,
     Divider,
     Group,
@@ -75,11 +77,18 @@ const RegisterPage = () => {
         }
     }
 
+    const boxProps: BoxProps = {
+        mt: 24,
+        mb: 0,
+        py: 48
+    }
+
     return (
         <GiversLayoutGuest>
             <Helmet>
                 <title>Signup</title>
             </Helmet>
+            <Box {...boxProps}>
             <Container size={420} my={40}>
                 <Title
                     align="center"
@@ -147,6 +156,7 @@ const RegisterPage = () => {
                     }
                 </Paper>
             </Container>
+            </Box>
         </GiversLayoutGuest>
     );
 }

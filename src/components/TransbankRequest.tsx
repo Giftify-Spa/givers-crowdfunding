@@ -18,7 +18,7 @@ const TransbankRequest = () => {
         const orderId = "1lD4aUlaDOu1z6ilbMOr";
         const amount = 4500;
 
-        const { data } = await axios.get<TransbankResponse>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_DEV_LOCAL as string, {
+        const { data } = await axios.get<TransbankResponse>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_PROD as string, {
           params: {
             orderId,
             amount,

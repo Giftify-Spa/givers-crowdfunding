@@ -33,7 +33,7 @@ const TransactionStatus = () => {
       const fetchData = async () => {
         try {
           const { data } = await axios.get<TransbankStatusResponse>(
-            import.meta.env.VITE_API_URL_TRANSBANK_STATUS_DEV_LOCAL as string, {
+            import.meta.env.VITE_API_URL_TRANSBANK_STATUS_PROD as string, {
             params: {
               token_ws: token_ws
             }

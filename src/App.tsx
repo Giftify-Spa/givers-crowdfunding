@@ -10,7 +10,6 @@ function App() {
     return (
         <>
             <MantineProvider theme={customTheme}>
-                {/* <RouterProvider router={router}/> */}
                 <AppRouter />
                 <MontserratFont />
                 <Notifications />

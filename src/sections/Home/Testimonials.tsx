@@ -15,7 +15,7 @@ const TestimonialsSection = ({boxProps, titleProps}: IProps) => {
 
     return (
         <Box {...boxProps}>
-            <Title {...titleProps} align="center">Testimonials</Title>
+            <Title {...titleProps} style={{ color: '#684DF0'}} align="center">Testimonios de nuestros asociados</Title>
             <Carousel slideSize="95%" align="center" slideGap="lg">
                 {slides}
             </Carousel>

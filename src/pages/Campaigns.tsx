@@ -1,4 +1,4 @@
-import { Box, BoxProps, Container, createStyles, Flex, rem, Select, SimpleGrid, Stack, TextInput, Title } from "@mantine/core";
+import { Box, BoxProps, Container, createStyles, Flex, rem, Select, SimpleGrid, Stack, Title } from "@mantine/core";
 import { CampaignCard } from "../components";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ const CampaignsPage = (): JSX.Element => {
 
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState('all');
 
 
     const matchesMobile = useMediaQuery('(max-width: 768px)');
@@ -73,7 +74,17 @@ const CampaignsPage = (): JSX.Element => {
     }, []);
 
     const { classes } = useStyles();
-    const items = campaigns.map(c => (<CampaignCard key={c.id} data={c} showActions={true} />))
+
+    // Filter campaigns with the selected filter
+    const filteredCampaigns = campaigns.filter(c => {
+        if (filter === 'all') return true;
+        if (filter === 'causes') return c.isCause;
+        if (filter === 'experiences') return c.isExperience;
+        return true;
+    });
+
+
+    const items = filteredCampaigns.map(c => (<CampaignCard key={c.id} data={c} showActions={true} />))
 
     return (
         <Box
@@ -97,18 +108,17 @@ const CampaignsPage = (): JSX.Element => {
                             gap={{ base: 'sm', sm: 'lg' }}
                             direction={{ base: 'column-reverse', sm: 'row' }}
                         >
-                            <TextInput placeholder="buscar campaña..." sx={{ width: 500 }} />
                             <Flex align="center" gap="sm" justify={{ base: 'space-between', sm: 'flex-start' }}>
                                 <Select
-                                    label=""
-                                    placeholder="campaigns in"
-                                    defaultValue=""
+                                    placeholder="Filtrar por"
+                                    defaultValue="all"
                                     data={[
-                                        { value: '10', label: 'show: 10' },
-                                        { value: '25', label: 'show: 25' },
-                                        { value: '50', label: 'show: 50' },
-                                        { value: '100', label: 'show: 100' },
+                                        { value: 'all', label: 'Todas' },
+                                        { value: 'causes', label: 'Causas' },
+                                        { value: 'experiences', label: 'Experiencias' },
                                     ]}
+                                    onChange={(value) => setFilter(value)}
+                                    style={{ marginTop: '50px', marginBottom: '20px' }}
                                 />
                             </Flex>
                         </Flex>

@@ -1,5 +1,4 @@
-import {Button, Container, createStyles, Overlay, rem, Stack, Title} from '@mantine/core';
-import {Link} from "react-router-dom";
+import { Container, createStyles, Overlay, rem, Stack, Title } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -7,7 +6,7 @@ const useStyles = createStyles((theme) => ({
         // paddingTop: rem(180),
         // paddingBottom: rem(130),
         backgroundImage:
-            'url(https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/background-landing.png?alt=media&token=f90d63f0-526f-4e13-9a7c-24eabfea4dbe)',
+            'url(https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/33e296d06964bfa4b4dffd5f4ca3d27d.png?alt=media&token=2aeadcb5-22d4-4d13-8c86-1ec5be227d82)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: rem(640),
@@ -103,38 +102,30 @@ const useStyles = createStyles((theme) => ({
         width: "fit-content",
         padding: theme.spacing.sm,
         borderRadius: theme.radius.sm,
-        backgroundImage: theme.fn.gradient({from: theme.colors.green[2], to: theme.colors.lime[6], deg: 20}),
+        backgroundImage: theme.fn.gradient({ from: theme.colors.green[2], to: theme.colors.lime[6], deg: 20 }),
         fontWeight: 500
     }
 }));
 
-const HeroSection = () => {
-    const {classes} = useStyles();
+const BottomSection = () => {
+    const { classes } = useStyles();
 
     return (
         <div className={classes.wrapper}>
-            <Overlay color="#000" opacity={0.65} zIndex={1}/>
+            <Overlay color="#000" opacity={0.1} zIndex={1} />
 
             <div className={classes.inner}>
                 <Container>
                     <Stack spacing="xl">
                         <Title className={classes.title}>
-                            Apoyando a crear grandes cambios para un mundo mejor
+                            Juntos podemos crear cambios
+                            para mejorar nuestro mundo
                         </Title>
                     </Stack>
                 </Container>
-
-                <div className={classes.controls}>
-                    <Button className={classes.control} style={{ backgroundColor: '#ff7f4d' }} size="lg" component={Link} to="/">
-                        Comenzar una Campaña
-                    </Button>
-                    <Button className={classes.control} style={{ backgroundColor: 'transparent', borderColor: 'white', borderWidth: 2 }} size="lg" component={Link} to="/">
-                        Consultas
-                    </Button>
-                </div>
             </div>
         </div>
     );
 }
 
-export default HeroSection;
+export default BottomSection;

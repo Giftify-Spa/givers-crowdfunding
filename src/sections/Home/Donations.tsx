@@ -1,85 +1,85 @@
-import { Box, BoxProps, createStyles, Paper, PaperProps, rem, SimpleGrid, Text, TextProps, Title, TitleProps } from "@mantine/core";
-import {
-    IconAugmentedReality,
-    IconClipboardHeart,
-    IconDog,
-    IconLeaf,
-    IconSos,
-    IconSchool
-} from "@tabler/icons-react";
+import { Box, BoxProps, createStyles, rem, Text, TextProps, Title, TitleProps } from "@mantine/core";
+// import {
+//     IconAugmentedReality,
+//     IconClipboardHeart,
+//     IconDog,
+//     IconLeaf,
+//     IconSos,
+//     IconSchool
+// } from "@tabler/icons-react";
 
 
-const iconMap = {
-    IconAugmentedReality: IconAugmentedReality,
-    IconDog: IconDog,
-    IconClipboardHeart: IconClipboardHeart,
-    IconLeaf: IconLeaf,
-    IconSos: IconSos,
-    IconSchool: IconSchool,
-}
+// const iconMap = {
+//     IconAugmentedReality: IconAugmentedReality,
+//     IconDog: IconDog,
+//     IconClipboardHeart: IconClipboardHeart,
+//     IconLeaf: IconLeaf,
+//     IconSos: IconSos,
+//     IconSchool: IconSchool,
+// }
 
 
-const mockData = [
-    {
-        icon: 'IconAugmentedReality',
-        name: 'Tecnología',
-    },
-    {
-        icon: 'IconDog',
-        name: 'Animales',
-    },
-    {
-        icon: 'IconSchool',
-        name: 'Escolar',
-    }
-]
+// const mockData = [
+//     {
+//         icon: 'IconAugmentedReality',
+//         name: 'Tecnología',
+//     },
+//     {
+//         icon: 'IconDog',
+//         name: 'Animales',
+//     },
+//     {
+//         icon: 'IconSchool',
+//         name: 'Escolar',
+//     }
+// ]
 
-interface IDonationsProps extends PaperProps {
-    icon: string
-    name: string
-}
+// interface IDonationsProps extends PaperProps {
+//     icon: string
+//     name: string
+// }
 
-const Donations = ({ icon, name }: IDonationsProps) => {
-    const IconComponent = iconMap[icon];
+// const Donations = ({ icon, name }: IDonationsProps) => {
+//     const IconComponent = iconMap[icon];
 
-    return (
-        <Paper
-            m="sm"
-            p="md"
-            shadow="md"
-            radius="sm"
-            sx={{
-                width: rem(150), // Ancho fijo para cada contenedor
-                aspectRatio: '1 / 1', // Relación de aspecto 1:1 para hacerlos cuadrados
-                backdropFilter: `blur(16px) saturate(180%)`,
-                backgroundColor: 'transparent',
-                border: `2px solid #FFF`,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}>
-            <IconComponent
-                size={64}
-                color="#ff7f4d"
-                style={{
-                    marginBottom: '10px',
-                }}
-                stroke={1}
-            />
-            <Text
-                size="md"
-                style={{
-                    textAlign: 'center',
-                    fontWeight: 500,
-                    color: '#FFF'
-                }}
-            >
-                {name}
-            </Text>
-        </Paper>
-    )
-}
+//     return (
+//         <Paper
+//             m="sm"
+//             p="md"
+//             shadow="md"
+//             radius="sm"
+//             sx={{
+//                 width: rem(150), // Ancho fijo para cada contenedor
+//                 aspectRatio: '1 / 1', // Relación de aspecto 1:1 para hacerlos cuadrados
+//                 backdropFilter: `blur(16px) saturate(180%)`,
+//                 backgroundColor: 'transparent',
+//                 border: `2px solid #FFF`,
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 justifyContent: 'center',
+//                 alignItems: 'center',
+//             }}>
+//             <IconComponent
+//                 size={64}
+//                 color="#ff7f4d"
+//                 style={{
+//                     marginBottom: '10px',
+//                 }}
+//                 stroke={1}
+//             />
+//             <Text
+//                 size="md"
+//                 style={{
+//                     textAlign: 'center',
+//                     fontWeight: 500,
+//                     color: '#FFF'
+//                 }}
+//             >
+//                 {name}
+//             </Text>
+//         </Paper>
+//     )
+// }
 
 interface IProps {
     boxProps: BoxProps
@@ -137,7 +137,7 @@ const useStyles = createStyles((theme) => ({
 const DonationsSection = ({ boxProps }: IProps) => {
 
     const { classes } = useStyles();
-    const items = mockData.map((item) => <Donations {...item} key={item.name} />)
+    // const items = mockData.map((item) => <Donations {...item} key={item.name} />)
 
     return (
         <Box
@@ -160,7 +160,7 @@ const DonationsSection = ({ boxProps }: IProps) => {
                     Cubilia iaculis aliquet a mus sodales nulla vitae senectus mollis litora quisque eros at, tempor egestas taciti facilisis risus platea luctus scelerisque natoque dui nascetur. Fringilla mattis cras lacinia conubia viverra aliquet aliquam ridiculus venenatis ultricies, sem mollis eros neque pellentesque potenti magnis vitae
                 </Text>
             </Box>
-            <Box
+            {/* <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -177,7 +177,7 @@ const DonationsSection = ({ boxProps }: IProps) => {
                 >
                     {items}
                 </SimpleGrid>
-            </Box>
+            </Box> */}
         </Box>
     );
 };

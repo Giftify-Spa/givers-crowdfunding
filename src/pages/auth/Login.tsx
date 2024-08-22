@@ -1,11 +1,13 @@
 import {
     TextInput,
+    Box,
     PasswordInput,
     Checkbox,
     Anchor,
     Paper,
     Title,
     Text,
+    BoxProps,
     Container,
     Group,
     Button, 
@@ -76,13 +78,18 @@ const LoginPage = () => {
         }
     }
 
+    const boxProps: BoxProps = {
+        mt: 24,
+        mb: 0,
+        py: 48
+    }
 
     return (
         <GiversLayoutGuest>
-
             <Helmet>
                 <title>Login</title>
             </Helmet>
+            <Box {...boxProps}>
             <Container size={420} my={40}>
                 <Title
                     align="center"
@@ -142,6 +149,7 @@ const LoginPage = () => {
                     }
                 </Paper>
             </Container>
+            </Box>
         </GiversLayoutGuest >
     );
 }

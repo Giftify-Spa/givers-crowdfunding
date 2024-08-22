@@ -1,16 +1,13 @@
 import HeroSection from "../sections/Home/Hero.tsx";
-import { Text, Box, BoxProps, Container, TextProps, Title, TitleProps } from "@mantine/core";
-import { TitleBadge } from "../components/index.ts";
-import FeaturesSection from "../sections/Home/Features.tsx";
-import StatsSection from "../sections/Home/Stats.tsx";
-import JoinUsSection from "../sections/Home/JoinUs.tsx";
-import WaysToFundSection from "../sections/Home/WaysToFund.tsx";
-import GetStartedSection from "../sections/Home/GetStarted.tsx";
+import { Box, BoxProps, Container, TextProps, TitleProps } from "@mantine/core";
 import TestimonialsSection from "../sections/Home/Testimonials.tsx";
 import GiversLayoutGuest from "../layout/GiversLayoutGuest.tsx";
 import CampaignsPage from "./Campaigns.tsx";
 import CategoriesSection from "../sections/Home/Categories.tsx";
 import DonationsSection from "../sections/Home/Donations.tsx";
+import ServicesSection from "../sections/Home/Services.tsx";
+import SubtitleSection from "../sections/Home/Subtitle.tsx";
+import BottomSection from "../sections/Home/Bottom.tsx";
 
 const HomeLanding = (): JSX.Element => {
     const boxProps: BoxProps = {
@@ -41,24 +38,12 @@ const HomeLanding = (): JSX.Element => {
                 <Container >
                     <CategoriesSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
                     <CampaignsPage />
-                    {/* <Box {...boxProps}>
-                        <TitleBadge title="About us" />
-                        <Title {...titleProps}>more people more impact</Title>
-                        <Text {...subTitleProps}>Because together, we can make a real difference. Our volunteers service
-                            in a
-                            variety of roles according to their skills and interests.</Text>
-                    </Box> */}
                     <DonationsSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
-                    {/* <FeaturesSection boxProps={boxProps} subtitleProps={subTitleProps} /> */}
-                    <StatsSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
-                    <JoinUsSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
-                </Container>
-                <WaysToFundSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
-                <Container>
+                    <ServicesSection boxProps={boxProps} />
+                    <SubtitleSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
                     <TestimonialsSection boxProps={boxProps} titleProps={titleProps} />
-
-                    <GetStartedSection boxProps={boxProps} titleProps={titleProps} />
                 </Container>
+                <BottomSection />
             </Box>
         </GiversLayoutGuest>
     );

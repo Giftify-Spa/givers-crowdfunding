@@ -4,7 +4,6 @@ import {
     createStyles,
     Flex,
     getStylesRef,
-    Group,
     Image,
     PaperProps,
     Progress,
@@ -35,7 +34,15 @@ const useStyles = createStyles((theme) => ({
             transition: 'all 150ms ease',
         }
     },
-
+    category: {
+        backgroundColor: '#ff7f4d',
+        borderRadius: theme.radius.xs,
+        color: '#FFF',
+        display: 'inline-block',
+        fontWeight: 'bold',
+        padding: theme.spacing.xs,
+        marginTop: theme.spacing.md
+    },
     title: {
         marginTop: theme.spacing.md,
     },
@@ -61,6 +68,8 @@ const CampaignCard = ({ data, showActions }: IProps) => {
         requestAmount,
         multimedia,
         donorsCount,
+        isCause,
+        isExperience
     } = data;
     const linkProps = { to: `/campaign/${id}`, rel: 'noopener noreferrer' };
     return (
@@ -71,15 +80,12 @@ const CampaignCard = ({ data, showActions }: IProps) => {
 
             <Card.Section pt={0} px="md" pb="md">
                 <Stack>
+                    <Text className={classes.category} lineClamp={1} fw={500} size="lg">
+                        { isCause ? 'Causa' : 'Experiencia' }
+                    </Text>
                     <Text className={classes.title} lineClamp={1} fw={500} size="lg">
                         {name}
                     </Text>
-
-                    <Group position="apart">
-                        {/* <Text size="xs" transform="uppercase" color="dimmed" fw={700}>{country}</Text>
-                        <Badge variant="dot" color="secondary">{category}</Badge> */}
-                    </Group>
-
                     {showActions && <Text lineClamp={3} size="sm">{description}</Text>}
 
                     {/* <Progress value={daysLeft} /> */}
