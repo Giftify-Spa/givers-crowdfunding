@@ -16,7 +16,7 @@ const CampaignsTable = () => {
 
         const chargedCampaigns = async () => {
             try {
-                const response = await getCampaigns();
+                const response = await getCampaigns(1000);
                 return response;
             } catch (error) {
                 console.error("Error getting documents: ", error);

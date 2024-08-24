@@ -69,7 +69,6 @@ const CampaignCard = ({ data, showActions }: IProps) => {
         multimedia,
         donorsCount,
         isCause,
-        isExperience
     } = data;
     const linkProps = { to: `/campaign/${id}`, rel: 'noopener noreferrer' };
     return (

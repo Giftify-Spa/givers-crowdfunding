@@ -27,9 +27,6 @@ import {
 } from "@tabler/icons-react";
 import * as yup from 'yup';
 import { Campaign } from '../interfaces/Campaign';
-
-import { useNavigate } from 'react-router-dom';
-
 interface IProps extends Pick<DrawerProps, 'opened' | 'onClose' | 'size'> {
     campaign?: Campaign
     iconSize: number
@@ -72,8 +69,6 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
         });
     }
 
-    const navigate = useNavigate();
-
     const isValidForm = async (): Promise<boolean> => {
         try {
             await validationDonationSchema.validate(formValues, { abortEarly: false });
@@ -90,8 +85,11 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
 
     const onCreateDonation = async () => {
 
-        
-        navigate('/transbank/request');
+        const isValid = isValidForm();
+
+        if(isValid) {
+            console.log('Formulario ingresado');
+        }
         
         // try {
         //     const response = await axios.get<any, any>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_DEV_LOCAL as string);
