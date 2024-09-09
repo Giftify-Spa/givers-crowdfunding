@@ -3,10 +3,9 @@ export interface User {
     rut?: string;
     checkDigit?: string;
     name: string;
-    lastnamePaternal?: string;
-    lastnameMaternal?: string;
+    lastname?: string;
     email: string;
-    profile: string;
+    profile?: string;
     photoURL?: string;
-    status: boolean;
+    status?: boolean;
 }

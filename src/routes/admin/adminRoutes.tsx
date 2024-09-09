@@ -1,4 +1,5 @@
-import { CreateCampaignPage, DashboardAdminPage } from "../../pages";
+import GiversLayout from "../../layout/GiversLayout";
+import { CampaignDetailsPage, CausesPage, CreateCampaignPage, DashboardAdminPage, ExperiencesPage } from "../../pages";
 import CreateFoundationPage from "../../pages/admin/CreateFoundation";
 
 
@@ -15,5 +16,21 @@ export const adminRoutes = [
     {
         path: "create-foundation",
         element: <CreateFoundationPage />
+    },
+    {
+        path: "causes",
+        element: <GiversLayout>
+            <CausesPage />
+        </GiversLayout>
+    },
+    {
+        path: "experiences",
+        element: <GiversLayout>
+            <ExperiencesPage />
+        </GiversLayout>
+    },
+    {
+        path: "campaign/:id",
+        element: <CampaignDetailsPage />
     },
 ];

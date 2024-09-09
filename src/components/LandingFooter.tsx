@@ -9,9 +9,8 @@ import { BrandName } from "./index";
 
 const useStyles = createStyles((theme) => ({
     footer: {
-        marginTop: rem(120),
         paddingTop: `calc(${theme.spacing.xl} * 2)`,
-        paddingBottom: `calc(${theme.spacing.xl} * 2)`,
+        // paddingBottom: `calc(${theme.spacing.xl} * 2)`,
         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
         borderTop: `${rem(1)} solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
             }`,
@@ -102,8 +101,8 @@ const useStyles = createStyles((theme) => ({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: theme.spacing.xl,
-        paddingTop: theme.spacing.xl,
-        paddingBottom: theme.spacing.xl,
+        // paddingTop: theme.spacing.xl,
+        // paddingBottom: theme.spacing.xl,
         borderTop: `${rem(1)} solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
             }`,
 

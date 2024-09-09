@@ -48,7 +48,7 @@ const DonatorsTable = () => {
                 {
                     accessor: 'campaign',
                     title: 'Nombre de Campaña',
-                    render: ({campaign}) => campaign.name
+                    render: ({ campaign }) => campaign.name
                 },
                 {
                     accessor: 'contributionAmount',

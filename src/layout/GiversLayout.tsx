@@ -1,8 +1,17 @@
-import {AppShell, useMantineTheme} from '@mantine/core';
-import {AppNavbar} from "../components";
+import { AppShell, useMantineTheme } from '@mantine/core';
+import { AppNavbar, LandingFooter } from "../components";
 
 const GiversLayout = ({ children }) => {
     const theme = useMantineTheme();
+
+    const data = {
+        title: 'Givers',
+        links: [
+            { label: 'Contacto', link: '/landing' },
+            { label: 'Terminos de uso', link: '/landing' },
+            { label: 'Politicas de Privacidad', link: '/landing' },
+        ],
+    }
 
     return (
         <>
@@ -15,7 +24,8 @@ const GiversLayout = ({ children }) => {
                 navbarOffsetBreakpoint="sm"
                 asideOffsetBreakpoint="sm"
                 navbar={<></>}
-                header={<AppNavbar/>}
+                header={<AppNavbar />}
+                footer={<LandingFooter data={[data]} />}
             >
                 {children}
             </AppShell>

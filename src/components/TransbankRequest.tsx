@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import { useLocation } from "react-router-dom";
 
 interface TransbankResponse {
   url_pago: string;
@@ -12,18 +14,23 @@ const TransbankRequest = () => {
   const [isLoading, setIsLoading] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const location = useLocation();
+
+  const { order, campaignId } = location.state || {};
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const orderId = "1lD4aUlaDOu1z6ilbMOr";
-        const amount = 4500;
+        const orderId = order.id;
+        const amount = order.contributionAmount;
 
         const { data } = await axios.get<TransbankResponse>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_PROD as string, {
           params: {
             orderId,
             amount,
-            status: "INITIALIZED",
-            os: "WEB"
+            status: order.status,
+            os: order.os,
+            campaignId
           }
         });
         console.log(data);
@@ -36,7 +43,7 @@ const TransbankRequest = () => {
     };
 
     fetchData();
-  }, []);
+  }, [order]);
 
   useEffect(() => {
     if (transbankResp && formRef.current) {

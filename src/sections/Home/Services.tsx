@@ -158,26 +158,31 @@ interface ServiceProps extends PaperProps {
 
 const mockdata = [
     {
+        id: 1,
         icon: 'https://icons.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
         title: 'Community',
         description: 'Join our community of givers and make a difference in the world',
     },
     {
+        id: 2,
         icon: 'https://icons.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80',
         title: 'Education',
         description: 'Join our community of givers and make a difference in the world',
     },
     {
+        id: 3,
         icon: 'https://icons.unsplash.com/photo-1574607383476-f517f260d30b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
         title: 'Crowdfunding',
         description: 'Join our community of givers and make a difference in the world',
     },
     {
+        id: 4,
         icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
         title: 'Partnerships',
         description: 'Join our community of givers and make a difference in the world',
     },
     {
+        id: 5,
         icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
         title: 'Partnerships',
         description: 'Join our community of givers and make a difference in the world',
@@ -217,7 +222,7 @@ interface IProps {
 }
 
 const ServicesSection = ({ boxProps }: IProps) => {
-    const items = mockdata.map((item) => <Service {...item} key={item.title} />);
+    const items = mockdata.map((item) => <Service {...item} key={item.id} />);
     const { classes } = useStyles();
 
     return (

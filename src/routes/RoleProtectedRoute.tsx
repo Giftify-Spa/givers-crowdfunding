@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from "react"
 import { AuthContext } from "../context/auth/AuthContext";
-import LoadingSpinner from "../components/LoadingSpinner";
+// import LoadingSpinner from "../components/LoadingSpinner";
 import { Navigate } from "react-router-dom";
 
 
@@ -11,11 +11,11 @@ interface RoleProtectedRouteProps {
 }
 
 const RoleProtectedRoute: React.FC<RoleProtectedRouteProps> = ({ component: Component, allowedRoles, ...rest }) => {
-    const { user, loading } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
-    if (loading) {
-        return <LoadingSpinner />
-    }
+    // if (loading) {
+    //     return <LoadingSpinner />
+    // }
 
     if (!user || !allowedRoles.includes(user.profile)) {
         return <Navigate to="/" />

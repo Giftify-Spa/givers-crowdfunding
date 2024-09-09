@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import {
     Accordion,
     ActionIcon,
-    Anchor,
     Box,
     BoxProps,
     Button,
@@ -12,7 +11,6 @@ import {
     Divider,
     Flex,
     Grid,
-    Group,
     Image,
     Paper,
     PaperProps,
@@ -21,10 +19,9 @@ import {
     Text,
     TextProps,
     Title,
-    TitleProps,
-    UnstyledButton
+    TitleProps
 } from "@mantine/core";
-import { IconFlag, IconSeparator, IconShare } from "@tabler/icons-react";
+import { IconShare } from "@tabler/icons-react";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { BackButton, DonationDrawer, ShareModal, UserCard } from "../components";
 import { Helmet } from "react-helmet";
@@ -113,37 +110,6 @@ const CampaignDetailsPage = (): JSX.Element => {
                                         </Card.Section>
                                         <Stack mt="md">
                                             <Title>{campaign?.name}</Title>
-                                            {!matchesMobile ?
-                                                <Flex gap="xs" align="center">
-                                                    <Text size="sm">Campaña de recaudación de fondos creada por:</Text>
-                                                    <UnstyledButton component={Anchor}>
-                                                        <Flex gap="xs" align="center">
-                                                            <Text style={{ fontWeight: 'bold' }} size="sm">{campaign?.foundation.name}</Text>
-                                                        </Flex>
-                                                    </UnstyledButton>
-                                                    <IconSeparator size={18} />
-                                                    {/* <Text component={Anchor} size="sm">{campaign?.country}</Text> */}
-                                                    <IconSeparator size={18} />
-                                                    <Text component={Anchor} size="sm">{campaign?.category.name}</Text>
-                                                </Flex> :
-                                                <Stack>
-                                                    <Flex gap="md">
-                                                        <Text size="sm">Campaña de recaudación de fondos creada por:</Text>
-                                                        <UnstyledButton component={Anchor}>
-                                                            <Flex gap="xs" align="center">
-                                                                <Text style={{ fontWeight: 'bold' }} size="sm">{campaign?.foundation.name}</Text>
-                                                            </Flex>
-
-                                                        </UnstyledButton>
-                                                    </Flex>
-                                                    <Group>
-                                                        <Text size="sm">Ubicación
-                                                            - Chile</Text>
-                                                        <Text size="sm">Categoría
-                                                            - <Anchor>{campaign?.category.name}</Anchor></Text>
-                                                    </Group>
-                                                </Stack>
-                                            }
                                             <Text {...subTitleProps}>Nuestra historia</Text>
                                             <Text size="sm">{campaign?.description}</Text>
                                             {matchesMobile && <>
@@ -179,15 +145,6 @@ const CampaignDetailsPage = (): JSX.Element => {
                                     <Paper {...paperProps}>
                                         <Text>Creado el {new Date(campaign.createdAt.seconds * 1000).toLocaleDateString()}</Text>
                                     </Paper>
-                                    {!matchesMobile &&
-                                        <Button
-                                            leftIcon={<IconFlag size={iconSize} />}
-                                            variant="subtle"
-                                            color="secondary"
-                                        >
-                                            Reportar campaña
-                                        </Button>
-                                    }
                                 </Stack>
                             </Grid.Col>
                             <Grid.Col lg={4}>
@@ -232,15 +189,6 @@ const CampaignDetailsPage = (): JSX.Element => {
                                             </Accordion.Item>
                                         </Accordion>
                                     </Paper>
-                                    {matchesMobile &&
-                                        <Button
-                                            leftIcon={<IconFlag size={iconSize} />}
-                                            variant="subtle"
-                                            color="secondary"
-                                        >
-                                            Reportar campaña
-                                        </Button>
-                                    }
                                 </Stack>
                             </Grid.Col>
                         </Grid>
@@ -269,30 +217,6 @@ const CampaignDetailsPage = (): JSX.Element => {
                                     </Card.Section>
                                     <Stack mt="md">
                                         <Title>{campaign?.name}</Title>
-                                        {!matchesMobile ?
-                                            <Flex gap="xs" align="center">
-                                                <Text size="sm">Campaña de recaudación de fondos creada por:</Text>
-                                                <UnstyledButton component={Anchor}>
-                                                    <Flex gap="xs" align="center">
-                                                        <Text style={{ fontWeight: 'bold' }} size="sm">{campaign?.foundation.name}</Text>
-                                                    </Flex>
-                                                </UnstyledButton>
-                                            </Flex> :
-                                            <Stack>
-                                                <Flex gap="md">
-                                                    <Text size="sm">Campaña de recaudación de fondos creada por:</Text>
-                                                    <Flex gap="xs" align="center">
-                                                        <Text style={{ fontWeight: 'bold' }} size="sm">{campaign?.foundation.name}</Text>
-                                                    </Flex>
-                                                </Flex>
-                                                <Group>
-                                                    <Text size="sm">Ubicación
-                                                        - Chile</Text>
-                                                    <Text size="sm">Categoría
-                                                        - <Anchor>{campaign?.category.name}</Anchor></Text>
-                                                </Group>
-                                            </Stack>
-                                        }
                                         <Text {...subTitleProps}>Nuestra historia</Text>
                                         <Text size="sm">{campaign?.description}</Text>
                                         {matchesMobile && <>
@@ -323,20 +247,11 @@ const CampaignDetailsPage = (): JSX.Element => {
                                 </Card>
                                 <Paper {...paperProps}>
                                     <Text {...subTitleProps} mb="sm">Organizador</Text>
-                                    <UserCard responsibleData={campaign.responsible} />
+                                    <UserCard responsibleData={campaign.foundation} />
                                 </Paper>
                                 <Paper {...paperProps}>
                                     <Text>Creado el {new Date(campaign.createdAt.seconds * 1000).toLocaleDateString()}</Text>
                                 </Paper>
-                                {!matchesMobile &&
-                                    <Button
-                                        leftIcon={<IconFlag size={iconSize} />}
-                                        variant="subtle"
-                                        color="secondary"
-                                    >
-                                        Reportar campaña
-                                    </Button>
-                                }
                             </Stack>
                         </Grid.Col>
                         <Grid.Col lg={4}>
@@ -381,15 +296,6 @@ const CampaignDetailsPage = (): JSX.Element => {
                                         </Accordion.Item>
                                     </Accordion>
                                 </Paper>
-                                {matchesMobile &&
-                                    <Button
-                                        leftIcon={<IconFlag size={iconSize} />}
-                                        variant="subtle"
-                                        color="secondary"
-                                    >
-                                        Reportar campaña
-                                    </Button>
-                                }
                             </Stack>
                         </Grid.Col>
                     </Grid>

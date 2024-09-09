@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext, ReactNode, useEffect, useReducer, useState } from "react";
+import { createContext, ReactNode, useEffect, useReducer } from "react";
 import { AuthState, authReducer } from "./authReducer";
 
 import { signInWithGoogle, loginWithEmailAndPassword, logoutFirebase } from "../../firebase/providers";
 import { User } from '../../interfaces/User';
-import { addDocument, checkIfDocumentExists, getUserByUid } from "../../firebase/service";
+import { addDocument, checkIfDocumentExists, getUserByEmail, getUserByUid } from "../../firebase/service";
 import { AuthResponse } from "../../interfaces/AuthResponse";
 import { registerUserWithEmailAndPassword } from "../../firebase/providers";
 import { onAuthStateChanged } from "firebase/auth";
 import { FirebaseAuth } from "../../firebase/config";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import { updateDoc } from "firebase/firestore";
 
 type AuthContextProps = {
     user: User | null,
     status: 'checking' | 'authenticated' | 'not-authenticated',
-    loading: boolean,
     startGoogleSignIn: () => void,
     startLoginWithEmailAndPasssword: (email: string, password: string) => Promise<AuthResponse>,
     startLogout: () => void,
@@ -36,7 +35,6 @@ export const AuthContext = createContext({} as AuthContextProps);
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => {
 
     const [state, dispatch] = useReducer(authReducer, authInitialState);
-    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(FirebaseAuth, async (authUser) => {
@@ -58,7 +56,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                     }
                 });
             }
-            setLoading(false);
         });
 
         return () => unsubscribe();
@@ -149,19 +146,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
         // Search user in the DB with the uid
         const existUser = await checkIfDocumentExists('users', 'uid', uid);
 
-        if (!existUser) {
-            // Save user in the DB
-            await addDocument('users', userData);
-            dispatch({
-                type: "auth",
-                payload: {
-                    user: userData
-                }
-            });
+        console.log('EXISTS: ', existUser);
 
-            return {
-                success: true
+        if (!existUser) {
+            // check temporal user
+            const existUserEmail = await checkIfDocumentExists('users', 'email', userData.email);
+
+            console.log(existUserEmail);
+
+            if (!existUserEmail) {
+                // Save user in the DB
+                await addDocument('users', userData);
+                dispatch({
+                    type: "auth",
+                    payload: {
+                        user: userData
+                    }
+                });
+
+                return {
+                    success: true
+                }
+            } else {
+                const userRef = await getUserByEmail(userData.email);
+                if (userRef) {
+                    await updateDoc(userRef.ref,
+                        {
+                            "uid": userData.uid,
+                            "profile": userData.profile,
+                            "status": userData.status
+                        });
+                }
             }
+
         }
 
         const user = await getUserByUid(userData.uid);
@@ -213,6 +230,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                 }
             }
         });
+
+        return {
+            success: true
+        }
     }
 
     const startLogout = async () => {
@@ -227,15 +248,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
         <AuthContext.Provider
             value={{
                 ...state,
-                loading,
                 startGoogleSignIn,
                 startLoginWithEmailAndPasssword,
                 startLogout,
                 startCreatingUserWithEmailAndPassword
             }}
         >
-
-            {loading ? <LoadingSpinner /> : children}
+            {children}
         </AuthContext.Provider >
     )
 

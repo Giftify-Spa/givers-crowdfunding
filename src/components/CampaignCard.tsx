@@ -14,6 +14,9 @@ import { Link } from "react-router-dom";
 import { Campaign } from '../interfaces/Campaign';
 import { formattingToCLPNumber } from '../helpers/formatCurrency';
 import { calculatePercentage, calculatePercentageString } from '../helpers/percentageCampaign';
+import { useContext, useEffect, useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { AuthContext } from '../context/auth/AuthContext';
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -60,6 +63,19 @@ interface IProps extends PaperProps {
 
 const CampaignCard = ({ data, showActions }: IProps) => {
     const { classes } = useStyles();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        const auth = getAuth();
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setIsAuthenticated(!!user);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
     const {
         id,
         name,
@@ -70,7 +86,12 @@ const CampaignCard = ({ data, showActions }: IProps) => {
         donorsCount,
         isCause,
     } = data;
-    const linkProps = { to: `/campaign/${id}`, rel: 'noopener noreferrer' };
+    const linkProps = (isAuthenticated && user.profile === "Admin")
+        ? { to: `/admin/campaign/${id}`, rel: 'noopener noreferrer' }
+        : (isAuthenticated && user.profile === "Client")
+            ? { to: `/panel/campaign/${id}`, rel: 'noopener noreferrer' }
+            : { to: `/campaign/${id}`, rel: 'noopener noreferrer' };
+
     return (
         <Card radius="sm" shadow="md" ml="xs" component={Link} {...linkProps} className={classes.card}>
             <Card.Section>
@@ -80,7 +101,7 @@ const CampaignCard = ({ data, showActions }: IProps) => {
             <Card.Section pt={0} px="md" pb="md">
                 <Stack>
                     <Text className={classes.category} lineClamp={1} fw={500} size="lg">
-                        { isCause ? 'Causa' : 'Experiencia' }
+                        {isCause ? 'Causa' : 'Experiencia'}
                     </Text>
                     <Text className={classes.title} lineClamp={1} fw={500} size="lg">
                         {name}

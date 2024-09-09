@@ -1,13 +1,12 @@
-import HeroSection from "../sections/Home/Hero.tsx";
+import HeroSection from "../../sections/Home/Hero.tsx";
 import { Box, BoxProps, Container, TextProps, TitleProps } from "@mantine/core";
-import TestimonialsSection from "../sections/Home/Testimonials.tsx";
-import GiversLayoutGuest from "../layout/GiversLayoutGuest.tsx";
-import CampaignsPage from "./Campaigns.tsx";
-import CategoriesSection from "../sections/Home/Categories.tsx";
-import DonationsSection from "../sections/Home/Donations.tsx";
-import ServicesSection from "../sections/Home/Services.tsx";
-import SubtitleSection from "../sections/Home/Subtitle.tsx";
-import BottomSection from "../sections/Home/Bottom.tsx";
+import TestimonialsSection from "../../sections/Home/Testimonials.tsx";
+import GiversLayoutGuest from "../../layout/GiversLayoutGuest.tsx";
+import CampaignsLandingPage from "../CampaignsLanding.tsx";
+import CategoriesSection from "../../sections/Home/Categories.tsx";
+import DonationsSection from "../../sections/Home/Donations.tsx";
+import ServicesSection from "../../sections/Home/Services.tsx";
+import SubtitleSection from "../../sections/Home/Subtitle.tsx";
 
 const HomeLanding = (): JSX.Element => {
     const boxProps: BoxProps = {
@@ -37,13 +36,12 @@ const HomeLanding = (): JSX.Element => {
                 <HeroSection />
                 <Container >
                     <CategoriesSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
-                    <CampaignsPage />
+                    <CampaignsLandingPage />
                     <DonationsSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
                     <ServicesSection boxProps={boxProps} />
                     <SubtitleSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
                     <TestimonialsSection boxProps={boxProps} titleProps={titleProps} />
                 </Container>
-                <BottomSection />
             </Box>
         </GiversLayoutGuest>
     );

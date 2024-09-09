@@ -22,6 +22,8 @@ import BackButton from "./BackButton";
 import CategorySelect from "./CategorySelect";
 import SearchDrawer from "./SearchDrawer";
 import AppNavbar from "./AppNavbar";
+import OrderSuccess from './order/OrderSuccess';
+import OrderFailed from './order/OrderFailed';
 
 export {
     LandingNavbar,
@@ -47,5 +49,7 @@ export {
     BackButton,
     CategorySelect,
     SearchDrawer,
-    AppNavbar
+    AppNavbar,
+    OrderSuccess,
+    OrderFailed
 };

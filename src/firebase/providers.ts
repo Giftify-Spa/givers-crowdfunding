@@ -82,7 +82,6 @@ export const loginWithEmailAndPassword = async (email: string, password: string)
             displayName, email: userEmail, uid, photoURL
         }
     } catch (error) {
-        console.log(error);
         const translateError = findError(error.message);
         return {
             success: false,

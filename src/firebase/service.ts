@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // firebaseService.ts
-
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Campaign } from '../interfaces/Campaign';
 import { Foundation } from "../interfaces/Foundation";
@@ -16,11 +15,14 @@ import {
   getDocs,
   where,
   GeoPoint,
-  limit as firestorelimit
+  limit as firestorelimit,
+  limit,
 } from "firebase/firestore";
 
 import axios from 'axios';
 import { Category } from "../interfaces/Category";
+import { Contribution } from "../interfaces/Contribution";
+import { getAuth } from "firebase/auth";
 
 export const addDocument = async (collectionName: string, data: any) => {
   try {
@@ -68,7 +70,7 @@ export const getUserReferenceByUid = async (uid: string): Promise<any> => {
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      const userDoc = querySnapshot.docs[0]; // Assuming uid is unique and there's only one document
+      const userDoc = querySnapshot.docs[0].id; // Assuming uid is unique and there's only one document
       return userDoc;
     } else {
       return null;
@@ -78,6 +80,31 @@ export const getUserReferenceByUid = async (uid: string): Promise<any> => {
     return null;
   }
 };
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    // Reference to the "users" collection in Firestore
+    const usersCollectionRef = collection(FirebaseDB, "users");
+
+    // Create a query that searches by "email" field and limits results to 1 document
+    const q = query(usersCollectionRef, where("email", "==", email), limit(1));
+
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+
+    // If a document is found, return the data of the first document (since only 1 is expected)
+    if (!querySnapshot.empty) {
+      return querySnapshot.docs[0] // Efficient: returns only the first match
+    }
+
+    // If no document matches the email, return null
+    return null;
+
+  } catch (error) {
+    console.error("Error fetching user by email:", error);
+    throw error; // Handle or rethrow the error
+  }
+}
 
 export const getUsersSelect = async () => {
   try {
@@ -103,21 +130,37 @@ export const getUsersSelect = async () => {
   }
 }
 
+const getAuthenticatedUserId = async (): Promise<string | null> => {
+  const auth = getAuth();
+  const userAuth = auth.currentUser;
+
+  const userId = getUserReferenceByUid(userAuth.uid);
+
+  return userId ? userId : null;
+};
+
 export const getDonorsByUser = async () => {
   try {
-    const q = query(collection(FirebaseDB, "contributions"));
+    const userId = await getAuthenticatedUserId();
+    if (!userId) {
+      throw new Error("No authenticated user found");
+    }
+
+    const userRef = doc(FirebaseDB, 'users', userId);
+
+    const q = query(collection(FirebaseDB, "contributions"),
+      where("user", "==", userRef));
 
     const querySnapshot = await getDocs(q);
 
-    const contributions = [];
-    for (const doc of querySnapshot.docs) {
+    const contributionsPromises = querySnapshot.docs.map(async (doc) => {
       const { contributionAmount, userContribution, dateContribution, state, campaign } = doc.data();
 
-      // Obtain Campaign Data
+      // Obtain data the campaign
       const campaignDoc = await getDoc(campaign);
       const campaignData = campaignDoc.exists() ? campaignDoc.data() as Campaign : null;
 
-      contributions.push({
+      return {
         id: doc.id,
         contributionAmount,
         dateContribution,
@@ -125,14 +168,16 @@ export const getDonorsByUser = async () => {
         userContribution,
         campaign: {
           id: campaignDoc.id,
-          name: campaignData.name,
+          name: campaignData?.name,
         }
-      });
-    }
+      };
+    });
 
+    const contributions = await Promise.all(contributionsPromises);
     return contributions;
   } catch (error) {
     console.error("Error getting documents: ", error);
+    return []
   }
 }
 
@@ -179,7 +224,13 @@ export const getFoundations = async () => {
 
 export const getCampaigns = async (limit: number) => {
   try {
-    const q = query(collection(FirebaseDB, "campaigns"), where("status", "==", true), firestorelimit(limit));
+    let q: any;
+    if (limit > 0) {
+      q = query(collection(FirebaseDB, "campaigns"), where("status", "==", true), firestorelimit(limit));
+    } else {
+      q = query(collection(FirebaseDB, "campaigns"), where("status", "==", true));
+
+    }
     const querySnapshot = await getDocs(q);
 
     const campaignsPromises = querySnapshot.docs.map(async (doc) => {
@@ -196,7 +247,137 @@ export const getCampaigns = async (limit: number) => {
         multimedia,
         foundation,
         createdBy
-      } = doc.data();
+      } = doc.data() as Campaign;
+
+      // Obtener datos de Foundation y User en paralelo
+      const [foundationDoc, userDoc] = await Promise.all([getDoc(foundation), getDoc(createdBy)]);
+
+      const foundationData = foundationDoc.exists() ? foundationDoc.data() as Foundation : null;
+      const userData = userDoc.exists() ? userDoc.data() as User : null;
+
+      return {
+        id: doc.id,
+        name,
+        description,
+        initDate,
+        endDate,
+        isCause,
+        isExperience,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation: foundationData,
+        createdBy: userData
+      };
+    });
+
+    const campaigns = await Promise.all(campaignsPromises);
+    return campaigns;
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    return [];
+  }
+}
+
+export const getCampaignsWithExperiences = async (limit: number) => {
+  try {
+    let q: any;
+    if (limit > 0) {
+      q = query(
+        collection(FirebaseDB, "campaigns"),
+        where("status", "==", true),
+        where("isExperience", "==", true),
+        firestorelimit(limit));
+    } else {
+      q = query(
+        collection(FirebaseDB, "campaigns"),
+        where("status", "==", true),
+        where("isExperience", "==", true));
+
+    }
+    const querySnapshot = await getDocs(q);
+
+    const campaignsPromises = querySnapshot.docs.map(async (doc) => {
+      const {
+        name,
+        description,
+        initDate,
+        endDate,
+        isCause,
+        isExperience,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation,
+        createdBy
+      } = doc.data() as Campaign;
+
+      // Obtener datos de Foundation y User en paralelo
+      const [foundationDoc, userDoc] = await Promise.all([getDoc(foundation), getDoc(createdBy)]);
+
+      const foundationData = foundationDoc.exists() ? foundationDoc.data() as Foundation : null;
+      const userData = userDoc.exists() ? userDoc.data() as User : null;
+
+      return {
+        id: doc.id,
+        name,
+        description,
+        initDate,
+        endDate,
+        isCause,
+        isExperience,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation: foundationData,
+        createdBy: userData
+      };
+    });
+
+    const campaigns = await Promise.all(campaignsPromises);
+    return campaigns;
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    return [];
+  }
+}
+
+export const getCampaignsWithCauses = async (limit: number) => {
+  try {
+    let q: any;
+    if (limit > 0) {
+      q = query(
+        collection(FirebaseDB, "campaigns"),
+        where("status", "==", true),
+        where("isCause", "==", true),
+        firestorelimit(limit));
+    } else {
+      q = query(
+        collection(FirebaseDB, "campaigns"),
+        where("status", "==", true),
+        where("isCause", "==", true));
+
+    }
+    const querySnapshot = await getDocs(q);
+
+    const campaignsPromises = querySnapshot.docs.map(async (doc) => {
+      const {
+        name,
+        description,
+        initDate,
+        endDate,
+        isCause,
+        isExperience,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation,
+        createdBy
+      } = doc.data() as Campaign;
 
       // Obtener datos de Foundation y User en paralelo
       const [foundationDoc, userDoc] = await Promise.all([getDoc(foundation), getDoc(createdBy)]);
@@ -359,8 +540,6 @@ export const getCategoriesSelect = async () => {
   }
 }
 
-
-
 // Create Operations
 export const addFoundation = async (data: Foundation) => {
   try {
@@ -398,7 +577,6 @@ export const addFoundation = async (data: Foundation) => {
 
 export const addCampaign = async (data: Campaign) => {
   try {
-
     const { name,
       description,
       initDate,
@@ -462,6 +640,48 @@ export const addCampaign = async (data: Campaign) => {
   }
 }
 
+export const addOrder = async (data: Contribution) => {
+  try {
+    const {
+      contributionAmount,
+      os,
+      status,
+      userId,
+      campaignId
+    } = data;
+
+    // Convert user ID to a Firestore reference
+    const userRef = doc(FirebaseDB, 'users', userId);
+
+    // Convert campaign ID to a Firestore reference
+    const campaignRef = doc(FirebaseDB, 'campaigns', campaignId)
+
+    const dateContribution = new Date();
+
+    const docRef = await addDoc(collection(FirebaseDB, 'contributions'), {
+      contributionAmount,
+      os,
+      status,
+      dateContribution,
+      user: userRef,
+      campaign: campaignRef
+    });
+
+    return {
+      success: true,
+      order: {
+        id: docRef.id,
+        contributionAmount,
+        os,
+        status,
+        dateContribution,
+        userId
+      }
+    };
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
 
 export const uploadFile = async (file: File, path: string): Promise<string> => {
   try {
@@ -499,3 +719,32 @@ export async function webpayResponse(data: any) {
 
 }
 
+export async function checkUser(data: User) {
+  // Verificar si el usuario existe. Si existe -> flujo normal : No existe -> crear usuario
+
+  // Flujo normal: Obtengo referencia y la envio como un campo para crear la orden ....
+
+  // No existe: crear el usuario con la informacion que ingreso en el formul...
+
+  try {
+    const userExists = await getUserByEmail(data.email);
+
+    if (userExists) {
+      return userExists.id;
+    }
+
+    // Create user in db
+    const docRef = await addDoc(collection(FirebaseDB, 'users'), {
+      name: data.name,
+      lastname: data.lastname,
+      email: data.email
+    });
+
+    return docRef.id;
+
+  } catch (error) {
+    console.log(error);
+  }
+
+
+}

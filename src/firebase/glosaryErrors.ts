@@ -26,6 +26,11 @@ export const glosaryErrors = [
         key: "Firebase: Error (auth/invalid-credential).",
         en: "Invalid credential.",
         es: "Credenciales inválidas."
+    },
+    {
+        key: "Firebase: Error (auth/email-already-in-use).",
+        en: "The email entered is already in use.",
+        es: "El correo electrónico ingresado ya esta en uso."
     }
 ]
 

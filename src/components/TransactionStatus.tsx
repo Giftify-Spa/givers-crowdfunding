@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { useLocation } from "react-router-dom";
+import OrderFailed from "./order/OrderFailed";
+import OrderSuccess from "./order/OrderSuccess";
 
 interface TransbankStatusResponse {
   vci: string;
@@ -25,6 +27,7 @@ const TransactionStatus = () => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const token_ws = queryParams.get("token");
@@ -35,11 +38,14 @@ const TransactionStatus = () => {
           const { data } = await axios.get<TransbankStatusResponse>(
             import.meta.env.VITE_API_URL_TRANSBANK_STATUS_PROD as string, {
             params: {
-              token_ws: token_ws
+              token_ws: token_ws,
             }
           });
           console.log(data);
           setTransbankResp(data);
+
+
+
         } catch (error) {
           console.error("Error fetching data from Transbank API", error);
         } finally {
@@ -62,22 +68,14 @@ const TransactionStatus = () => {
     return <p>No se encontraron datos de la transacción.</p>;
   }
 
+  if (transbankResp.status == "FAILED") {
+    return <OrderFailed transbankResp={transbankResp} />
+  }
+
   return (
-    <div>
-      <h1>Transaction Status</h1>
-      <p><strong>Amount:</strong> {transbankResp.amount}</p>
-      <p><strong>Status:</strong> {transbankResp.status}</p>
-      <p><strong>Order:</strong> {transbankResp.buy_order}</p>
-      <p><strong>Session ID:</strong> {transbankResp.session_id}</p>
-      <p><strong>Card Last Digits:</strong> {transbankResp.card_detail.card_number.slice(-4)}</p>
-      <p><strong>Accounting Date:</strong> {transbankResp.accounting_date}</p>
-      <p><strong>Transaction Date:</strong> {transbankResp.transaction_date}</p>
-      <p><strong>Authorization Code:</strong> {transbankResp.authorization_code}</p>
-      <p><strong>Payment Type Code:</strong> {transbankResp.payment_type_code}</p>
-      <p><strong>Response Code:</strong> {transbankResp.response_code}</p>
-      <p><strong>Installments Number:</strong> {transbankResp.installments_number}</p>
-    </div>
+    <OrderSuccess transbankResp={transbankResp} />
   );
 };
+
 
 export default TransactionStatus;

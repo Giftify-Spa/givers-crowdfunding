@@ -40,8 +40,9 @@ const RegisterPage = () => {
     });
 
     const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
-
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [loadingGoogle, setLoadingGoogle] = useState<boolean>(false);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.currentTarget;
@@ -52,13 +53,24 @@ const RegisterPage = () => {
     }
 
     const onRegister = async () => {
-
+        setLoading(true);
         const isValid = await isValidForm();
 
         if (isValid) {
             const response = await startCreatingUserWithEmailAndPassword(formValues.name, formValues.email, formValues.password);
-
             if (!response.success) setError(response.errorMessage);
+        }
+        setLoading(false);
+    }
+
+    const onRegisterGoogle = async () => {
+        try {
+            setLoadingGoogle(true);
+            await startGoogleSignIn();
+            setLoadingGoogle(false);
+        } catch (error) {
+            console.log(error);
+            setLoadingGoogle(false);
         }
     }
 
@@ -89,73 +101,85 @@ const RegisterPage = () => {
                 <title>Signup</title>
             </Helmet>
             <Box {...boxProps}>
-            <Container size={420} my={40}>
-                <Title
-                    align="center"
-                    sx={() => ({ fontWeight: 900 })}
-                >
-                    Bienvenido Nuevamente!
-                </Title>
-                <Text color="dimmed" size="sm" align="center" mt={5}>
-                    Ya tienes una cuenta?{' '}
-                    <Link color={'inherit'} to="/login">
-                        Iniciar Sesión
-                    </Link>
-                </Text>
+                <Container size={420} my={40}>
+                    <Title
+                        align="center"
+                        sx={() => ({ fontWeight: 900 })}
+                    >
+                        Bienvenido Nuevamente!
+                    </Title>
+                    <Text color="dimmed" size="sm" align="center" mt={5}>
+                        Ya tienes una cuenta?{' '}
+                        <Link color={'inherit'} to="/login">
+                            Iniciar Sesión
+                        </Link>
+                    </Text>
 
-                <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-                    <Group grow mb="md" mt="md">
-                        <Button onClick={startGoogleSignIn} radius="xl" leftIcon={<IconBrandGoogle size={18} />}>Google</Button>
-                    </Group>
-                    <Divider label="O continua con tu correo electrónico" labelPosition="center" my="lg" />
-                    <TextInput
-                        label="Nombre"
-                        placeholder="Diego"
-                        name='name'
-                        value={formValues.name}
-                        onChange={handleChange}
-                        error={errorMessages.name}
-                        required />
-                    <TextInput
-                        label="Correo electrónico"
-                        placeholder="givers@givers.cl"
-                        name='email'
-                        value={formValues.email}
-                        onChange={handleChange}
-                        error={errorMessages.email}
-                        required
-                        mt="md" />
-                    <PasswordInput
-                        label="Contraseña"
-                        placeholder="********"
-                        name='password'
-                        value={formValues.password}
-                        onChange={handleChange}
-                        error={errorMessages.password}
-                        required
-                        mt="md" />
-                    <Group position="center" mt="lg">
-                        {/* <Checkbox label="Remember me" /> */}
-                        <Anchor component="button" size="sm">
-                            Olvidaste tu contraseña?
-                        </Anchor>
-                    </Group>
-                    <Button fullWidth mt="xl" onClick={onRegister}>
-                        Crear cuenta
-                    </Button>
-                    {
-                        error && (
-                            <List style={{ marginTop: 10 }}>
-                                <List.Item
-                                    style={{ color: '#ad3838' }}
-                                >
-                                    {error}
-                                </List.Item>
-                            </List>
-                        )
-                    }
-                </Paper>
-            </Container>
+                    <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+                        <Group grow mb="md" mt="md">
+                            <Button
+                                onClick={onRegisterGoogle}
+                                radius="xl"
+                                leftIcon={<IconBrandGoogle size={18} />}
+                                loading={loadingGoogle}
+                            >
+                                Google
+                            </Button>
+                        </Group>
+                        <Divider label="O continua con tu correo electrónico" labelPosition="center" my="lg" />
+                        <TextInput
+                            label="Nombre"
+                            placeholder="Diego"
+                            name='name'
+                            value={formValues.name}
+                            onChange={handleChange}
+                            error={errorMessages.name}
+                            required />
+                        <TextInput
+                            label="Correo electrónico"
+                            placeholder="givers@givers.cl"
+                            name='email'
+                            value={formValues.email}
+                            onChange={handleChange}
+                            error={errorMessages.email}
+                            required
+                            mt="md" />
+                        <PasswordInput
+                            label="Contraseña"
+                            placeholder="********"
+                            name='password'
+                            value={formValues.password}
+                            onChange={handleChange}
+                            error={errorMessages.password}
+                            required
+                            mt="md" />
+                        <Group position="center" mt="lg">
+                            {/* <Checkbox label="Remember me" /> */}
+                            <Anchor component="button" size="sm">
+                                Olvidaste tu contraseña?
+                            </Anchor>
+                        </Group>
+                        <Button
+                            fullWidth
+                            mt="xl"
+                            onClick={onRegister}
+                            loading={loading}
+                        >
+                            Crear cuenta
+                        </Button>
+                        {
+                            error && (
+                                <List style={{ marginTop: 10 }}>
+                                    <List.Item
+                                        style={{ color: '#ad3838' }}
+                                    >
+                                        {error}
+                                    </List.Item>
+                                </List>
+                            )
+                        }
+                    </Paper>
+                </Container>
             </Box>
         </GiversLayoutGuest>
     );

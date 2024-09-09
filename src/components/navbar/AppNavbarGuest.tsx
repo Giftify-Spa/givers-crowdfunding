@@ -132,8 +132,6 @@ const useStyles = createStyles((theme) => ({
 type IProps = BoxProps
 
 const AppNavbarGuest = ({ ...others }: IProps) => {
-
-    // const { user, startLogout } = useContext(AuthContext);
     const { classes, theme } = useStyles();
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [searchOpened, { close: closeSearchDrawer }] = useDisclosure(false);

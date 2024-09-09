@@ -23,5 +23,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <AppState>
             <App />
         </AppState>
-    </React.StrictMode>,
+    </React.StrictMode>
 )

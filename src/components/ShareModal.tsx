@@ -66,7 +66,7 @@ const ShareModal = ({ campaign, iconSize, ...others }: IProps) => {
                                 value={`https://givers.cl/campaign/${campaign?.id}`}
                                 disabled
                                 sx={{ flex: '1 1 auto' }} />
-                            <CopyButton value={`https://givers.cl/campaign${campaign?.id}`} timeout={2000}>
+                            <CopyButton value={`https://givers.cl/campaign/${campaign?.id}`} timeout={2000}>
                                 {({ copied, copy }) => (
                                     <Tooltip label={copied ? 'Copiado' : 'Copiar'} withArrow position="right">
                                         <Button

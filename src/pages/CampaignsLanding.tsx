@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getCampaigns } from "../firebase/service";
 import LoadingSpinner from "../components/LoadingSpinner";
 
-const CampaignsPage = (): JSX.Element => {
+const CampaignsLandingPage = (): JSX.Element => {
 
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -147,4 +147,4 @@ const CampaignsPage = (): JSX.Element => {
     );
 };
 
-export default CampaignsPage;
+export default CampaignsLandingPage;

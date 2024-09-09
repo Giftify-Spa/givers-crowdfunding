@@ -27,6 +27,9 @@ import {
 } from "@tabler/icons-react";
 import * as yup from 'yup';
 import { Campaign } from '../interfaces/Campaign';
+import { useNavigate } from 'react-router-dom';
+import { formattingToCLPNumber } from '../helpers/formatCurrency';
+import { addOrder, checkUser } from '../firebase/service';
 interface IProps extends Pick<DrawerProps, 'opened' | 'onClose' | 'size'> {
     campaign?: Campaign
     iconSize: number
@@ -41,7 +44,10 @@ const validationDonationSchema = yup.object().shape({
 });
 
 const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
-    const [formValues, setFormValues] = useState<{ name: string, lastname: string, email: string, amount: number, payment: string }>({
+
+    const navigate = useNavigate();
+
+    const [formValues, setFormValues] = useState<{ name: string, lastname: string, email: string, amount: number | string, payment: string }>({
         name: '',
         lastname: '',
         email: '',
@@ -84,25 +90,29 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
     }
 
     const onCreateDonation = async () => {
+        const isValid = await isValidForm();
+        if (isValid) {
+            try {
 
-        const isValid = isValidForm();
+                const userId = await checkUser(formValues);
 
-        if(isValid) {
-            console.log('Formulario ingresado');
+                const formattedOrderData = {
+                    contributionAmount: Number(formValues.amount),
+                    status: 'INITIALIZED',
+                    os: 'WEB',
+                    userId,
+                    campaignId: campaign.id
+                };
+
+                const { success, order } = await addOrder(formattedOrderData);
+
+                if (success) {
+                    navigate('/transbank/request', { state: { order, campaignId: campaign?.id } });
+                }
+            } catch (error) {
+                console.log(error);
+            }
         }
-        
-        // try {
-        //     const response = await axios.get<any, any>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_DEV_LOCAL as string);
-            
-        //     console.log(response);
-            
-        //     return (
-        //         <TransbankRequest token_ws={response.token_ws}  url_pago={response.url_pago}/>
-        //     )
-
-        // } catch (error) {
-        //     console.error('Error al llamar a la API', error);
-        // }
     }
     return (
         <Drawer
@@ -122,11 +132,12 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                         size="md"
                         label="Ingresa el monto de donación"
                         name="amount"
-                        value={formValues.amount}
+                        value={typeof formValues.amount === 'string' ? parseFloat(formValues.amount) : formValues.amount}
                         onChange={(value) => handleChange({ currentTarget: { name: 'amount', value } } as any)}
-                        precision={2}
+                        precision={0}
                         rightSection={<IconCurrencyDollar size={iconSize} />}
                         error={errorMessages.amount}
+                        placeholder='0'
                         required
                     />
                     <Paper
@@ -138,6 +149,7 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                         <Stack sx={{ width: '100%' }}>
                             <TextInput
                                 label="Correo electrónico"
+                                name="email"
                                 placeholder="Correo electrónico"
                                 value={formValues.email}
                                 onChange={handleChange}
@@ -147,6 +159,7 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                             <Group grow>
                                 <TextInput
                                     label="Nombre"
+                                    name="name"
                                     placeholder="Nombre"
                                     value={formValues.name}
                                     onChange={handleChange}
@@ -155,6 +168,7 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                                 />
                                 <TextInput
                                     label="Apellidos"
+                                    name="lastname"
                                     placeholder="Apellidos"
                                     value={formValues.lastname}
                                     onChange={handleChange}
@@ -185,15 +199,11 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                             <Text fw={700} size="lg">Tu donación</Text>
                             <Group position="apart">
                                 <Text>Tu donación</Text>
-                                <Text fw={500}>${formValues.amount}</Text>
+                                <Text fw={500}>{formattingToCLPNumber(Number(formValues.amount))}</Text>
                             </Group>
-                            {/* <Group position="apart">
-                                <Text>Givers tip</Text>
-                                <Text fw={500}>$0.00</Text>
-                            </Group> */}
                             <Group position="apart">
                                 <Text>Total</Text>
-                                <Text fw={500}>$0</Text>
+                                <Text fw={500}>{formattingToCLPNumber(Number(formValues.amount))}</Text>
                             </Group>
                             <Button onClick={onCreateDonation} size="lg">Ir al pago</Button>
                         </Stack>
