@@ -121,6 +121,8 @@ const CreateCampaignPage = () => {
         });
     }
 
+    console.log(error);
+
     const onCreateCampaign = async () => {
         const isValid = await isValidForm();
 
