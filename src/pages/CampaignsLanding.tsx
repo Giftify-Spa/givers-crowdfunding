@@ -124,7 +124,7 @@ const CampaignsLandingPage = (): JSX.Element => {
                         </Flex>
                         {
                             loading ? (
-                                <LoadingSpinner />
+                                <LoadingSpinner position="center" />
                             ) : (
                                 <div className="animate__animated animate__fadeIn animate__fast">
                                     <SimpleGrid

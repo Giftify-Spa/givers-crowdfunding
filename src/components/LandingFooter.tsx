@@ -146,11 +146,7 @@ const LandingFooter = ({ data }: FooterLinksProps) => {
             <Container className={classes.inner} size="lg">
                 <div className={classes.logo}>
                     <Stack align="flex-start">
-                        <BrandName size={40} />
-                        {/* <Text size="sm">Givers es un sitio web de financiación colectiva que te permite recaudar dinero para cualquier cosa que te importe.
-                            Desde causas y eventos personales hasta proyectos
-                            y más.
-                        </Text> */}
+                        <BrandName />
                     </Stack>
                 </div>
                 <div className={classes.groups}>{groups}</div>

@@ -93,7 +93,7 @@ const FoundationsPage = (): JSX.Element => {
                             <Title className={classes.title} align="center">Fundaciones que confian en nosotros</Title>
                             {
                                 loading ? (
-                                    <LoadingSpinner />
+                                    <LoadingSpinner position="center"/>
                                 ) : (
                                     <div className="animate__animated animate__fadeIn animate__fast">
                                         <SimpleGrid

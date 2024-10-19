@@ -5,14 +5,10 @@ import {
     Box,
     BoxProps,
     Container,
-    createStyles,
-    rem,
     SimpleGrid,
-    Stack,
-    Title,
+    Stack
 } from "@mantine/core";
 import { CampaignCard } from "../components";
-import GiversLayoutGuest from "../layout/GiversLayoutGuest";
 import { getCampaignsWithFoundation } from "../firebase/service";
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -27,32 +23,6 @@ const FoundationCampaignsPage = (): JSX.Element => {
         mb: 0,
         py: 48
     }
-
-    const useStyles = createStyles((theme) => ({
-        title: {
-            fontWeight: 800,
-            fontSize: rem(36),
-            letterSpacing: rem(-1),
-            paddingLeft: theme.spacing.md,
-            paddingRight: theme.spacing.md,
-            marginBottom: 24,
-            color: theme.black,
-            textAlign: 'center',
-
-            [theme.fn.smallerThan('md')]: {
-                fontSize: rem(48),
-            },
-
-            [theme.fn.smallerThan('sm')]: {
-                fontSize: rem(28),
-                textAlign: 'left',
-                fontWeight: 800,
-                padding: 0,
-                marginLeft: theme.spacing.md,
-            },
-        },
-    }));
-
 
     useEffect(() => {
 
@@ -81,8 +51,6 @@ const FoundationCampaignsPage = (): JSX.Element => {
 
     }, []);
 
-    const { classes } = useStyles();
-
     const items = campaigns.map(c => (<CampaignCard key={c.id} data={c} showActions={true} />))
 
 
@@ -104,7 +72,7 @@ const FoundationCampaignsPage = (): JSX.Element => {
                     <Box {...boxProps}>
                         {
                             loading ? (
-                                <LoadingSpinner />
+                                <LoadingSpinner position="center" />
                             ) : (
                                 <div className="animate__animated animate__fadeIn animate__fast">
                                     <SimpleGrid

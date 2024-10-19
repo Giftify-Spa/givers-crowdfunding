@@ -63,7 +63,7 @@ const TransactionStatus = () => {
 
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner position="center" />;
   }
 
   if (!transbankResp) {

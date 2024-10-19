@@ -56,7 +56,7 @@ const TransbankRequest = () => {
   return (
     <>
       {isLoading && (
-        <LoadingSpinner />
+        <LoadingSpinner position="center"/>
       )}
       <form
         ref={formRef}
