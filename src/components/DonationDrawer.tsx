@@ -107,7 +107,7 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                 const { success, order } = await addOrder(formattedOrderData);
 
                 if (success) {
-                    navigate('/transbank/request', { state: { order, campaignId: campaign?.id } });
+                    navigate('/transbank/request', { state: { order, campaignId: campaign?.id, userId: formattedOrderData.userId } });
                 }
             } catch (error) {
                 console.log(error);

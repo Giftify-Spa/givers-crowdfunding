@@ -1,6 +1,8 @@
 import GiversLayout from "../../layout/GiversLayout";
-import { CampaignDetailsPage, CausesPage, CreateCampaignPage, DashboardAdminPage, ExperiencesPage } from "../../pages";
+import { CampaignDetailsPage, CreateCampaignPage, DashboardAdminPage } from "../../pages";
 import CreateFoundationPage from "../../pages/admin/CreateFoundation";
+import EditCampaignPage from "../../pages/admin/EditCampaign";
+import Campaignspage from "../../pages/CampaignsPage";
 
 
 
@@ -14,19 +16,17 @@ export const adminRoutes = [
         element: <CreateCampaignPage />
     },
     {
+        path: "edit-campaign/:id",
+        element: <EditCampaignPage />
+    },
+    {
         path: "create-foundation",
         element: <CreateFoundationPage />
     },
     {
-        path: "causes",
+        path: "campaigns",
         element: <GiversLayout>
-            <CausesPage />
-        </GiversLayout>
-    },
-    {
-        path: "experiences",
-        element: <GiversLayout>
-            <ExperiencesPage />
+            <Campaignspage />
         </GiversLayout>
     },
     {

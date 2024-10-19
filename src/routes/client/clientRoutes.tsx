@@ -1,5 +1,6 @@
 import GiversLayout from "../../layout/GiversLayout";
-import { CampaignDetailsPage, CausesPage, DashboardClientPage, ExperiencesPage } from "../../pages";
+import { CampaignDetailsPage, DashboardClientPage } from "../../pages";
+import Campaignspage from "../../pages/CampaignsPage";
 
 
 
@@ -9,15 +10,9 @@ export const clientRoutes = [
         element: <DashboardClientPage />
     },
     {
-        path: "causes",
+        path: "campaigns",
         element: <GiversLayout>
-            <CausesPage />
-        </GiversLayout>
-    },
-    {
-        path: "experiences",
-        element: <GiversLayout>
-            <ExperiencesPage />
+            <Campaignspage />
         </GiversLayout>
     },
     {

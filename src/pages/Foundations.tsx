@@ -1,20 +1,19 @@
 import { Box, BoxProps, Container, createStyles, rem, SimpleGrid, Stack, Title } from '@mantine/core';
-import { CampaignCard } from "../components";
 import { useEffect, useState } from "react";
-import { getCampaignsWithExperiences } from "../firebase/service";
+import { getFoundations } from "../firebase/service";
 import LoadingSpinner from "../components/LoadingSpinner";
 import HeroSection from '../sections/Home/HeroSection';
+import FoundationCard from '../components/FoundationCard';
 
-const ExperiencesPage = (): JSX.Element => {
-    const [campaigns, setCampaigns] = useState([]);
+const FoundationsPage = (): JSX.Element => {
+    const [foundations, setFoundations] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const boxProps: BoxProps = {
-        mt: 36,
+        mt: 24,
         mb: 0,
         py: 48
     }
-
 
     const useStyles = createStyles((theme) => ({
         title: {
@@ -44,9 +43,9 @@ const ExperiencesPage = (): JSX.Element => {
 
     useEffect(() => {
 
-        const chargedCampaigns = async () => {
+        const chargedFoundations = async () => {
             try {
-                const response = await getCampaignsWithExperiences(0);
+                const response = await getFoundations();
                 return response;
             } catch (error) {
                 console.error("Error getting documents: ", error);
@@ -56,8 +55,8 @@ const ExperiencesPage = (): JSX.Element => {
 
         const fetchData = async () => {
             try {
-                const campaigns = await chargedCampaigns();
-                setCampaigns(campaigns);
+                const foundations = await chargedFoundations();
+                setFoundations(foundations);
                 setLoading(false);
             } catch (error) {
                 // Manejar errores aquí, por ejemplo, establecer un estado de error
@@ -71,11 +70,11 @@ const ExperiencesPage = (): JSX.Element => {
 
     const { classes } = useStyles();
 
-    const items = campaigns.map(c => (<CampaignCard key={c.id} data={c} showActions={true} />))
+    const items = foundations.map(c => (<FoundationCard key={c.id} data={c} showActions={true} />))
 
     return (
         <>
-            <HeroSection title="Experiencias" />
+            <HeroSection title="Fundaciones" />
             <Box
                 sx={{
                     ...boxProps.sx,
@@ -90,12 +89,11 @@ const ExperiencesPage = (): JSX.Element => {
             >
                 <Container size="lg">
                     <Stack>
-
                         <Box {...boxProps}>
-                            <Title className={classes.title} align="center">Experiencias que inspiran</Title>
+                            <Title className={classes.title} align="center">Fundaciones que confian en nosotros</Title>
                             {
                                 loading ? (
-                                    <LoadingSpinner position="center" />
+                                    <LoadingSpinner />
                                 ) : (
                                     <div className="animate__animated animate__fadeIn animate__fast">
                                         <SimpleGrid
@@ -119,4 +117,4 @@ const ExperiencesPage = (): JSX.Element => {
     );
 };
 
-export default ExperiencesPage;
+export default FoundationsPage;

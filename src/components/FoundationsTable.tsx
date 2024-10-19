@@ -2,6 +2,7 @@ import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import { getFoundations } from "../firebase/service";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
+import { randomId } from "@mantine/hooks";
 
 const PAGE_SIZE = 10;
 
@@ -48,29 +49,30 @@ const FoundationsTable = () => {
             <DataTable
 
                 columns={[
+                    { accessor: 'id', title: 'ID' },
                     { accessor: 'name', title: 'Nombre' },
                     { accessor: 'city', title: 'Ciudad' },
                     { accessor: 'address', title: 'Dirección' },
                     { accessor: 'fono', title: 'Teléfono' },
-                    { 
-                        accessor: 'responsibleName', 
+                    {
+                        accessor: 'responsibleName',
                         title: 'Nombre Responsable',
-                        render: ({responsibleName}) => responsibleName 
+                        render: ({ responsibleName }) => responsibleName
                     },
-                    { 
-                        accessor: 'responsibleEmail', 
+                    {
+                        accessor: 'responsibleEmail',
                         title: 'Correo electrónico Responsable',
-                        render: ({responsibleEmail}) => responsibleEmail 
+                        render: ({ responsibleEmail }) => responsibleEmail
                     },
                 ]}
-                records={records}
+                records={records.map((record) => ({ ...record, key: record.id }))}
                 totalRecords={records.length}
                 noRecordsText="No hay registros"
                 recordsPerPage={PAGE_SIZE}
                 page={page}
                 onPageChange={(p) => setPage(p)}
                 highlightOnHover
-                verticalSpacing="sm"
+                key={randomId()}
             />
         </div>
     );

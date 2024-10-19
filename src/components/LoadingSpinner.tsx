@@ -1,10 +1,13 @@
-// LoadingSpinner.tsx
-import React from 'react';
 import { Loader } from '@mantine/core';
 
-const LoadingSpinner: React.FC = () => {
+
+interface Props {
+  position: string;
+}
+
+const LoadingSpinner = ({ position }: Props) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: position, height: '100vh' }}>
       <Loader color="violet" size="lg" />
     </div>
   );

@@ -46,6 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                     type: "auth",
                     payload: {
                         user: {
+                            id: user.id,
                             uid: user.uid,
                             name: user.name,
                             email: user.email,
@@ -133,8 +134,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
             };
         }
 
+        const userCheck = await getUserByUid(uid);
+
         // Format user data
         const userData = {
+            id: userCheck.id,
             uid,
             name: displayName,
             email: userEmail,
@@ -152,15 +156,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
             // check temporal user
             const existUserEmail = await checkIfDocumentExists('users', 'email', userData.email);
 
-            console.log(existUserEmail);
-
             if (!existUserEmail) {
                 // Save user in the DB
                 await addDocument('users', userData);
                 dispatch({
                     type: "auth",
                     payload: {
-                        user: userData
+                        user: {
+                            ...userData,
+                        }
                     }
                 });
 
@@ -187,6 +191,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
             type: "auth",
             payload: {
                 user: {
+                    id: user.id,
                     uid: user.uid,
                     name: user.name,
                     email: user.email,
@@ -217,10 +222,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
             };
         }
 
+        const user = await getUserByUid(uid);
+
         dispatch({
             type: "auth",
             payload: {
                 user: {
+                    id: user.id,
                     uid,
                     name: displayName,
                     email,

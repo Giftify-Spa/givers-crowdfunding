@@ -16,7 +16,7 @@ const TransbankRequest = () => {
 
   const location = useLocation();
 
-  const { order, campaignId } = location.state || {};
+  const { order, campaignId, userId } = location.state || {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,13 +24,15 @@ const TransbankRequest = () => {
         const orderId = order.id;
         const amount = order.contributionAmount;
 
-        const { data } = await axios.get<TransbankResponse>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_PROD as string, {
+        const { data } = await axios.get<TransbankResponse>(import.meta.env.VITE_API_URL_TRANSBANK_CREATE_DEV_LOCAL as string, {
           params: {
             orderId,
+            userId,
             amount,
             status: order.status,
             os: order.os,
-            campaignId
+            campaignId,
+
           }
         });
         console.log(data);

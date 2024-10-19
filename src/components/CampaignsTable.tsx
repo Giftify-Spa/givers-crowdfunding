@@ -1,11 +1,17 @@
-import { Avatar, Group, Text } from "@mantine/core";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Avatar, Group, Text, Button } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import { getCampaigns } from "../firebase/service";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
+import { Link } from 'react-router-dom';
+import { IconPencil } from '@tabler/icons-react';
 
 const PAGE_SIZE = 10;
+
+const campaignsCache: any[] = [];
 
 const CampaignsTable = () => {
     const [page, setPage] = useState(1);
@@ -16,8 +22,17 @@ const CampaignsTable = () => {
 
         const chargedCampaigns = async () => {
             try {
+                if (campaignsCache.length > 0) {
+                    return campaignsCache;
+                }
                 const response = await getCampaigns(1000);
-                return response;
+
+                const newCampaigns = response.filter(campaign =>
+                    !campaignsCache.some(cached => cached.id === campaign.id) // Asegúrate de que 'id' es el campo correcto
+                );
+
+                campaignsCache.push(...newCampaigns);
+                return campaignsCache;
             } catch (error) {
                 console.error("Error getting documents: ", error);
                 throw error; // Re-lanza el error para que pueda ser capturado por el caller
@@ -27,7 +42,8 @@ const CampaignsTable = () => {
         const fetchData = async () => {
             try {
                 const campaigns = await chargedCampaigns();
-                setRecords(campaigns);
+                const recordsFormatted = campaigns.map((d) => ({ ...d, key: d.ID }))
+                setRecords(recordsFormatted);
                 setIsLoading(false);
             } catch (error) {
                 // Manejar errores aquí, por ejemplo, establecer un estado de error
@@ -42,10 +58,15 @@ const CampaignsTable = () => {
     if (isLoading) {
         return <LoadingSpinnerTable />;
     }
+
     return (
         <div className="animate__animated animate__fadeIn animate__fast">
             <DataTable
                 columns={[
+                    {
+                        accessor: 'id',
+                        title: "ID"
+                    },
                     {
                         accessor: 'createdBy',
                         title: 'Creado por',
@@ -56,7 +77,7 @@ const CampaignsTable = () => {
                             </Group>
                     },
                     {
-                        accessor: 'name', 
+                        accessor: 'name',
                         title: 'Nombre',
                     },
                     {
@@ -79,6 +100,15 @@ const CampaignsTable = () => {
                     {
                         accessor: 'endDate', title: 'Fecha de término',
                         render: ({ endDate }) => new Date(endDate.seconds * 1000).toLocaleDateString(),
+                    },
+                    {
+                        accessor: 'actions', title: 'Acciones',
+                        render: () => <Button
+                            leftIcon={<IconPencil size={18} />}
+                            component={Link}
+                            to={'#'}
+                            // to={`/admin/edit-campaign/${id}`}
+                        ></Button>,
                     }
 
                 ]}
@@ -90,7 +120,7 @@ const CampaignsTable = () => {
                 highlightOnHover
                 verticalSpacing="sm"
             />
-        </div>
+        </div >
     );
 };
 

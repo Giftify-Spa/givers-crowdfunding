@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Button, createStyles, Flex, FlexProps, getStylesRef, rem } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconCubePlus, IconDoorExit, IconFolderPlus, IconHome, IconPrismPlus, IconUser, IconUserPlus, } from '@tabler/icons-react';
+import { IconBuildingWarehouse, IconDoorExit, IconFolderPlus, IconHome, IconUser } from '@tabler/icons-react';
 import { Link } from "react-router-dom";
 import { AuthContext } from '../context/auth/AuthContext';
 
@@ -64,20 +64,18 @@ const dataAdmin = [
     { link: '/admin/dashboard', label: 'Mi Dashboard', icon: IconHome },
     { link: '/admin/create-campaign', label: 'Crear Nueva Campaña', icon: IconFolderPlus },
     { link: '/admin/create-foundation', label: 'Crear Nueva Fundación', icon: IconFolderPlus },
-    { link: '/admin/experiences', label: 'Experiencias', icon: IconPrismPlus },
-    { link: '/admin/causes', label: 'Causas', icon: IconCubePlus },
+    { link: '/admin/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
 ];
 
 const dataClient = [
     { link: '/dashboard', label: 'Mi Dashboard', icon: IconHome },
-    { link: '/panel/experiences', label: 'Experiencias', icon: IconPrismPlus },
-    { link: '/panel/causes', label: 'Causas', icon: IconCubePlus },
+    { link: '/panel/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
 ];
 
 const dataGuest = [
     { link: '/', label: 'Inicio', icon: IconHome },
     { link: '/login', label: 'Iniciar Sesión', icon: IconUser },
-    { link: '/register', label: 'Crear Cuenta', icon: IconUserPlus },
+    { link: '/register', label: 'Regístrate' },
 ];
 const ICON_SIZE = 18
 
@@ -114,7 +112,9 @@ const AppLinks = ({ ...others }: IProps) => {
                 setActive(item.label);
             }}
         >
-            <item.icon className={classes.linkIcon} stroke={1.5} size={ICON_SIZE} />
+            {
+                item.icon && <item.icon className={classes.linkIcon} stroke={1.5} size={ICON_SIZE} />
+            }
             <span>{item.label}</span>
         </Button>
     ));
@@ -129,7 +129,9 @@ const AppLinks = ({ ...others }: IProps) => {
                 setActive(item.label);
             }}
         >
-            <item.icon className={classes.linkIcon} stroke={1.5} size={ICON_SIZE} />
+            {
+                item.icon && <item.icon className={classes.linkIcon} stroke={1.5} size={ICON_SIZE} />
+            }
             <span>{item.label}</span>
         </Button>
     ));

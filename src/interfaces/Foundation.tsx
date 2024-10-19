@@ -1,6 +1,7 @@
 import { GeoPoint } from "firebase/firestore";
 
 export interface Foundation {
+    id?: string;
     name: string;
     fono: string;
     confidenceLevel: number;
@@ -12,4 +13,5 @@ export interface Foundation {
     location?: GeoPoint;
     status?: boolean;
     responsible: string;
+    image?: string;
 }

@@ -3,6 +3,7 @@ import { CampaignCard } from "../components";
 import { useEffect, useState } from "react";
 import { getCampaignsWithCauses } from "../firebase/service";
 import LoadingSpinner from "../components/LoadingSpinner";
+import HeroSection from '../sections/Home/HeroSection';
 
 const CausesPage = (): JSX.Element => {
     const [campaigns, setCampaigns] = useState([]);
@@ -73,6 +74,7 @@ const CausesPage = (): JSX.Element => {
 
     return (
         <>
+            <HeroSection title="Causas"/>
             <Box
                 sx={{
                     ...boxProps.sx,
@@ -92,7 +94,7 @@ const CausesPage = (): JSX.Element => {
                             <Title className={classes.title} align="center">Causas que inspiran</Title>
                             {
                                 loading ? (
-                                    <LoadingSpinner />
+                                    <LoadingSpinner position="center" />
                                 ) : (
                                     <div className="animate__animated animate__fadeIn animate__fast">
                                         <SimpleGrid

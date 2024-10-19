@@ -100,7 +100,7 @@ const OrderSuccess = ({ transbankResp }: OrderProps) => {
                     <table className={classes.table}>
                         <thead>
                             <tr>
-                                <th className={classes.tableHeader}>Campana</th>
+                                <th className={classes.tableHeader}>Campaña</th>
                                 <th className={classes.tableHeader}>Fundación</th>
                                 <th className={classes.tableHeader}>Monto Donado</th>
                             </tr>
@@ -109,7 +109,7 @@ const OrderSuccess = ({ transbankResp }: OrderProps) => {
                             <tr>
                                 <td className={classes.tableCell}>Campaña example</td>
                                 <td className={classes.tableCell}>Fundación 1</td>
-                                <td className={classes.tableCell}>1500</td>
+                                <td className={classes.tableCell}>${transbankResp.amount}</td>
                             </tr>
                         </tbody>
                     </table>

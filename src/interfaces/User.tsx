@@ -1,4 +1,5 @@
 export interface User {
+    id?: string;
     uid?: string;
     rut?: string;
     checkDigit?: string;

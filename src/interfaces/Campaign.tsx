@@ -5,10 +5,12 @@ export interface Campaign {
     id?: string;
     name: string;
     description: string;
+    initVideo: string;
     initDate: Date;
     endDate: Date;
     isCause: boolean;
     isExperience: boolean;
+    isFinished?: boolean;
     cumulativeAmount?: number;
     requestAmount: number;
     multimedia?: any[];

@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
 import LoginPage from "../../pages/auth/Login";
 import RegisterPage from "../../pages/auth/Register";
-import { CampaignDetailsPage, CausesPage, HomeLanding } from "../../pages";
-import ExperiencesPage from "../../pages/Experiences";
+import { CampaignDetailsPage, HomeLanding } from "../../pages";
 import GiversLayoutGuest from "../../layout/GiversLayoutGuest";
+import Campaignspage from "../../pages/CampaignsPage";
+import FoundationPage from "../../pages/Foundation";
 
 
 
@@ -21,16 +22,17 @@ export const authRoutes = [
         element: <RegisterPage />
     },
     {
-        path: "causes",
+        path: "campaigns",
         element: <GiversLayoutGuest>
-            <CausesPage />
+            <Campaignspage />
         </GiversLayoutGuest>
     },
     {
-        path: "experiences",
+        path: "foundation/:id",
         element: <GiversLayoutGuest>
-            <ExperiencesPage />
+            <FoundationPage />
         </GiversLayoutGuest>
+
     },
     {
         path: "campaign/:id",

@@ -1,68 +1,45 @@
-import { createStyles, rem, Title, TitleProps, UnstyledButton } from "@mantine/core";
+import { createStyles, Image, rem, UnstyledButton } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
-    title: {
-        textAlign: 'center',
-        fontWeight: 900,
-        letterSpacing: -1,
-        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+    imageContainer: {
+        [theme.fn.smallerThan('md')]: {
+            textAlign: 'center'
+        },
+
+        [theme.fn.smallerThan('xs')]: {
+            textAlign: 'center'
+        },
+    },
+    image: {
+        width: `${rem(120)} !important`, // Ajusta el tamaño del logo para la navbar
+        height: 'auto',
 
         [theme.fn.smallerThan('md')]: {
-            fontWeight: 700,
+            width: `${rem(100)} !important`, // Tamaño más pequeño en pantallas medianas
         },
 
         [theme.fn.smallerThan('sm')]: {
-            fontSize: rem(24),
-            textAlign: 'left',
+            width: `${rem(80)} !important`, // Tamaño más pequeño en pantallas pequeñas
         },
     },
-
-    highlight: {
-        color: theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6],
-    },
-
-    white: {
-        textAlign: 'center',
-        fontWeight: 800,
-        letterSpacing: -1,
-        color: theme.colors.gray[0],
-
-        [theme.fn.smallerThan('md')]: {
-            fontWeight: 700,
-        },
-
-        [theme.fn.smallerThan('sm')]: {
-            fontSize: rem(24),
-            textAlign: 'left',
-        },
-    }
 }))
 
-interface IProps extends TitleProps {
-    asLink?: boolean
-    variant?: 'grayscale' | 'default'
-}
-
-const Brand = ({ asLink, variant, ...others }: IProps) => {
+const Brand = () => {
     const { classes } = useStyles();
+    const isSmallOrMedium = useMediaQuery('(max-width: 992px)');
 
     return (
-        asLink ?
-            <UnstyledButton component={Link} to="/">
-                <Title className={variant === 'grayscale' ? classes.white : classes.title} {...others}>
-                    Givers
-                    {/* <Text component="span" className={variant === 'grayscale' ? '' : classes.highlight} inherit>
-                        
-                    </Text> */}
-                </Title>
-            </UnstyledButton> :
-            <Title className={classes.title} {...others}>
-                Givers
-                {/*<Text component="span" className={classes.highlight} inherit>
-                    
-                </Text> */}
-            </Title>
+        <UnstyledButton component={Link} to="/" className={classes.imageContainer}>
+            {!isSmallOrMedium && (
+                <Image
+                    src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/logo%20givers_blanco.svg?alt=media&token=c314e77a-5dd2-4da4-874c-b17808dc5563"
+                    className={classes.image}
+                    alt="Givers Logo"
+                />
+            )}
+        </UnstyledButton>
     );
 };
 

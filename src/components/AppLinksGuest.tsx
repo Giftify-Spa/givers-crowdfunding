@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, createStyles, Flex, FlexProps, getStylesRef, rem } from '@mantine/core';
-import { IconCubePlus, IconPrismPlus, IconUserCircle, } from '@tabler/icons-react';
+import { IconBuildingWarehouse, IconUserCircle } from '@tabler/icons-react';
 import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -59,10 +59,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data = [
-    { link: '/experiences', label: 'Experiencias', icon: IconPrismPlus },
-    { link: '/causes', label: 'Causas', icon: IconCubePlus},
+    { link: '/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
     { link: '/login', label: 'Iniciar Sesion', icon: IconUserCircle },
-    { link: '/register', label: 'Registrarse', icon: IconUserCircle },
+    { link: '/register', label: 'Regístrate' },
 ];
 
 const ICON_SIZE = 18
@@ -83,7 +82,9 @@ const AppLinksGuest = ({ ...others }: IProps) => {
                 setActive(item.label);
             }}
         >
-            <item.icon className={classes.linkIcon} stroke={1.5} size={ICON_SIZE} />
+            {
+                item.icon && <item.icon className={classes.linkIcon} stroke={1.5} size={ICON_SIZE} />
+            }
             <span>{item.label}</span>
         </Button>
     ));

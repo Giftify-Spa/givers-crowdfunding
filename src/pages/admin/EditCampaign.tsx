@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Helmet } from "react-helmet";
 import {
     Box,
@@ -17,21 +18,20 @@ import {
     TitleProps,
     useMantineTheme
 } from "@mantine/core";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { DateInput } from "@mantine/dates";
 import { CategorySelect, FileDropzone } from "../../components";
 
-import { Link as LinkRouter } from "react-router-dom";
+import { Link as LinkRouter, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import FoundationSelect from "../../components/FoundationSelect";
 
 import * as yup from 'yup';
 import { IconCalendar, IconCurrencyDollar } from "@tabler/icons-react";
-import { addCampaign } from "../../firebase/service";
+import { addCampaign, getCampaign } from "../../firebase/service";
 import GiversLayout from "../../layout/GiversLayout";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import { AuthContext } from "../../context/auth/AuthContext";
-import { getYouTubeEmbedUrl } from "../../helpers/getYoutubeEmbedUrl";
 
 const validationCampaignSchema = yup.object().shape({
     name: yup.string().required('El nombre de la campaña es requerido'),
@@ -48,11 +48,11 @@ const validationCampaignSchema = yup.object().shape({
     multimediaCount: yup.number().required('El contenido multimedia es requerido').min(1, 'Al menos una imagen es requerida')
 });
 
-const CreateCampaignPage = () => {
+const EditCampaignPage = () => {
 
 
     const { user } = useContext(AuthContext);
-
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const [formValues, setFormValues] = useState<{ name: string; description: string; requestAmount: number; category: string; foundation: string; responsible: string; initVideo: string; initDate: Date; finishDate: Date; isCause: boolean; isExperience: boolean, multimediaCount: number }>({
@@ -137,7 +137,7 @@ const CreateCampaignPage = () => {
                 category: formValues.category,
                 foundation: formValues.foundation,
                 initDate: formValues.initDate,
-                initVideo: getYouTubeEmbedUrl(formValues.initVideo),
+                initVideo: formValues.initVideo,
                 endDate: formValues.finishDate,
                 isCause: formValues.isCause,
                 isExperience: formValues.isExperience,
@@ -149,7 +149,7 @@ const CreateCampaignPage = () => {
 
             const response = await addCampaign(campaignData);
 
-            if (!response.success) return setError('ocurrió un error al crear la fundación');
+            if (!response.success) return setError('ocurrió un error al editar la campaña');
 
             // Redirect to dashboard
             navigate('/panel/dashboard');
@@ -176,14 +176,32 @@ const CreateCampaignPage = () => {
         setFormValues({ ...formValues, multimediaCount: dropFiles.length })
     }
 
+    useEffect(() => {
+
+        const fetchCampaign = async () => {
+            console.log(id);
+            const campaign = await getCampaign(id);
+            setFormValues({
+                ...formValues,
+                name: campaign.name,
+                description: campaign.description,
+                initVideo: campaign.initVideo,
+                isCause: campaign.isCause,
+                isExperience: campaign.isExperience,
+                requestAmount: campaign.requestAmount,
+            })
+        }
+        fetchCampaign();
+    }, [id])
+
     return (
         <GiversLayout>
             <Helmet>
-                <title>Crear Campaña</title>
+                <title>Editar Campaña</title>
             </Helmet>
             <Box>
                 <Container my={36}>
-                    <Title mb="xl" align="center">Crea tu campaña</Title>
+                    <Title mb="xl" align="center">Editar campaña - {formValues.name}</Title>
 
                     <div>
                         <Title {...titleProps}>Información Campaña</Title>
@@ -311,7 +329,7 @@ const CreateCampaignPage = () => {
                                     component={LinkRouter}
                                     onClick={onCreateCampaign}
                                 >
-                                    Crear una campaña
+                                    Editar campaña
                                 </Button>
                             </Flex>
                         </Card.Section>
@@ -322,4 +340,4 @@ const CreateCampaignPage = () => {
     );
 };
 
-export default CreateCampaignPage;
+export default EditCampaignPage;

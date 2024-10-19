@@ -40,6 +40,7 @@ const FoundationSelect = ({ errorFoundation, handleSelectFoundation }: Props) =>
     return (
         <Select
             label="Fundación"
+            placeholder='Selecciona la fundación que organiza la campaña'
             itemComponent={FoundationSelectItem}
             data={foundations.map((foundation) => ({ value: foundation.id, label: foundation.id, ...foundation }))}
             searchable

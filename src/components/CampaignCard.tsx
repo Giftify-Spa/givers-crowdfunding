@@ -112,10 +112,11 @@ const CampaignCard = ({ data, showActions }: IProps) => {
                     <Progress value={calculatePercentageString(requestAmount.toString(), cumulativeAmount.toString())} size="md" />
                     <Flex justify="space-between">
                         <Text fw={500}>{calculatePercentage(requestAmount, cumulativeAmount)}% Reunido</Text>
+                        <Text fw={500}>Meta {formattingToCLPNumber(requestAmount)}</Text>
                     </Flex>
 
                     <Flex justify="space-between">
-                        <Text><b>{formattingToCLPNumber(requestAmount)}</b> recaudados</Text>
+                        <Text><b>{formattingToCLPNumber(cumulativeAmount)}</b> recaudados</Text>
                         <Text><b>{donorsCount}</b> donaciones</Text>
                     </Flex>
 

@@ -1,12 +1,11 @@
-import HeroSection from "../../sections/Home/Hero.tsx";
+import HeroSectionLanding from "../../sections/Home/HeroLanding.tsx";
 import { Box, BoxProps, Container, TextProps, TitleProps } from "@mantine/core";
 import TestimonialsSection from "../../sections/Home/Testimonials.tsx";
 import GiversLayoutGuest from "../../layout/GiversLayoutGuest.tsx";
-import CampaignsLandingPage from "../CampaignsLanding.tsx";
 import CategoriesSection from "../../sections/Home/Categories.tsx";
-import DonationsSection from "../../sections/Home/Donations.tsx";
 import ServicesSection from "../../sections/Home/Services.tsx";
 import SubtitleSection from "../../sections/Home/Subtitle.tsx";
+import WhatIsGiversSection from "../../sections/Home/WhatIsGivers.tsx";
 
 const HomeLanding = (): JSX.Element => {
     const boxProps: BoxProps = {
@@ -33,11 +32,13 @@ const HomeLanding = (): JSX.Element => {
     return (
         <GiversLayoutGuest>
             <Box>
-                <HeroSection />
+                <HeroSectionLanding 
+                    title="Tu donación es su nueva oportunidad"
+                    subtitle="conectamos a la comunidad para financiar colectivamente proyectos sociales"
+                />
                 <Container >
                     <CategoriesSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
-                    <CampaignsLandingPage />
-                    <DonationsSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
+                    <WhatIsGiversSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
                     <ServicesSection boxProps={boxProps} />
                     <SubtitleSection boxProps={boxProps} titleProps={titleProps} subtitleProps={subTitleProps} />
                     <TestimonialsSection boxProps={boxProps} titleProps={titleProps} />

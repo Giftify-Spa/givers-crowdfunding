@@ -16,7 +16,10 @@ import {
   where,
   GeoPoint,
   limit as firestorelimit,
-  limit,
+  Query,
+  DocumentData,
+  QueryDocumentSnapshot,
+  startAfter,
 } from "firebase/firestore";
 
 import axios from 'axios';
@@ -53,7 +56,10 @@ export const getUserByUid = async (uid: string): Promise<User | null> => {
 
     if (!querySnapshot.empty) {
       const userDoc = querySnapshot.docs[0]; // Assuming uid is unique and there's only one document
-      return userDoc.data() as User;
+      return {
+        ...userDoc.data() as User,
+        id: userDoc.id
+      };
     } else {
       return null;
     }
@@ -81,13 +87,15 @@ export const getUserReferenceByUid = async (uid: string): Promise<any> => {
   }
 };
 
+
+
 export const getUserByEmail = async (email: string) => {
   try {
     // Reference to the "users" collection in Firestore
     const usersCollectionRef = collection(FirebaseDB, "users");
 
     // Create a query that searches by "email" field and limits results to 1 document
-    const q = query(usersCollectionRef, where("email", "==", email), limit(1));
+    const q = query(usersCollectionRef, where("email", "==", email), firestorelimit(1));
 
     // Execute the query
     const querySnapshot = await getDocs(q);
@@ -139,45 +147,112 @@ const getAuthenticatedUserId = async (): Promise<string | null> => {
   return userId ? userId : null;
 };
 
+/**
+ * Retrieves the list of contributions made by the authenticated user.
+ * @returns {Promise<Array>} An array of contribution objects containing details of each contribution and its related campaign.
+ */
 export const getDonorsByUser = async () => {
   try {
+    // Get the authenticated user's ID
     const userId = await getAuthenticatedUserId();
     if (!userId) {
       throw new Error("No authenticated user found");
     }
 
+    // Reference the user's document in the 'users' collection
     const userRef = doc(FirebaseDB, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    const user = userDoc.data();
 
-    const q = query(collection(FirebaseDB, "contributions"),
-      where("user", "==", userRef));
 
-    const querySnapshot = await getDocs(q);
 
-    const contributionsPromises = querySnapshot.docs.map(async (doc) => {
-      const { contributionAmount, userContribution, dateContribution, state, campaign } = doc.data();
+    // Fetch all contributions in parallel using Promise.all
+    const contributionsPromises = user.contributions.map((contributionId: string) => {
+      const contributionRef = doc(FirebaseDB, "contributions", contributionId);
+      return getDoc(contributionRef);
+    });
 
-      // Obtain data the campaign
-      const campaignDoc = await getDoc(campaign);
-      const campaignData = campaignDoc.exists() ? campaignDoc.data() as Campaign : null;
+    // Wait for all contribution documents to be fetched
+    const contributionsDocs = await Promise.all(contributionsPromises);
+
+    // Map the fetched contributions to the required format
+    const contributions = await Promise.all(contributionsDocs.map(async (contributionDoc) => {
+      if (!contributionDoc.exists()) {
+        console.warn(`Contribution not found: ${contributionDoc.id}`);
+        return null; // O Return null or handle is another way as needed
+      }
+
+      // Extract contribution data
+      const { contributionAmount, userContribution, dateContribution, state, campaign } = contributionDoc.data();
+
+      // If campaign reference is valid, fetch the campaign data
+      let campaignData = null;
+      if (campaign) {
+        const campaignDoc = await getDoc(campaign);
+        campaignData = campaignDoc.exists() ? (campaignDoc.data() as Campaign) : null;
+      }
 
       return {
-        id: doc.id,
+        id: contributionDoc.id,
         contributionAmount,
         dateContribution,
         state,
         userContribution,
         campaign: {
-          id: campaignDoc.id,
+          id: campaign?.id,
           name: campaignData?.name,
-        }
+        },
       };
-    });
+    }));
 
-    const contributions = await Promise.all(contributionsPromises);
-    return contributions;
+    // Filter out any null values from the contributions array
+    return contributions.filter(contribution => contribution !== null);
+
   } catch (error) {
     console.error("Error getting documents: ", error);
     return []
+  }
+}
+
+export const getFoundation = async (id: string) => {
+  try {
+    const docRef = doc(FirebaseDB, "foundations", id);
+    const docSnapshot = await getDoc(docRef);
+
+    if (docSnapshot.exists()) {
+      const {
+        name,
+        description,
+        fono,
+        country,
+        image,
+        status,
+        responsible,
+        confidenceLevel,
+        city,
+        address
+      } = docSnapshot.data();
+
+      return {
+        id: docSnapshot.id,
+        name,
+        description,
+        fono,
+        country,
+        image,
+        status,
+        responsible,
+        confidenceLevel,
+        city,
+        address
+      };
+    } else {
+      console.error("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting document: ", error);
+    return null;
   }
 }
 
@@ -195,7 +270,8 @@ export const getFoundations = async () => {
         city,
         address,
         fono,
-        responsible
+        responsible,
+        image
       } = doc.data();
 
       // Obtain Responsible
@@ -210,7 +286,8 @@ export const getFoundations = async () => {
         address,
         fono,
         responsibleName: responsibleData.name,
-        responsibleEmail: responsibleData.email
+        responsibleEmail: responsibleData.email,
+        image
       };
     });
 
@@ -238,9 +315,11 @@ export const getCampaigns = async (limit: number) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -260,9 +339,11 @@ export const getCampaigns = async (limit: number) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -279,6 +360,82 @@ export const getCampaigns = async (limit: number) => {
     return [];
   }
 }
+
+export const getCampaignsByType = async (type: 'cause' | 'experience', lastDoc?: QueryDocumentSnapshot<DocumentData>) => {
+  try {
+    let q: Query<DocumentData, DocumentData>;
+
+    if (type === 'cause') {
+      q = query(
+        collection(FirebaseDB, "campaigns"),
+        where("status", "==", true),
+        where("isCause", "==", true),
+        ...(lastDoc ? [startAfter(lastDoc)] : []),
+        firestorelimit(100),
+      );
+    } else if (type === 'experience') {
+      q = query(
+        collection(FirebaseDB, "campaigns"),
+        where("status", "==", true),
+        where("isExperience", "==", true),
+        ...(lastDoc ? [startAfter(lastDoc)] : []),
+        firestorelimit(100),
+      );
+    }
+
+    const querySnapshot = await getDocs(q);
+    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    const campaignsPromises = querySnapshot.docs.map(async (doc) => {
+      const {
+        name,
+        description,
+        initDate,
+        initVideo,
+        endDate,
+        isCause,
+        isExperience,
+        isFinished,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation,
+        createdBy
+      } = doc.data() as Campaign;
+
+      const [foundationDoc, userDoc] = await Promise.all([getDoc(foundation), getDoc(createdBy)]);
+
+      const foundationData = foundationDoc.exists() ? foundationDoc.data() as Foundation : null;
+      const userData = userDoc.exists() ? userDoc.data() as User : null;
+
+      return {
+        id: doc.id,
+        name,
+        description,
+        initDate,
+        initVideo,
+        endDate,
+        isCause,
+        isExperience,
+        isFinished,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation: foundationData,
+        createdBy: userData
+      };
+    });
+
+    const campaigns = await Promise.all(campaignsPromises);
+    return { campaigns, lastVisible };
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    return { campaigns: [], lastVisible: null };
+  }
+};
+
 
 export const getCampaignsWithExperiences = async (limit: number) => {
   try {
@@ -303,9 +460,11 @@ export const getCampaignsWithExperiences = async (limit: number) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -325,9 +484,11 @@ export const getCampaignsWithExperiences = async (limit: number) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -368,9 +529,11 @@ export const getCampaignsWithCauses = async (limit: number) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -390,9 +553,11 @@ export const getCampaignsWithCauses = async (limit: number) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -420,9 +585,11 @@ export const getCampaign = async (id: string) => {
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
@@ -440,23 +607,29 @@ export const getCampaign = async (id: string) => {
         getDoc(category)
       ]);
 
+
+      const foundationId = foundationDoc.id;
       const foundationData = foundationDoc.exists() ? foundationDoc.data() as Foundation : null;
       const userData = userDoc.exists() ? userDoc.data() as User : null;
       const categoryData = categoryDoc.exists() ? categoryDoc.data() as Category : null;
+
+      const totalFoundation = { ...foundationData, id: foundationId }
 
       return {
         id: docSnapshot.id,
         name,
         description,
         initDate,
+        initVideo,
         endDate,
         isCause,
         isExperience,
+        isFinished,
         cumulativeAmount,
         requestAmount,
         donorsCount,
         multimedia,
-        foundation: foundationData,
+        foundation: totalFoundation,
         responsible: userData,
         category: categoryData,
         createdAt
@@ -468,6 +641,81 @@ export const getCampaign = async (id: string) => {
   } catch (error) {
     console.error("Error getting document: ", error);
     return null;
+  }
+}
+
+export const getCampaignsWithFoundation = async (id: string) => {
+  try {
+    // Reference the user's document in the 'foundations' collection
+    const Ref = doc(FirebaseDB, 'foundations', id);
+    const foundationDoc = await getDoc(Ref);
+    const foundation = foundationDoc.data();
+
+
+
+    // Fetch all campaigns in parallel using Promise.all
+    const campaignsPromises = foundation.campaigns.map((campaignId: string) => {
+      const campaignRef = doc(FirebaseDB, "campaigns", campaignId);
+      return getDoc(campaignRef);
+    });
+
+    // Wait for all campaign documents to be fetched
+    const campaignsDocs = await Promise.all(campaignsPromises);
+
+    // Map the fetched campaigns to the required format
+    const campaigns = await Promise.all(campaignsDocs.map(async (campaignDoc) => {
+      if (!campaignDoc.exists()) {
+        console.warn(`Campaign not found: ${campaignDoc.id}`);
+        return null; // O Return null or handle is another way as needed
+      }
+
+      // Extract campaign data
+      const {
+        name,
+        description,
+        initDate,
+        initVideo,
+        endDate,
+        isCause,
+        isExperience,
+        isFinished,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation,
+        category,
+        responsible,
+        createdAt
+      } = campaignDoc.data();
+
+      return {
+        id: campaignDoc.id,
+        name,
+        description,
+        initDate,
+        initVideo,
+        endDate,
+        isCause,
+        isExperience,
+        isFinished,
+        cumulativeAmount,
+        requestAmount,
+        donorsCount,
+        multimedia,
+        foundation,
+        category,
+        responsible,
+        createdAt
+      };
+    }));
+
+    // Filter out any null value campaigns array
+    return campaigns.filter(campaign => campaign !== null);
+
+  } catch (error) {
+    console.error("Error getting documents: ", error);
+    return []
   }
 }
 
@@ -580,6 +828,7 @@ export const addCampaign = async (data: Campaign) => {
     const { name,
       description,
       initDate,
+      initVideo,
       endDate,
       isCause,
       isExperience,
@@ -600,11 +849,10 @@ export const addCampaign = async (data: Campaign) => {
     // Convert responsible ID to a Firestore reference
     const responsibleRef = doc(FirebaseDB, 'users', responsible);
 
-
     const responseUser = await getUserReferenceByUid(createdBy);
-    // Convert ID created campaign ID to a Firestore reference
-    const createdByReference = doc(FirebaseDB, 'users', responseUser.id);
 
+    // Convert ID created campaign ID to a Firestore reference
+    const createdByReference = doc(FirebaseDB, 'users', responseUser);
 
     // Upload multimedia files to Firebase Storage
     const uploadedFiles = await Promise.all(multimedia.map(async (file: File) => {
@@ -612,14 +860,15 @@ export const addCampaign = async (data: Campaign) => {
       return url;
     }));
 
-
     await addDoc(collection(FirebaseDB, 'campaigns'), {
       name,
       description,
       initDate,
+      initVideo,
       endDate,
       isCause,
       isExperience,
+      isFinished: false,
       requestAmount,
       cumulativeAmount: 0,
       donorsCount: 0,
@@ -745,6 +994,4 @@ export async function checkUser(data: User) {
   } catch (error) {
     console.log(error);
   }
-
-
 }

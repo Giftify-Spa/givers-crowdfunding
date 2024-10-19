@@ -33,6 +33,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { AuthContext } from "../context/auth/AuthContext";
 import GiversLayout from "../layout/GiversLayout";
 import GiversLayoutGuest from "../layout/GiversLayoutGuest";
+import { Carousel } from "@mantine/carousel";
 
 const CampaignDetailsPage = (): JSX.Element => {
     const { user } = useContext(AuthContext);
@@ -116,7 +117,7 @@ const CampaignDetailsPage = (): JSX.Element => {
                                                 <Divider />
                                                 <Flex align="flex-end" gap="sm">
                                                     <Title {...titleProps} align="center">{campaign?.cumulativeAmount}</Title>
-                                                    <Text fw={500} align="center" color="dimmed">recaudados de {formattingToCLPNumber(campaign?.requestAmount)}</Text>
+                                                    <Text fw={500} align="center" color="dimmed">Meta {formattingToCLPNumber(campaign?.requestAmount)}</Text>
                                                 </Flex>
                                                 <Progress value={calculatePercentageString(campaign.requestAmount.toString(), campaign.cumulativeAmount.toString())} size="md" />
                                                 <Flex justify="space-between">
@@ -140,7 +141,9 @@ const CampaignDetailsPage = (): JSX.Element => {
                                     </Card>
                                     <Paper {...paperProps}>
                                         <Text {...subTitleProps} mb="sm">Organizador</Text>
-                                        <UserCard responsibleData={campaign.responsible} />
+                                        <Button>
+                                            <UserCard responsibleData={campaign.foundation} />
+                                        </Button>
                                     </Paper>
                                     <Paper {...paperProps}>
                                         <Text>Creado el {new Date(campaign.createdAt.seconds * 1000).toLocaleDateString()}</Text>
@@ -152,8 +155,8 @@ const CampaignDetailsPage = (): JSX.Element => {
                                     {!matchesMobile &&
                                         <Paper {...paperProps}>
                                             <Stack spacing="sm">
-                                                <Title {...titleProps} align="center">{formattingToCLPNumber(campaign?.cumulativeAmount)}</Title>
-                                                <Text fw={500} align="center" color="dimmed">recaudados de {formattingToCLPNumber(campaign?.requestAmount)}</Text>
+                                                <Title {...titleProps} align="center">{formattingToCLPNumber(campaign?.cumulativeAmount)} recaudados</Title>
+                                                <Text fw={500} align="center" color="dimmed">Meta {formattingToCLPNumber(campaign?.requestAmount)}</Text>
                                                 <Progress value={calculatePercentageString(campaign.requestAmount.toString(), campaign.cumulativeAmount.toString())} size="md" />
                                                 <Flex justify="space-between">
                                                     <Text fw={500}>{calculatePercentage(campaign.requestAmount, campaign.cumulativeAmount)}% Reunido</Text>
@@ -192,7 +195,7 @@ const CampaignDetailsPage = (): JSX.Element => {
                                 </Stack>
                             </Grid.Col>
                         </Grid>
-                    </Container> : <LoadingSpinner />}
+                    </Container> : <LoadingSpinner position="center" />}
                     <ShareModal opened={opened} onClose={close} campaign={campaign} iconSize={iconSize} />
                     <DonationDrawer campaign={campaign} opened={donateOpened} onClose={donateClose} iconSize={iconSize} />
                 </Box>
@@ -213,7 +216,27 @@ const CampaignDetailsPage = (): JSX.Element => {
                             <Stack>
                                 <Card padding="md" shadow="sm">
                                     <Card.Section>
-                                        <Image src={campaign.multimedia[0]} height={480} />
+                                        <Carousel
+                                            withIndicators
+                                            height={480} // Ajusta la altura del carrusel
+                                            slideSize="100%" // Asegúrate de que las imágenes ocupen todo el ancho
+                                            align="start" // Alinea las imágenes al inicio
+                                        >
+                                            <Carousel.Slide>
+                                                <iframe
+                                                    width="100%"
+                                                    height="100%"
+                                                    src="https://www.youtube.com/embed/fJ9rUzIMcZQ"
+                                                    title="What is Givers?"
+                                                    frameBorder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    allowFullScreen
+                                                />
+                                            </Carousel.Slide>
+                                            <Carousel.Slide>
+                                                <Image src={campaign.multimedia[0]} height={480} />
+                                            </Carousel.Slide>
+                                        </Carousel>
                                     </Card.Section>
                                     <Stack mt="md">
                                         <Title>{campaign?.name}</Title>
@@ -223,7 +246,7 @@ const CampaignDetailsPage = (): JSX.Element => {
                                             <Divider />
                                             <Flex align="flex-end" gap="sm">
                                                 <Title {...titleProps} align="center">{campaign?.cumulativeAmount}</Title>
-                                                <Text fw={500} align="center" color="dimmed">recaudados de {formattingToCLPNumber(campaign?.requestAmount)}</Text>
+                                                <Text fw={500} align="center" color="dimmed">Meta {formattingToCLPNumber(campaign?.requestAmount)}</Text>
                                             </Flex>
                                             <Progress value={calculatePercentageString(campaign.requestAmount.toString(), campaign.cumulativeAmount.toString())} size="md" />
                                             <Flex justify="space-between">
@@ -259,8 +282,8 @@ const CampaignDetailsPage = (): JSX.Element => {
                                 {!matchesMobile &&
                                     <Paper {...paperProps}>
                                         <Stack spacing="sm">
-                                            <Title {...titleProps} align="center">{formattingToCLPNumber(campaign?.cumulativeAmount)}</Title>
-                                            <Text fw={500} align="center" color="dimmed">recaudados de {formattingToCLPNumber(campaign?.requestAmount)}</Text>
+                                            <Title {...titleProps} align="center">{formattingToCLPNumber(campaign?.cumulativeAmount)} recaudados</Title>
+                                            <Text fw={500} align="center" color="dimmed">Meta {formattingToCLPNumber(campaign?.requestAmount)}</Text>
                                             <Progress value={calculatePercentageString(campaign.requestAmount.toString(), campaign.cumulativeAmount.toString())} size="md" />
                                             <Flex justify="space-between">
                                                 <Text fw={500}>{calculatePercentage(campaign.requestAmount, campaign.cumulativeAmount)}% Reunido</Text>
@@ -299,7 +322,7 @@ const CampaignDetailsPage = (): JSX.Element => {
                             </Stack>
                         </Grid.Col>
                     </Grid>
-                </Container> : <LoadingSpinner />}
+                </Container> : <LoadingSpinner position="center" />}
                 <ShareModal opened={opened} onClose={close} campaign={campaign} iconSize={iconSize} />
                 <DonationDrawer campaign={campaign} opened={donateOpened} onClose={donateClose} iconSize={iconSize} />
             </Box>

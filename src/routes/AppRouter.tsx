@@ -9,9 +9,6 @@ import { clientRoutes } from "./client/clientRoutes";
 import { adminRoutes } from "./admin/adminRoutes";
 import { TransbankRouter } from "./transbank/TransbankRouter";
 import { transbankRoutes } from "./transbank/transbankRoutes";
-// import CheckingAuth from "../ui/components/CheckingAuth";
-
-// import { useCheckAuth } from "../hooks/useCheckAuth";
 
 const router = createBrowserRouter([
     // Public Routes
@@ -60,10 +57,6 @@ const router = createBrowserRouter([
 
 
 export const AppRouter = () => {
-    // const status = useContext(AuthContext);
-
-    // if (status === 'checking') return <CheckingAuth />
-
     return (
         <>
             <RouterProvider router={router} />

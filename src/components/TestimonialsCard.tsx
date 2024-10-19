@@ -1,6 +1,6 @@
-import {createStyles, Divider, Grid, Group, Image, Paper, PaperProps, rem, Stack, Text,} from '@mantine/core';
-import {ITestimonial} from "../types";
-import {useMediaQuery} from "@mantine/hooks";
+import { createStyles, Grid, Image, Paper, PaperProps, rem, Stack, Text, } from '@mantine/core';
+import { ITestimonial } from "../types";
+import { useMediaQuery } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -38,32 +38,27 @@ interface IProps extends PaperProps {
     data: ITestimonial
 }
 
-const CampaignCard = ({data, ...others}: IProps) => {
-    const {classes} = useStyles();
+const CampaignCard = ({ data, ...others }: IProps) => {
+    const { classes } = useStyles();
     const {
-        company, createdByImage, createdBy, testimonial, jobPosition
+        createdByImage, createdBy, testimonial
     } = data;
     const matchesMobile = useMediaQuery('(max-width: 768px)');
 
     return (
         <Paper radius="md" className={classes.card} mx={36} {...others}>
-            <Grid sx={{alignItems: 'center'}}>
+            <Grid sx={{ alignItems: 'center' }}>
                 {matchesMobile && <Grid.Col lg={5}>
-                    <Image src={createdByImage} height={360} fit="cover"/>
+                    <Image src={createdByImage} height={360} fit="cover" />
                 </Grid.Col>}
                 <Grid.Col lg={7} pl={matchesMobile ? 'xl' : 'xl'} pb="xl">
                     <Stack spacing="sm">
-                        <Text size="xl">"{testimonial}"</Text>
                         <Text fw={700}>{createdBy}</Text>
-                        <Group>
-                            <Text size="md" fs="italic">{jobPosition}</Text>
-                            <Divider orientation="vertical"/>
-                            <Text size="md" td="underline">{company}</Text>
-                        </Group>
+                        <Text size="xl">"{testimonial}"</Text>
                     </Stack>
                 </Grid.Col>
                 {!matchesMobile && <Grid.Col lg={5}>
-                    <Image src={createdByImage} height={320} fit="cover"/>
+                    <Image src={createdByImage} height={320} fit="cover" />
                 </Grid.Col>}
             </Grid>
         </Paper>

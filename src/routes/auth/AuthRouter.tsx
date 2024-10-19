@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate, Outlet, ScrollRestoration } from "react-router-dom"
 import { AuthContext } from "../../context/auth/AuthContext";
 
 export const AuthRouter = () => {
@@ -9,6 +9,11 @@ export const AuthRouter = () => {
         const redirectTo = user?.profile === 'Admin' ? '/admin/dashboard' : '/panel/dashboard';
         return <Navigate to={redirectTo} />
     }
-    return <Outlet />;
+    return (
+        <>
+            <Outlet />
+            <ScrollRestoration />
+        </>
+    );
 
 }

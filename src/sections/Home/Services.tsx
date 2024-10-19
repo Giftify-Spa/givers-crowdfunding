@@ -1,7 +1,6 @@
 import {
     Box,
     BoxProps,
-    Button,
     Card,
     createStyles,
     PaperProps,
@@ -13,7 +12,6 @@ import {
     TitleProps
 } from '@mantine/core';
 import { IconHomeShield } from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
     feature: {
@@ -160,32 +158,32 @@ const mockdata = [
     {
         id: 1,
         icon: 'https://icons.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        title: 'Community',
-        description: 'Join our community of givers and make a difference in the world',
+        title: 'Transparencia',
+        description: 'Recibiras un vídeo con el real impacto de tu donación',
     },
     {
         id: 2,
         icon: 'https://icons.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80',
-        title: 'Education',
-        description: 'Join our community of givers and make a difference in the world',
+        title: 'Impacto',
+        description: 'Puedes donar desde $1.000 pesos y crear grandes cambios.',
     },
     {
         id: 3,
         icon: 'https://icons.unsplash.com/photo-1574607383476-f517f260d30b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
-        title: 'Crowdfunding',
-        description: 'Join our community of givers and make a difference in the world',
+        title: 'Beneficios',
+        description: 'Obten regalías en comercios locales. ¡Te premiamos por donar!',
     },
     {
         id: 4,
         icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        title: 'Partnerships',
-        description: 'Join our community of givers and make a difference in the world',
+        title: 'Crea tus propios proyectos',
+        description: 'Podrás subir tus causas o experiencias.',
     },
     {
         id: 5,
         icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        title: 'Partnerships',
-        description: 'Join our community of givers and make a difference in the world',
+        title: 'Conecta con otros Givers',
+        description: 'Construyendo comunidad o incluso proyectos en conjunto.',
     }
 ];
 
@@ -229,23 +227,17 @@ const ServicesSection = ({ boxProps }: IProps) => {
         <Box {...boxProps}>
             <SimpleGrid cols={3} spacing="lg" breakpoints={[{ maxWidth: 'md', cols: 2, spacing: 'sm' }]} >
                 <Title className={classes.titleSection}>
-                    Qué ofrecemos a la <Text
+                    ¿Por qué <Text
                         component="span"
                         inherit
                         color='#ff7f4d'
                     >
-                        gente creativa
+                        nosotros?
                     </Text>
                 </Title>
                 {items}
             </SimpleGrid>
-            <div className={classes.controls}>
-                <Button className={classes.control} style={{ backgroundColor: '#08857f' }} size="lg" component={Link} to="/create-campaign">
-                    Comencémos una nueva campaña
-                </Button>
-            </div>
         </Box>
     );
 }
-
 export default ServicesSection;

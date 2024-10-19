@@ -237,7 +237,7 @@ const LandingNavbar = ({ compressed }: IProps) => {
                 }}>
                 <Container size="lg" fluid={compressed} sx={{ height: '100%' }}>
                     <Flex justify="space-between" align="center" sx={{ height: '100%' }}>
-                        <BrandName size={28} asLink />
+                        <BrandName />
                         <Flex align="center" gap="xs" sx={{ height: '100%' }} className={classes.hiddenMobile}>
                             <Button component={Link} to="/how-it-works" className={classes.link} {...buttonProps}>
                                 Cómo funciona

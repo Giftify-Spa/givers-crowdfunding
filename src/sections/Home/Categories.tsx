@@ -1,6 +1,8 @@
 import { Box, BoxProps, createStyles, Paper, PaperProps, rem, SimpleGrid, Text, TextProps, Title, TitleProps } from "@mantine/core";
 import { IconAugmentedReality, 
-         IconClipboardHeart, 
+         IconClipboardHeart,
+         IconHeartHandshake,
+         IconComet,
          IconDog,
          IconLeaf,
          IconSos,
@@ -14,34 +16,20 @@ const iconMap = {
     IconLeaf: IconLeaf,
     IconSos: IconSos,
     IconSchool: IconSchool,
+    IconHeartHandshake: IconHeartHandshake,
+    IconComet: IconComet
 }
 
 
 const mockData = [
     {
-        icon: 'IconAugmentedReality',
-        name: 'Tecnología',
+        icon: 'IconHeartHandshake',
+        name: 'Campañas',
     },
     {
-        icon: 'IconDog',
-        name: 'Animales',
-    },
-    {
-        icon: 'IconSchool',
-        name: 'Escolar',
-    },
-    {
-        icon: 'IconLeaf',
-        name: 'Ambiente',
-    },
-    {
-        icon: 'IconSos',
-        name: 'Emergencia',
-    },
-    {
-        icon: 'IconClipboardHeart',
-        name: 'Médico',
-    },
+        icon: 'IconComet',
+        name: 'Experiencias',
+    }
 ]
 
 interface ICategoriesProps extends PaperProps {
@@ -142,7 +130,7 @@ const CategoriesSection = ({ boxProps }: IProps) => {
             }}
         >
             <Box mb="lg">
-                <Title className={classes.title}>Revisa las principales categorías</Title>
+                <Title className={classes.title}>Conoce nuestras categorías</Title>
             </Box>
             <Box
                 sx={{
@@ -152,7 +140,7 @@ const CategoriesSection = ({ boxProps }: IProps) => {
                 }}
             >
                 <SimpleGrid
-                    cols={6}
+                    cols={2}
                     spacing="sm"
                     breakpoints={[
                         { maxWidth: 'md', cols: 3, spacing: 'md' },

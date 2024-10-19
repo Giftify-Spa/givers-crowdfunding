@@ -31,14 +31,16 @@ const TransactionStatus = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const token_ws = queryParams.get("token");
+    const orderId = queryParams.get("orderId");
 
     if (token_ws) {
       const fetchData = async () => {
         try {
           const { data } = await axios.get<TransbankStatusResponse>(
-            import.meta.env.VITE_API_URL_TRANSBANK_STATUS_PROD as string, {
+            import.meta.env.VITE_API_URL_TRANSBANK_STATUS_DEV_LOCAL as string, {
             params: {
               token_ws: token_ws,
+              orderId
             }
           });
           console.log(data);

@@ -8,6 +8,7 @@ import {
     Drawer,
     Group,
     Header,
+    Image,
     Menu,
     rem,
     ScrollArea,
@@ -132,7 +133,20 @@ const useStyles = createStyles((theme) => ({
 
     close: {
         color: theme.white
-    }
+    },
+    image: {
+        width: `${rem(120)} !important`, // Ajusta el tamaño del logo para la navbar
+        height: 'auto',
+        marginLeft: 10,
+
+        [theme.fn.smallerThan('md')]: {
+            width: `${rem(100)} !important`, // Tamaño más pequeño en pantallas medianas
+        },
+
+        [theme.fn.smallerThan('sm')]: {
+            width: `${rem(80)} !important`, // Tamaño más pequeño en pantallas pequeñas
+        },
+    },
 }));
 
 type IProps = BoxProps
@@ -146,7 +160,7 @@ const AppNavbar = ({ ...others }: IProps) => {
     const [searchOpened, { close: closeSearchDrawer }] = useDisclosure(false);
     const matchesMobile = useMediaQuery('(max-width: 600px)');
 
-    
+
     return (
         <Box {...others}>
             <Header
@@ -170,12 +184,7 @@ const AppNavbar = ({ ...others }: IProps) => {
 
                     <Group position="apart" sx={{ width: '100%' }}>
                         <Group>
-                            <BrandName
-                                size={24}
-                                ml={matchesMobile ? 'md' : 'xs'}
-                                asLink
-                                variant="grayscale"
-                            />
+                            <BrandName />
                             <AppLinks className={classes.hiddenMobile} />
                         </Group>
                         <Group>
@@ -225,18 +234,22 @@ const AppNavbar = ({ ...others }: IProps) => {
                     </Group>
                 </Container>
             </Header>
-
             <Drawer
                 opened={drawerOpened}
                 onClose={closeDrawer}
                 size="100%"
                 padding="md"
-                title="Panel de Navagación"
+                title=""
                 className={classes.hiddenDesktop}
                 classNames={{ header: classes.drawerHeader, close: classes.close }}
                 zIndex={1000000}
             >
                 <ScrollArea h={`calc(100vh - ${rem(0)})`} mx="-md" sx={{ backgroundColor: theme.colors.primary[6] }}>
+                    <Image
+                        src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/logo%20givers_blanco.svg?alt=media&token=c314e77a-5dd2-4da4-874c-b17808dc5563"
+                        className={classes.image}
+                        alt="Givers Logo"
+                    />
                     <AppLinks direction='column' />
                 </ScrollArea>
             </Drawer>

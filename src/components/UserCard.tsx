@@ -1,5 +1,6 @@
-import { Avatar, Flex, Paper, PaperProps, Stack, Text } from '@mantine/core';
+import { Avatar, Button, Flex, Paper, PaperProps, Stack, Text } from '@mantine/core';
 import { User } from '../interfaces/User';
+import { Link } from 'react-router-dom';
 
 interface IProps extends PaperProps {
     responsibleData: User
@@ -7,16 +8,18 @@ interface IProps extends PaperProps {
 
 const UserCard = ({ responsibleData, ...others }: IProps) => {
 
-    const { name, email, photoURL } = responsibleData;
+    const { id, name, email, photoURL } = responsibleData;
 
     return (
         <Paper{...others}>
             <Flex gap="lg" align="center">
                 <Avatar src={photoURL ? photoURL : ''} size={120} radius={120} />
                 <Stack spacing="xs" align="flex-start">
-                    <Text ta="center" fz="lg" weight={500}>
-                        {name}
-                    </Text>
+                    <Button component={Link} to={`/foundation/${id}`}>
+                        <Text ta="center" fz="lg" weight={500}>
+                            {name}
+                        </Text>
+                    </Button>
                     <Text ta="center" c="dimmed" fz="sm">
                         {email}
                     </Text>
