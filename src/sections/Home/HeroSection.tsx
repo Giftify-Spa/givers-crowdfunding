@@ -124,7 +124,7 @@ const useStyles = createStyles((theme) => ({
 }));
 interface Props {
     title: string;
-    subtitle: string;
+    subtitle?: string;
 }
 
 const HeroSection = ({ title, subtitle }: Props) => {
@@ -140,9 +140,13 @@ const HeroSection = ({ title, subtitle }: Props) => {
                         <Title className={classes.title}>
                             {title}
                         </Title>
-                        <Text className={classes.subtitle}>
-                            {subtitle}
-                        </Text>
+                        {
+                            subtitle && (
+                                <Text className={classes.subtitle}>
+                                    {subtitle}
+                                </Text>
+                            )
+                        }
                     </Stack>
                 </Container>
             </div>
