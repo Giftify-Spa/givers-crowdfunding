@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { forwardRef, useEffect, useState } from 'react';
 import { Group, Select, Text } from "@mantine/core";
-import { getUsersSelect } from '../firebase/service';
+import { getUsersSelect } from '../firebase/services/UserServices';
 
 const CategorySelectItem = forwardRef<HTMLDivElement, any>(
     ({ name, ...others }: any, ref) => (

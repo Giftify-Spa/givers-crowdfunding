@@ -1,4 +1,4 @@
-import { Container, createStyles, Overlay, rem, Stack, Title } from '@mantine/core';
+import { Container, createStyles, Overlay, rem, Stack, Text, Title } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
@@ -55,6 +55,26 @@ const useStyles = createStyles((theme) => ({
         },
     },
 
+    subtitle: {
+        fontWeight: 400,
+        fontSize: rem(24),
+        color: theme.colors.gray[3],
+        textAlign: 'start',
+        paddingLeft: theme.spacing.md,
+        paddingRight: theme.spacing.md,
+        marginTop: theme.spacing.sm,
+
+        [theme.fn.smallerThan('md')]: {
+            fontSize: rem(20),
+        },
+
+        [theme.fn.smallerThan('sm')]: {
+            fontSize: rem(16),
+            textAlign: 'left',
+            padding: 0,
+        },
+    },
+
     highlight: {
         color: theme.colors.gray[4],
     },
@@ -104,9 +124,10 @@ const useStyles = createStyles((theme) => ({
 }));
 interface Props {
     title: string;
+    subtitle: string;
 }
 
-const HeroSection = ({ title }: Props) => {
+const HeroSection = ({ title, subtitle }: Props) => {
     const { classes } = useStyles();
 
     return (
@@ -119,6 +140,9 @@ const HeroSection = ({ title }: Props) => {
                         <Title className={classes.title}>
                             {title}
                         </Title>
+                        <Text className={classes.subtitle}>
+                            {subtitle}
+                        </Text>
                     </Stack>
                 </Container>
             </div>

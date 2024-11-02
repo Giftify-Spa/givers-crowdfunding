@@ -26,26 +26,16 @@ import { Link as LinkRouter, useNavigate } from "react-router-dom";
 import GooglePlace from "../../components/Place";
 import ConfidenceSelect from "../../components/ConfidenceSelect";
 
-import * as yup from "yup";
-import { addFoundation } from "../../firebase/service";
+import { addFoundation } from "../../firebase/services/FoundationServices";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import GiversLayout from "../../layout/GiversLayout";
-
-const validationFoundationSchema = yup.object().shape({
-    name: yup.string().required('El nombre es requerido'),
-    country: yup.string().required('El país es requerido'),
-    city: yup.string().required('La ciudad es requerida'),
-    address: yup.string().required('La dirección es requerida'),
-    fono: yup.string().required('El teléfono es requerido'),
-    confidenceLevel: yup.number().notOneOf([0], 'El nivel de confianza es requerido'),
-    responsible: yup.string().required('El responsable es requerido'),
-});
-
+import { validationFoundationSchema } from "../../schemas/foundation/createSchema";
 
 const CreateFoundationPage = () => {
 
-    const [formValues, setFormValues] = useState<{ name: string; country: string; city: string, address: string, lat: string, lng: string, confidenceLevel: number, fono: string, responsible: string }>({
+    const [formValues, setFormValues] = useState<{ name: string; description: string; country: string; city: string, address: string, lat: string, lng: string, confidenceLevel: number, fono: string, responsible: string }>({
         name: '',
+        description: '',
         country: '',
         city: '',
         address: '',
@@ -132,6 +122,7 @@ const CreateFoundationPage = () => {
             // Format data
             const foundationData = {
                 name: formValues.name,
+                description: formValues.description,
                 country: countrySelect,
                 city: formValues.city,
                 address: formValues.address,
@@ -148,7 +139,7 @@ const CreateFoundationPage = () => {
 
             // Redirect to dashboard
             navigate('/panel/dashboard');
-            
+
         }
     }
 
@@ -186,6 +177,16 @@ const CreateFoundationPage = () => {
                                     onChange={handleChange}
                                     error={errorMessages.name}
                                     required />
+
+                                <TextInput
+                                    label="Descripción"
+                                    placeholder="Ingrese la descripción de la fundación"
+                                    name='description'
+                                    value={formValues.description}
+                                    onChange={handleChange}
+                                    error={errorMessages.description}
+                                    required />
+
                                 <TextInput
                                     label="Teléfono"
                                     placeholder="Ingresar teléfono"

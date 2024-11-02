@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { DataTable } from "mantine-datatable";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
-import { getDonorsByUser } from "../firebase/service";
+import { getDonorsByUser } from "../firebase/services/UserServices";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 
 const PAGE_SIZE = 10;

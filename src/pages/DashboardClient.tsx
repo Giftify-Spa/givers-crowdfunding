@@ -11,7 +11,7 @@ import {
 import { DonatorsTable } from "../components";
 import { Helmet } from "react-helmet";
 import GiversLayout from "../layout/GiversLayout";
-import { useContext} from "react";
+import { useContext } from "react";
 import { AuthContext } from "../context/auth/AuthContext";
 
 const DashboardClientPage = () => {

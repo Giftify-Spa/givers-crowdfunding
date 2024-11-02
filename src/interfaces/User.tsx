@@ -9,4 +9,5 @@ export interface User {
     profile?: string;
     photoURL?: string;
     status?: boolean;
+    foundation?: string;
 }

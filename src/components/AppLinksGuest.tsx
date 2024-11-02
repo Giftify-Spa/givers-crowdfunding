@@ -62,6 +62,7 @@ const data = [
     { link: '/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
     { link: '/login', label: 'Iniciar Sesion', icon: IconUserCircle },
     { link: '/register', label: 'Regístrate' },
+    { link: '/registerFoundation', label: 'Regístrar Organización' },
 ];
 
 const ICON_SIZE = 18

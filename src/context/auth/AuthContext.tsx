@@ -4,7 +4,8 @@ import { AuthState, authReducer } from "./authReducer";
 
 import { signInWithGoogle, loginWithEmailAndPassword, logoutFirebase } from "../../firebase/providers";
 import { User } from '../../interfaces/User';
-import { addDocument, checkIfDocumentExists, getUserByEmail, getUserByUid } from "../../firebase/service";
+import { addDocument, checkIfDocumentExists } from "../../firebase/service";
+import { getUserByEmail, getUserByUid } from "../../firebase/services/UserServices";
 import { AuthResponse } from "../../interfaces/AuthResponse";
 import { registerUserWithEmailAndPassword } from "../../firebase/providers";
 import { onAuthStateChanged } from "firebase/auth";
@@ -52,7 +53,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                             email: user.email,
                             status: user.status,
                             profile: user.profile,
-                            photoURL: user.photoURL
+                            photoURL: user.photoURL,
+                            ...(user.foundation ? { foundation: user.foundation } : {})
                         }
                     }
                 });
@@ -113,7 +115,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                     email: user.email,
                     status: user.status,
                     profile: user.profile,
-                    photoURL: user.photoURL
+                    photoURL: user.photoURL,
+                    ...(user.foundation ? { foundation: user.foundation } : {})
                 }
             }
         });
@@ -144,7 +147,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
             email: userEmail,
             status: true,
             profile: 'Client',
-            photoURL
+            photoURL,
         }
 
         // Search user in the DB with the uid
@@ -197,7 +200,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                     email: user.email,
                     status: user.status,
                     profile: user.profile,
-                    photoURL: user.photoURL
+                    photoURL: user.photoURL,
+                    ...(user.foundation ? { foundation: user.foundation } : {})
                 }
             }
         });
@@ -233,8 +237,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                     name: displayName,
                     email,
                     status: true,
-                    profile: 'Client',
-                    photoURL: photoURL
+                    profile: user.profile,
+                    photoURL: photoURL,
+                    ...(user.foundation ? { foundation: user.foundation } : {})
                 }
             }
         });

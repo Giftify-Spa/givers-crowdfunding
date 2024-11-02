@@ -8,7 +8,7 @@ import BrandName from "./BrandName";
 import UserCard from "./UserCard";
 import ContactCard from "./ContactCard";
 import AppLinks from "./AppLinks";
-import CampaignsTable from "./CampaignsTable";
+import CampaignsTable from "./CampaignsTable.tsx";
 import DonatorsTable from "./DonatorsTable";
 import YearlyDonationChart from "./YearlyDonationChart";
 import CheckoutPaymentModal from "./CheckoutPaymentModal";

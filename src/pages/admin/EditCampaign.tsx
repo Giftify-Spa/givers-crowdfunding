@@ -28,7 +28,7 @@ import FoundationSelect from "../../components/FoundationSelect";
 
 import * as yup from 'yup';
 import { IconCalendar, IconCurrencyDollar } from "@tabler/icons-react";
-import { addCampaign, getCampaign } from "../../firebase/service";
+import { addCampaign, getCampaign } from "../../firebase/services/CampaignServices";
 import GiversLayout from "../../layout/GiversLayout";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import { AuthContext } from "../../context/auth/AuthContext";

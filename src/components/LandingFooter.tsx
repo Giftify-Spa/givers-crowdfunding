@@ -154,7 +154,7 @@ const LandingFooter = ({ data }: FooterLinksProps) => {
             <Container className={classes.afterFooter} size="xl">
                 <div
                     style={{
-                        backgroundColor: '#08857f',
+                        backgroundColor: '#ff7f4d',
                         flex: 0.75,
                         display: 'flex',
                         flexDirection: 'row',

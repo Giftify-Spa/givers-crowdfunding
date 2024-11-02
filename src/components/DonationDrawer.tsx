@@ -29,7 +29,8 @@ import * as yup from 'yup';
 import { Campaign } from '../interfaces/Campaign';
 import { useNavigate } from 'react-router-dom';
 import { formattingToCLPNumber } from '../helpers/formatCurrency';
-import { addOrder, checkUser } from '../firebase/service';
+import { addOrder } from '../firebase/service';
+import { checkUser } from '../firebase/services/UserServices';
 interface IProps extends Pick<DrawerProps, 'opened' | 'onClose' | 'size'> {
     campaign?: Campaign
     iconSize: number

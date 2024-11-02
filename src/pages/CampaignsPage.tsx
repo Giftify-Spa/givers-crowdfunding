@@ -5,7 +5,7 @@ import { CampaignCard } from "../components";
 import HeroSection from "../sections/Home/HeroSection";
 import { Box, BoxProps, Button, Container, Flex, SimpleGrid, Stack } from "@mantine/core";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { getCampaignsByType } from "../firebase/service";
+import { getCampaignsByType } from "../firebase/services/CampaignServices";
 
 const Campaignspage = (): JSX.Element => {
     // State to store campaigns, loading status, filter type, etc.
@@ -105,10 +105,19 @@ const Campaignspage = (): JSX.Element => {
         <CampaignCard key={c.id} data={c} showActions={true} />
     ));
 
+    const subtitle = filter === "cause"
+        ? "Las causas son iniciativas que buscan generar un impacto positivo en la sociedad y el medio ambiente."
+        : "Las experiencias son eventos o actividades que permiten a las personas vivir momentos significativos y memorables.";
+
+
     return (
         <>
             <>
-                <HeroSection title="Nuestros proyectos" /> {/* Render HeroSection with title */}
+                {/* <HeroSection title="Nuestros proyectos" /> Render HeroSection with title */}
+                <HeroSection
+                    title={filter === "cause" ? "Causas" : "Experiencias"}
+                    subtitle={subtitle}
+                /> {/* Dynamic title based on filter */}
 
                 <Box
                     sx={{

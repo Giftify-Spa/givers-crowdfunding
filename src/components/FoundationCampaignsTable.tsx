@@ -3,7 +3,7 @@
 import { Avatar, Group, Text, Button } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
-import { getCampaigns } from "../firebase/services/CampaignServices";
+import { getCampaignsWithFoundation } from "../firebase/services/CampaignServices";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 import { Link } from 'react-router-dom';
@@ -13,7 +13,11 @@ const PAGE_SIZE = 5;
 
 const campaignsCache: any[] = [];
 
-const CampaignsTable = () => {
+interface Props {
+    id: string;
+}
+
+const FoundationCampaignsTable = ({ id }: Props) => {
     const [page, setPage] = useState(1);
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +29,7 @@ const CampaignsTable = () => {
                 if (campaignsCache.length > 0) {
                     return campaignsCache;
                 }
-                const response = await getCampaigns(1000);
+                const response = await getCampaignsWithFoundation(id);
 
                 const newCampaigns = response.filter(campaign =>
                     !campaignsCache.some(cached => cached.id === campaign.id) // Asegúrate de que 'id' es el campo correcto
@@ -53,7 +57,7 @@ const CampaignsTable = () => {
         };
 
         fetchData();
-    }, []);
+    }, [id]);
 
     const paginatedRecords = records.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -70,18 +74,17 @@ const CampaignsTable = () => {
                         title: 'Creado por',
                         render: ({ createdBy }) =>
                             <Group>
-                                <Avatar src={createdBy.photoURL ? createdBy.photoURL : ''} alt={`${createdBy ? createdBy.name : 'default'} profile avatar`} size="sm" radius="xl" />
+                                {
+                                    createdBy && (
+                                        <Avatar src={createdBy.photoURL ? createdBy.photoURL : '#'} alt={`${createdBy ? createdBy.name : 'default'} profile avatar`} size="sm" radius="xl" />
+                                    )
+                                }
                                 <Text>{createdBy ? createdBy.name : ''}</Text>
                             </Group>
                     },
                     {
                         accessor: 'name',
                         title: 'Nombre',
-                    },
-                    {
-                        accessor: 'foundation',
-                        title: 'Fundación',
-                        render: ({ foundation }) => foundation.name
                     },
                     {
                         accessor: 'cumulativeAmount', title: 'Monto acumulado',
@@ -121,4 +124,4 @@ const CampaignsTable = () => {
     );
 };
 
-export default CampaignsTable;
+export default FoundationCampaignsTable;

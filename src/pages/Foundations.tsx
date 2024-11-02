@@ -1,6 +1,6 @@
 import { Box, BoxProps, Container, createStyles, rem, SimpleGrid, Stack, Title } from '@mantine/core';
 import { useEffect, useState } from "react";
-import { getFoundations } from "../firebase/service";
+import { getFoundations } from "../firebase/services/FoundationServices";
 import LoadingSpinner from "../components/LoadingSpinner";
 import HeroSection from '../sections/Home/HeroSection';
 import FoundationCard from '../components/FoundationCard';
@@ -93,7 +93,7 @@ const FoundationsPage = (): JSX.Element => {
                             <Title className={classes.title} align="center">Fundaciones que confian en nosotros</Title>
                             {
                                 loading ? (
-                                    <LoadingSpinner position="center"/>
+                                    <LoadingSpinner position="center" />
                                 ) : (
                                     <div className="animate__animated animate__fadeIn animate__fast">
                                         <SimpleGrid

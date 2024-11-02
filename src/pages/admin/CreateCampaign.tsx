@@ -27,7 +27,7 @@ import FoundationSelect from "../../components/FoundationSelect";
 
 import * as yup from 'yup';
 import { IconCalendar, IconCurrencyDollar } from "@tabler/icons-react";
-import { addCampaign } from "../../firebase/service";
+import { addCampaign } from "../../firebase/services/CampaignServices";
 import GiversLayout from "../../layout/GiversLayout";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import { AuthContext } from "../../context/auth/AuthContext";
@@ -124,36 +124,38 @@ const CreateCampaignPage = () => {
         });
     }
 
-    console.log(error);
-
     const onCreateCampaign = async () => {
         const isValid = await isValidForm();
 
-        if (isValid) {
-            // Format data
-            const campaignData = {
-                name: formValues.name,
-                description: formValues.description,
-                category: formValues.category,
-                foundation: formValues.foundation,
-                initDate: formValues.initDate,
-                initVideo: getYouTubeEmbedUrl(formValues.initVideo),
-                endDate: formValues.finishDate,
-                isCause: formValues.isCause,
-                isExperience: formValues.isExperience,
-                requestAmount: formValues.requestAmount,
-                multimedia: files,
-                responsible: formValues.responsible,
-                createdBy: user.uid,
+        try {
+            if (isValid) {
+                // Format data
+                const campaignData = {
+                    name: formValues.name,
+                    description: formValues.description,
+                    category: formValues.category,
+                    foundation: formValues.foundation,
+                    initDate: formValues.initDate,
+                    initVideo: getYouTubeEmbedUrl(formValues.initVideo),
+                    endDate: formValues.finishDate,
+                    isCause: formValues.isCause,
+                    isExperience: formValues.isExperience,
+                    requestAmount: formValues.requestAmount,
+                    multimedia: files,
+                    responsible: formValues.responsible,
+                    createdBy: user.uid,
+                }
+
+                const response = await addCampaign(campaignData);
+
+                if (!response.success) return setError('ocurrió un error al crear la fundación');
+
+                // Redirect to dashboard
+                navigate('/panel/dashboard');
+
             }
-
-            const response = await addCampaign(campaignData);
-
-            if (!response.success) return setError('ocurrió un error al crear la fundación');
-
-            // Redirect to dashboard
-            navigate('/panel/dashboard');
-
+        } catch (e) {
+            console.log(error);
         }
     }
 

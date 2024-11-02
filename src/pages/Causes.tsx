@@ -1,7 +1,7 @@
 import { Box, BoxProps, Container, createStyles, rem, SimpleGrid, Stack, Title } from '@mantine/core';
 import { CampaignCard } from "../components";
 import { useEffect, useState } from "react";
-import { getCampaignsWithCauses } from "../firebase/service";
+import { getCampaignsWithCauses } from "../firebase/services/CampaignServices";
 import LoadingSpinner from "../components/LoadingSpinner";
 import HeroSection from '../sections/Home/HeroSection';
 
@@ -74,7 +74,7 @@ const CausesPage = (): JSX.Element => {
 
     return (
         <>
-            <HeroSection title="Causas"/>
+            <HeroSection title="Causas" />
             <Box
                 sx={{
                     ...boxProps.sx,

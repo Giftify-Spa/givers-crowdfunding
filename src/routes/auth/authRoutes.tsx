@@ -22,6 +22,10 @@ export const authRoutes = [
         element: <RegisterPage />
     },
     {
+        path: "registerFoundation",
+        element: <RegisterPage />
+    },
+    {
         path: "campaigns",
         element: <GiversLayoutGuest>
             <Campaignspage />

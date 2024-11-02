@@ -67,11 +67,6 @@ const dataAdmin = [
     { link: '/admin/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
 ];
 
-const dataClient = [
-    { link: '/dashboard', label: 'Mi Dashboard', icon: IconHome },
-    { link: '/panel/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
-];
-
 const dataGuest = [
     { link: '/', label: 'Inicio', icon: IconHome },
     { link: '/login', label: 'Iniciar Sesión', icon: IconUser },
@@ -86,6 +81,12 @@ const AppLinks = ({ ...others }: IProps) => {
     const { classes, cx } = useStyles();
     const [active, setActive] = useState('Billing');
     const isSmallScreen = useMediaQuery('(max-width: 768px)'); // sm breakpoint
+
+    const dataClient = [
+        { link: '/dashboard', label: 'Mi Dashboard', icon: IconHome },
+        { link: '/panel/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
+        ...(user?.foundation ? [{ link: `/panel/my-foundation/${user.foundation}`, label: 'Gestionar Organización', icon: IconBuildingWarehouse }] : []),
+    ];
 
     const linksAdmin = dataAdmin.map((item) => (
         <Button

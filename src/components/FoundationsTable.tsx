@@ -1,16 +1,21 @@
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
-import { getFoundations } from "../firebase/service";
+import { getFoundations } from "../firebase/services/FoundationServices";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
-import { randomId } from "@mantine/hooks";
+import { randomId, useDisclosure } from "@mantine/hooks";
+import { Button } from "@mantine/core";
+import { DetailModal } from "./DetailModal";
+import { Foundation } from "../interfaces/Foundation";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 
 const FoundationsTable = () => {
     const [page, setPage] = useState(1);
     const [records, setRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [opened, { open, close }] = useDisclosure(false);
+    const [selectedFoundation, setSelectedFoundation] = useState(null);
 
     useEffect(() => {
 
@@ -27,7 +32,8 @@ const FoundationsTable = () => {
         const fetchData = async () => {
             try {
                 const foundations = await chargedFoundations();
-                setRecords(foundations);
+                const recordsFormatted = foundations.map((d) => ({ ...d, key: d.id }))
+                setRecords(recordsFormatted);
                 setIsLoading(false);
             } catch (error) {
                 // Manejar errores aquí, por ejemplo, establecer un estado de error
@@ -39,6 +45,13 @@ const FoundationsTable = () => {
         fetchData();
     }, []);
 
+    const paginatedRecords = records.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    const handleOpenModal = (foundation: Foundation) => {
+        setSelectedFoundation(foundation);
+        open(); // Abre el modal
+    };
+
     if (isLoading) {
         return <LoadingSpinnerTable />;
     }
@@ -49,7 +62,6 @@ const FoundationsTable = () => {
             <DataTable
 
                 columns={[
-                    { accessor: 'id', title: 'ID' },
                     { accessor: 'name', title: 'Nombre' },
                     { accessor: 'city', title: 'Ciudad' },
                     { accessor: 'address', title: 'Dirección' },
@@ -64,8 +76,17 @@ const FoundationsTable = () => {
                         title: 'Correo electrónico Responsable',
                         render: ({ responsibleEmail }) => responsibleEmail
                     },
+                    {
+                        accessor: 'actions',
+                        title: 'Acciones',
+                        render: (foundation) => (
+                            <Button size="xs" onClick={() => handleOpenModal(foundation)}>
+                                Ver Detalles
+                            </Button>
+                        )
+                    }
                 ]}
-                records={records.map((record) => ({ ...record, key: record.id }))}
+                records={paginatedRecords}
                 totalRecords={records.length}
                 noRecordsText="No hay registros"
                 recordsPerPage={PAGE_SIZE}
@@ -73,6 +94,12 @@ const FoundationsTable = () => {
                 onPageChange={(p) => setPage(p)}
                 highlightOnHover
                 key={randomId()}
+            />
+
+            <DetailModal
+                opened={opened}
+                closeModal={close}
+                foundation={selectedFoundation} // Pasar la fundación seleccionada al modal
             />
         </div>
     );

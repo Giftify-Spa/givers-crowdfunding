@@ -5,7 +5,7 @@ import {
     Box,
     BoxProps,
 } from "@mantine/core";
-import { getFoundation } from "../firebase/service";
+import { getFoundation } from "../firebase/services/FoundationServices";
 import LoadingSpinner from "../components/LoadingSpinner";
 import FoundationCampaignsPage from "./FoundationCampaigns";
 import { Foundation } from "../interfaces/Foundation";

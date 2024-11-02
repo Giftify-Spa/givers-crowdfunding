@@ -154,7 +154,7 @@ const AppNavbarGuest = ({ ...others }: IProps) => {
     return (
         <Box {...others}>
             <Header
-                height={{ base: 50, md: 70 }}
+                height={{ base: 60, md: 80 }}
                 className={classes.header}
             >
                 <Container

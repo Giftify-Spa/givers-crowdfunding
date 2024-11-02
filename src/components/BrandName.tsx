@@ -15,6 +15,7 @@ const useStyles = createStyles((theme) => ({
     image: {
         width: `${rem(120)} !important`, // Ajusta el tamaño del logo para la navbar
         height: 'auto',
+        // marginLeft: 20,
 
         [theme.fn.smallerThan('md')]: {
             width: `${rem(100)} !important`, // Tamaño más pequeño en pantallas medianas

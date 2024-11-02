@@ -14,5 +14,15 @@ export default defineConfig({
         }
       }
     }
-  }
-})
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://api.fintoc.com/v1', // URL base de la API de Fintoc
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Opcional, elimina el prefijo '/api'
+        secure: true, // Activa solo si la API usa HTTPS
+      },
+    },
+  },
+});
