@@ -16,6 +16,24 @@ import {
     addDoc,
     updateDoc,
 } from "firebase/firestore";
+import { uploadFile } from "../service";
+
+export const countFoundations = async (): Promise<number> => {
+    try {
+
+        // Referencia a la colección 'foundations'
+        const foundationsCollectionRef = collection(FirebaseDB, 'foundations');
+
+        // Obtener todos los documentos de la colección 'foundations'
+        const foundationsSnapshot = await getDocs(foundationsCollectionRef);
+
+        // Retornar la cantidad de documentos en la colección
+        return foundationsSnapshot.size;
+    } catch (error) {
+        console.error("Error al contar las fundaciones:", error);
+        throw new Error("No se pudo contar las fundaciones");
+    }
+};
 
 /**
  * Retrieves the details of a specific foundation by its ID.
@@ -33,12 +51,13 @@ export const getFoundation = async (id: string): Promise<Foundation | null> => {
                 description,
                 fono,
                 country,
-                image,
                 status,
                 responsible,
                 confidenceLevel,
                 city,
-                address
+                address,
+                fundsTransferData,
+                multimedia
             } = docSnapshot.data();
 
             return {
@@ -47,12 +66,13 @@ export const getFoundation = async (id: string): Promise<Foundation | null> => {
                 description,
                 fono,
                 country,
-                image,
                 status,
                 responsible,
                 confidenceLevel,
                 city,
-                address
+                address,
+                fundsTransferData,
+                multimedia
             };
         } else {
             console.error("No such document!");
@@ -83,7 +103,8 @@ export const getFoundations = async (): Promise<Array<any>> => {
                 address,
                 fono,
                 responsible,
-                image
+                image,
+                fundsTransferData
             } = doc.data();
 
             // Obtain Responsible
@@ -99,7 +120,8 @@ export const getFoundations = async (): Promise<Array<any>> => {
                 fono,
                 responsibleName: responsibleData?.name,
                 responsibleEmail: responsibleData?.email,
-                image
+                image,
+                fundsTransferData
             };
         });
 
@@ -146,7 +168,7 @@ export const getFoundationsSelect = async (): Promise<Array<any>> => {
 export const addFoundation = async (data: Foundation): Promise<IFoundationResponse> => {
     try {
 
-        const { name, fono, lat, lng, country, city, address, confidenceLevel, responsible } = data;
+        const { name, fono, lat, lng, country, city, address, confidenceLevel, responsible, multimedia } = data;
 
         // Convert location to a GeoPoint
         const latitude = parseFloat(lat);
@@ -155,20 +177,38 @@ export const addFoundation = async (data: Foundation): Promise<IFoundationRespon
         const geoPoint = new GeoPoint(latitude, longitude);
 
         // Convert responsible ID to a Firestore reference
-        const userRef = doc(FirebaseDB, 'users', responsible);
+        const responsibleRef = responsible ? doc(FirebaseDB, 'users', responsible as string) : null;
 
-        await addDoc(collection(FirebaseDB, 'foundations'), {
+        // Upload multimedia files concurrently
+        const uploadedFiles = multimedia && multimedia.length > 0
+            ? await Promise.all(multimedia.map(file => uploadFile(file, `foundations/${name}/${file.name}`)))
+            : [];
+
+        const newFoundationData: Partial<Foundation> = {
             name,
             fono,
             country,
             city,
             address,
             confidenceLevel,
-            geoPoint,
+            location: geoPoint,
             status: true,
-            responsible: userRef
+            responsible: responsibleRef,
+            multimedia: uploadedFiles,
+        };
+
+        const foundationRef = await addDoc(collection(FirebaseDB, "foundations"), newFoundationData);
+
+        const responsibleDoc = await getDoc(responsibleRef);
+
+         // Perform the update in Firestore to responsible
+         await updateDoc(doc(FirebaseDB, 'users', responsibleDoc.id), {
+            foundation: foundationRef.id
         });
 
+        if (foundationRef.id) {
+            return { success: true };
+        }
         return {
             success: true
         };
@@ -191,18 +231,17 @@ export const addFoundation = async (data: Foundation): Promise<IFoundationRespon
 export const updateFoundationPaymentInfo = async (foundationId: string, paymentData: {
     bank: string;
     accountType: string;
-    holderName: string;
+    // holderName: string;
     accountNumber: string;
     email: string;
 }): Promise<IFoundationResponse> => {
     try {
-        const { bank, accountType, holderName, accountNumber, email } = paymentData;
+        const { bank, accountType, accountNumber, email } = paymentData;
 
         // Create the payment information object to update
         const updateData = {
             bank,
             accountType,
-            holderName,
             accountNumber,
             email
         };

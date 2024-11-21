@@ -120,6 +120,7 @@ const LoginPage = () => {
                                 radius="xl"
                                 leftIcon={<IconBrandGoogle size={18} />}
                                 loading={loadingGoogle}
+                                disabled={loading || loadingGoogle}
                             >
                                 Google
                             </Button>
@@ -132,6 +133,7 @@ const LoginPage = () => {
                             value={formValues.email}
                             onChange={handleChange}
                             error={errorMessages.email}
+                            disabled={loading || loadingGoogle}
                             required />
                         <PasswordInput
                             label="Contraseña"
@@ -140,6 +142,7 @@ const LoginPage = () => {
                             value={formValues.password}
                             onChange={handleChange}
                             error={errorMessages.password}
+                            disabled={loading || loadingGoogle}
                             required
                             mt="md" />
                         <Group position="apart" mt="lg">

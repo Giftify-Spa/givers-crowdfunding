@@ -1,13 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { forwardRef } from 'react';
 import { Group, Select, Text } from "@mantine/core";
 
-const CategorySelectItem = forwardRef<HTMLDivElement, any>(
-    ({ name, ...others }: any, ref) => (
+interface CategorySelectItemProps extends React.ComponentPropsWithoutRef<'div'> {
+    label: string;
+    value: string;
+}
+
+const ConfidenceSelectItem = forwardRef<HTMLDivElement, CategorySelectItemProps>(
+    ({ label, ...others }, ref) => (
         <div ref={ref} {...others}>
             <Group noWrap>
                 <div>
-                    <Text size="sm">{name}</Text>
+                    <Text size="sm">{label}</Text>
                 </div>
             </Group>
         </div>
@@ -16,17 +20,17 @@ const CategorySelectItem = forwardRef<HTMLDivElement, any>(
 
 const mockdata = [
     {
-        id: '1',
-        name: 'Alta',
+        id: "1",
+        name: "Baja",
     },
     {
-        id: '2',
-        name: 'Media',
+        id: "2",
+        name: "Media",
     },
     {
-        id: '3',
-        name: 'Baja',
-    }
+        id: "3",
+        name: "Alta",
+    },
 ];
 
 interface Props {
@@ -39,14 +43,14 @@ const ConfidenceSelect = ({ updateSelectedConfidence, errorConfidence }: Props) 
         <Select
             label="Nivel de confianza"
             placeholder='Selecciona un nivel de confianza'
-            itemComponent={CategorySelectItem}
+            itemComponent={ConfidenceSelectItem}
             data={mockdata.map(c => ({ value: c.id, label: c.name }))}
             searchable
             clearable
             maxDropdownHeight={300}
             nothingFound="Nothing found"
             filter={(value, item) =>
-                item?.title?.toLowerCase().includes(value?.toLowerCase().trim())
+                item?.label?.toLowerCase().includes(value?.toLowerCase().trim())
             }
             onChange={updateSelectedConfidence}
             error={errorConfidence}

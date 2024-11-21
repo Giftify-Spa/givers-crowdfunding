@@ -22,6 +22,7 @@
     "@mantine/notifications": "^6.0.9",
     "@mantine/nprogress": "^6.0.9",
     "@mantine/tiptap": "^6.0.9",
+    "@mercadopago/sdk-react": "^0.0.19",
     "@react-google-maps/api": "^2.19.3",
     "@tabler/icons-react": "^2.17.0",
     "@tiptap/extension-highlight": "^2.0.3",
@@ -45,6 +46,8 @@
     "react-flash-message": "^1.0.8",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.24.1",
+    "sweetalert2": "^11.14.5",
+    "sweetalert2-react-content": "^5.0.7",
     "yup": "^1.4.0"
   },
   "devDependencies": {

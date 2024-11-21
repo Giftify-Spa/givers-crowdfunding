@@ -21,8 +21,6 @@ interface Props {
 }
 
 const BankSelect = ({ handleSelectBank, errorBank }: Props) => {
-
-
     const [banks, setBanks] = useState([]);
 
     useEffect(() => {

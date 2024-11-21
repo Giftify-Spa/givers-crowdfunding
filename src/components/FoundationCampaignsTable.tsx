@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar, Group, Text, Button } from '@mantine/core';
+// import { Button } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import { getCampaignsWithFoundation } from "../firebase/services/CampaignServices";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
-import { Link } from 'react-router-dom';
-import { IconPencil } from '@tabler/icons-react';
+// import { Link } from 'react-router-dom';
+// import { IconPencil } from '@tabler/icons-react';
 
 const PAGE_SIZE = 5;
 
@@ -26,9 +26,6 @@ const FoundationCampaignsTable = ({ id }: Props) => {
 
         const chargedCampaigns = async () => {
             try {
-                if (campaignsCache.length > 0) {
-                    return campaignsCache;
-                }
                 const response = await getCampaignsWithFoundation(id);
 
                 const newCampaigns = response.filter(campaign =>
@@ -70,19 +67,6 @@ const FoundationCampaignsTable = ({ id }: Props) => {
             <DataTable
                 columns={[
                     {
-                        accessor: 'createdBy',
-                        title: 'Creado por',
-                        render: ({ createdBy }) =>
-                            <Group>
-                                {
-                                    createdBy && (
-                                        <Avatar src={createdBy.photoURL ? createdBy.photoURL : '#'} alt={`${createdBy ? createdBy.name : 'default'} profile avatar`} size="sm" radius="xl" />
-                                    )
-                                }
-                                <Text>{createdBy ? createdBy.name : ''}</Text>
-                            </Group>
-                    },
-                    {
                         accessor: 'name',
                         title: 'Nombre',
                     },
@@ -103,13 +87,17 @@ const FoundationCampaignsTable = ({ id }: Props) => {
                         render: ({ endDate }) => new Date(endDate.seconds * 1000).toLocaleDateString(),
                     },
                     {
-                        accessor: 'actions', title: 'Acciones',
-                        render: ({ id }) => <Button
-                            leftIcon={<IconPencil size={18} />}
-                            component={Link}
-                            to={`/admin/edit-campaign/${id}`}
-                        ></Button>,
-                    }
+                        accessor: 'status', title: 'Estado',
+                        render: ({ status }) => (status) ? 'En curso' : 'Pendiente de Aprobación',
+                    },
+                    // {
+                    //     accessor: 'actions', title: 'Acciones',
+                    //     render: ({ id }) => <Button
+                    //         leftIcon={<IconPencil size={18} />}
+                    //         component={Link}
+                    //         to={`/admin/edit-campaign/${id}`}
+                    //     ></Button>,
+                    // }
 
                 ]}
                 records={paginatedRecords}

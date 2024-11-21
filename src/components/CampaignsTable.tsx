@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar, Group, Text, Button } from '@mantine/core';
+import { Avatar, Group, Text, Button, Grid } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
-import { getCampaigns } from "../firebase/services/CampaignServices";
+import { deleteCampaign, getCampaigns } from "../firebase/services/CampaignServices";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 import { Link } from 'react-router-dom';
-import { IconPencil } from '@tabler/icons-react';
+import { IconPencil, IconTrash } from '@tabler/icons-react';
+import MySwal from '../utils/swal';
 
 const PAGE_SIZE = 5;
 
@@ -61,6 +62,36 @@ const CampaignsTable = () => {
         return <LoadingSpinnerTable />;
     }
 
+    const handleApprove = async (campaignId: string) => {
+        const result = await MySwal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Quieres eliminar esta campaña? Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await deleteCampaign(campaignId);
+                setRecords(prevCampaigns => prevCampaigns.filter(campaign => campaign.id !== campaignId));
+                MySwal.fire(
+                    'Eliminado',
+                    'La campaña ha sido eliminada correctamente.',
+                    'success'
+                );
+            } catch (error) {
+                console.error("Error eliminando campaña:", error);
+                MySwal.fire(
+                    'Error',
+                    'Hubo un problema al eliminar la campaña. Inténtalo de nuevo más tarde.',
+                    'error'
+                );
+            }
+        }
+    };
+
     return (
         <div className="animate__animated animate__fadeIn animate__fast">
             <DataTable
@@ -101,21 +132,42 @@ const CampaignsTable = () => {
                     },
                     {
                         accessor: 'actions', title: 'Acciones',
-                        render: ({ id }) => <Button
-                            leftIcon={<IconPencil size={18} />}
-                            component={Link}
-                            to={`/admin/edit-campaign/${id}`}
-                        ></Button>,
+                        render: ({ id }) =>
+                            <Grid gutter="xs">
+                                <Grid.Col span={6} xs={12}>
+                                    <Button
+                                        leftIcon={<IconPencil size={18} />}
+                                        component={Link}
+                                        to={`/admin/edit-campaign/${id}`}
+                                    >
+                                        Editar
+                                    </Button>
+                                </Grid.Col>
+
+                                <Grid.Col span={6} xs={12}>
+                                    <Button
+                                        onClick={() => handleApprove(id)}
+                                        leftIcon={<IconTrash size={18} />}
+                                        variant="outline"
+                                        color="red"
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </Grid.Col>
+                            </Grid>
                     }
 
                 ]}
                 records={paginatedRecords}
                 totalRecords={records.length}
+                noRecordsText="No hay registros"
                 recordsPerPage={PAGE_SIZE}
                 page={page}
                 onPageChange={(p) => setPage(p)}
                 highlightOnHover
                 verticalSpacing="sm"
+                
+
             />
         </div >
     );

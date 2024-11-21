@@ -38,18 +38,15 @@ const CategorySelect = ({ errorCategory, handleSelectCategory }: Props) => {
     }
     return (
         <Select
-            label="Categoría"
-            placeholder='Selecciona la categoría de la campaña'
+            label="Subcategoría"
+            placeholder='Selecciona la Subcategoría de la campaña'
             itemComponent={CategorySelectItem}
-            data={categories.map(category => ({ value: category.id, label: category.id, ...category }))}
+            data={categories.map(category => ({ value: category.id, label: category.name, ...category }))}
             searchable
             clearable
             maxDropdownHeight={300}
             nothingFound="No hay categorías"
-            onSelect={(v) => {
-                const event = v.target as HTMLSelectElement;
-                handleSelectCategory(event.value)
-            }}
+            onChange={(value) => handleSelectCategory(value)}
             error={errorCategory}
         />
     );

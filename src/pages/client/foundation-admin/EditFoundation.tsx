@@ -27,17 +27,14 @@ import BankSelect from "../../../components/BankSelect";
 import AccountTypeSelect from '../../../components/AccountTypeSelect';
 import { validationPaymentInfoFoundationSchema } from "../../../schemas/foundation/paymentInfoSchema";
 
-// Validation schema for the foundation form
-
-
 const EditFoundationPage = () => {
     const { id } = useParams<{ id: string }>();
 
     const [formValues, setFormValues] = useState({
-        rut: '',
+        // rut: '',
         bank: '',
         accountType: '',
-        holderName: '',
+        // holderName: '',
         accountNumber: '',
         email: ''
     });
@@ -126,7 +123,11 @@ const EditFoundationPage = () => {
         const fetchFoundationData = async () => {
             try {
                 const response = await getFoundation(id);
-                setFoundation(response);
+                if (response && typeof response === 'object') {
+                    setFoundation(response);
+                } else {
+                    setError("No se pudo cargar la fundación");
+                }
             } catch (error) {
                 console.error("Failed to fetch foundation: ", error);
                 setError("No se pudo cargar la fundación");
@@ -152,13 +153,25 @@ const EditFoundationPage = () => {
                                 <TextInput
                                     label="Nombre"
                                     name='name'
-                                    value={foundation?.name}
+                                    value={foundation?.name || ''}
                                     disabled />
                                 <TextInput
                                     label="Teléfono"
                                     name='fono'
-                                    value={foundation?.fono}
+                                    value={foundation?.fono || ''}
                                     disabled />
+
+                                {/* <TextInput
+                                    label="Rut"
+                                    name='fono'
+                                    value={foundation?.fono || ''}
+                                    disabled />
+
+                                <TextInput
+                                    label="Razón social"
+                                    name='fono'
+                                    value={foundation?.fono || ''}
+                                    disabled /> */}
                             </SimpleGrid>
                         </Paper>
                         <Paper {...paperProps}>
@@ -167,9 +180,9 @@ const EditFoundationPage = () => {
                                 Ingrese la información de la cuenta en la que se depositará el dinero recaudado de las campañas.
                             </Text>
 
-                            <Title {...subTitleProps}>Datos personales</Title>
+                            {/* <Title {...subTitleProps}>Datos de la organización</Title> */}
                             <SimpleGrid cols={1} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
-                                <TextInput
+                                {/* <TextInput
                                     label="Rut"
                                     name='rut'
                                     value={formValues.rut}
@@ -177,12 +190,12 @@ const EditFoundationPage = () => {
                                     error={errorMessages.rut}
                                     required />
                                 <TextInput
-                                    label="Nombre y Apellido"
+                                    label="Razón social"
                                     name='holderName'
                                     value={formValues.holderName}
                                     onChange={handleChange}
                                     error={errorMessages.holderName}
-                                    required />
+                                    required /> */}
 
                                 <Title {...subTitleProps}>Datos bancarios</Title>
 
@@ -211,7 +224,7 @@ const EditFoundationPage = () => {
                             <Flex align="center" justify="center">
                                 <Button
                                     component={LinkRouter}
-                                    to="/panel/dashboard"
+                                    to={`/panel/my-foundation/${id}`}
                                     style={{ marginRight: 20 }}
                                 >
                                     Volver

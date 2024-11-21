@@ -17,7 +17,6 @@ const FoundationCampaignsPage = (): JSX.Element => {
     const [loading, setLoading] = useState(true);
     const { id } = useParams();
 
-    console.log(id);
     const boxProps: BoxProps = {
         mt: 36,
         mb: 0,

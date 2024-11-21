@@ -132,7 +132,8 @@ const useStyles = createStyles((theme) => ({
         paddingLeft: theme.spacing.md,
         paddingRight: theme.spacing.md,
         color: theme.black,
-        textAlign: 'left',
+        textAlign: 'center',
+        marginBottom: 55,
 
         [theme.fn.smallerThan('md')]: {
             fontSize: rem(48),
@@ -173,18 +174,18 @@ const mockdata = [
         title: 'Beneficios',
         description: 'Obten regalías en comercios locales. ¡Te premiamos por donar!',
     },
-    {
-        id: 4,
-        icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        title: 'Crea tus propios proyectos',
-        description: 'Podrás subir tus causas o experiencias.',
-    },
-    {
-        id: 5,
-        icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        title: 'Conecta con otros Givers',
-        description: 'Construyendo comunidad o incluso proyectos en conjunto.',
-    }
+    // {
+    //     id: 4,
+    //     icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    //     title: 'Crea tus propios proyectos',
+    //     description: 'Podrás subir tus causas o experiencias.',
+    // },
+    // {
+    //     id: 5,
+    //     icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    //     title: 'Conecta con otros Givers',
+    //     description: 'Construyendo comunidad o incluso proyectos en conjunto.',
+    // }
 ];
 
 function Service({ title, description }: ServiceProps) {
@@ -225,16 +226,16 @@ const ServicesSection = ({ boxProps }: IProps) => {
 
     return (
         <Box {...boxProps}>
-            <SimpleGrid cols={3} spacing="lg" breakpoints={[{ maxWidth: 'md', cols: 2, spacing: 'sm' }]} >
-                <Title className={classes.titleSection}>
-                    ¿Por qué <Text
-                        component="span"
-                        inherit
-                        color='#ff7f4d'
-                    >
-                        nosotros?
-                    </Text>
-                </Title>
+            <Title className={classes.titleSection}>
+                ¿Por qué <Text
+                    component="span"
+                    inherit
+                    color='#ff7f4d'
+                >
+                    nosotros?
+                </Text>
+            </Title>
+            <SimpleGrid cols={3} spacing="lg" breakpoints={[{ maxWidth: 'md', cols: 2, spacing: 'sm' }]} sx={{ marginBottom: 20 }} >
                 {items}
             </SimpleGrid>
         </Box>

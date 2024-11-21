@@ -215,6 +215,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
 
         const { success, displayName, email, uid, photoURL, errorMessage } = await loginWithEmailAndPassword(emailUser, password);
 
+        if (!success) return { success, errorMessage };
+        
         if (!success) {
             dispatch({
                 type: "not-authenticated",
@@ -227,6 +229,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
         }
 
         const user = await getUserByUid(uid);
+
+        // Check if the user status is false
+        if (!user.status) {
+            dispatch({
+                type: "not-authenticated",
+            });
+
+            return {
+                success: false,
+                errorMessage: "Tu cuenta se encuentra deshabilitada. Por favor, contacta al administrador.",
+            };
+        }
 
         dispatch({
             type: "auth",
@@ -251,10 +265,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
 
     const startLogout = async () => {
         await logoutFirebase();
-
-        dispatch({
-            type: "logout"
-        });
+        dispatch({type: "logout"});
     }
 
     return (

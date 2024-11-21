@@ -201,7 +201,7 @@ const AppNavbarGuest = ({ ...others }: IProps) => {
                 onClose={closeDrawer}
                 size="100%"
                 padding="md"
-                title=""
+                title="Main Menu"
                 className={classes.hiddenDesktop}
                 classNames={{ header: classes.drawerHeader, close: classes.close }}
                 zIndex={1000000}

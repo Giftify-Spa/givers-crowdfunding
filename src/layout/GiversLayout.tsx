@@ -19,6 +19,10 @@ const GiversLayout = ({ children }) => {
                 styles={{
                     main: {
                         background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[1],
+                        adding: '0px',
+                        minHeight: '100vh',
+                        margin: '0px',
+                        overflow: 'visible'
                     },
                 }}
                 navbarOffsetBreakpoint="sm"

@@ -96,7 +96,7 @@ const ProfileSection = ({ data }: Props) => {
                     <Stack spacing="sm" align="stretch" justify="center">
                         {/* Imagen a la izquierda y nombre a la derecha */}
                         <Group align="center" noWrap>
-                            <Image src={data.image} height={100} width={100} className={classes.image} />
+                            <Image src={data.multimedia[0]} height={100} width={100} className={classes.image} />
                             <Title className={classes.title}>{data.name}</Title>
                         </Group>
                         {/* Localidad y Contacto debajo */}

@@ -3,12 +3,12 @@ import { forwardRef, useEffect, useState } from 'react';
 import { Group, Select, Text } from "@mantine/core";
 import { getUsersSelect } from '../firebase/services/UserServices';
 
-const CategorySelectItem = forwardRef<HTMLDivElement, any>(
-    ({ name, ...others }: any, ref) => (
+const ResponsibleSelectItem = forwardRef<HTMLDivElement, any>(
+    ({ name, email, ...others }: any, ref) => (
         <div ref={ref} {...others}>
             <Group noWrap>
                 <div>
-                    <Text size="sm">{name}</Text>
+                    <Text size="sm">{name} - {email}</Text>
                 </div>
             </Group>
         </div>
@@ -39,16 +39,13 @@ const ResponsibleSelect = ({ handleSelectResponsible, errorResponsible }: Props)
         <Select
             label="Responsable"
             placeholder='Selecciona al responsable de la fundación'
-            itemComponent={CategorySelectItem}
-            data={users.map((user) => ({ value: user.id, label: user.id, ...user }))}
+            itemComponent={ResponsibleSelectItem}
+            data={users.map((user) => ({ value: user.id, label: `${user.name} - ${user.email}`, ...user }))}
             searchable
             clearable
             maxDropdownHeight={300}
             nothingFound="No se encontró nada"
-            onSelect={(v) => {
-                const event = v.target as HTMLSelectElement;
-                handleSelectResponsible(event.value)
-            }}
+            onChange={(value) => handleSelectResponsible(value)}
             error={errorResponsible}
         />
     );

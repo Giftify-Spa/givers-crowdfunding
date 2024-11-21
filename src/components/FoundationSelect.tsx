@@ -42,15 +42,12 @@ const FoundationSelect = ({ errorFoundation, handleSelectFoundation }: Props) =>
             label="Fundación"
             placeholder='Selecciona la fundación que organiza la campaña'
             itemComponent={FoundationSelectItem}
-            data={foundations.map((foundation) => ({ value: foundation.id, label: foundation.id, ...foundation }))}
+            data={foundations.map((foundation) => ({ value: foundation.id, label: foundation.name, ...foundation }))}
             searchable
             clearable
             maxDropdownHeight={300}
             nothingFound="No hay fundaciones"
-            onSelect={(v) => {
-                const event = v.target as HTMLSelectElement;
-                handleSelectFoundation(event.value)
-            }}
+            onChange={(value) => handleSelectFoundation(value)}
             error={errorFoundation}
         />
     );

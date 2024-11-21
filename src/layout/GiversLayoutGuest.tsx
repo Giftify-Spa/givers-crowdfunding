@@ -23,6 +23,7 @@ const GiversLayoutGuest = ({ children }) => {
                         padding: '0px',
                         minHeight: '100vh',
                         margin: '0px',
+                        overflow: 'visible'
                     },
                 }}
                 navbarOffsetBreakpoint="sm"

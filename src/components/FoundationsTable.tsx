@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { getFoundations } from "../firebase/services/FoundationServices";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 import { randomId, useDisclosure } from "@mantine/hooks";
-import { Button } from "@mantine/core";
+import { Button, Grid } from "@mantine/core";
 import { DetailModal } from "./DetailModal";
 import { Foundation } from "../interfaces/Foundation";
+import { IconCash, IconPencil } from "@tabler/icons-react";
 
 const PAGE_SIZE = 5;
 
@@ -80,9 +81,27 @@ const FoundationsTable = () => {
                         accessor: 'actions',
                         title: 'Acciones',
                         render: (foundation) => (
-                            <Button size="xs" onClick={() => handleOpenModal(foundation)}>
-                                Ver Detalles
-                            </Button>
+                            <Grid gutter="xs">
+                                <Grid.Col span={6} xs={12}>
+                                    <Button
+                                        size="xs"
+                                        onClick={() => handleOpenModal(foundation)}
+                                        leftIcon={<IconPencil size={18} />}
+                                    >
+                                        Editar
+                                    </Button>
+                                </Grid.Col>
+
+                                <Grid.Col span={6} xs={12}>
+                                    <Button
+                                        size="xs"
+                                        onClick={() => handleOpenModal(foundation)}
+                                        leftIcon={<IconCash size={18} />}
+                                    >
+                                        Ver Datos Bancarios
+                                    </Button>
+                                </Grid.Col>
+                            </Grid>
                         )
                     }
                 ]}

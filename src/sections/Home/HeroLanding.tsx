@@ -1,14 +1,13 @@
-import { createStyles, Image, ImageProps, Overlay, rem, Stack, Title } from '@mantine/core';
+import { createStyles, Image, ImageProps, Overlay, rem, Title } from '@mantine/core';
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
         position: 'relative',
         backgroundImage:
-            'url(https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/fondogivers1.png?alt=media&token=9f090341-8319-4f73-ba1a-fdc83b383b05)',
+            'url(https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/fondogivers2.png?alt=media&token=1576a23b-4824-405a-a027-850db3280c0b)',
         backgroundSize: 'cover',
-        // backgroundPosition: 'center',
         backgroundPosition: 'center 5%',
-        height: rem(750),
+        height: rem(755),
         margin: 0,
         padding: 0,
 
@@ -25,92 +24,71 @@ const useStyles = createStyles((theme) => ({
     inner: {
         position: 'relative',
         zIndex: 1,
-        height: rem(640),
+        height: '100%', // Asegurarse de que ocupe toda la altura del wrapper
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-end', // Cambia la alineación a la derecha
-        justifyContent: 'center',
-        padding: 0,
+        alignItems: 'center', // Centrar verticalmente el contenido
+        justifyContent: 'flex-end', // Centrar horizontalmente el contenido
+        padding: theme.spacing.md,
 
         [theme.fn.smallerThan('md')]: {
-            height: rem(560),
-        }
+            height: 'auto',
+        },
+    },
+
+    contentContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end', // Centrar horizontalmente los elementos
+        justifyContent: 'center', // Centrar verticalmente los elementos
+        width: '100%',
+        maxWidth: rem(800),
+        padding: theme.spacing.md,
+
+        [theme.fn.smallerThan('sm')]: {
+            width: '100%',
+            padding: `${theme.spacing.sm} 0`,
+        },
     },
 
     title: {
         fontWeight: 900,
-        fontSize: rem(64),
+        fontSize: rem(48),
         color: theme.white,
         textAlign: 'end',
-
-        [theme.fn.smallerThan('md')]: {
-            fontSize: rem(48),
-        },
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(28),
             fontWeight: 700,
+            textAlign: 'center',
+            padding: 0,
+            marginBottom: theme.spacing.md,
         },
     },
 
     subtitle: {
         fontWeight: 600,
-        fontSize: rem(32),
+        fontSize: rem(24),
         color: theme.colors.gray[2],
         textAlign: 'end',
-
-        [theme.fn.smallerThan('md')]: {
-            fontSize: rem(24),
-        },
+        marginTop: theme.spacing.md,
+        marginBottom: theme.spacing.md,
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(20),
             fontWeight: 500,
+            textAlign: 'justify',
         },
     },
 
-    highlight: {
-        color: theme.colors.gray[4],
-    },
     controls: {
-        marginTop: `calc(${theme.spacing.xl} * 1.5)`,
         display: 'flex',
-        justifyContent: 'center',
-        paddingLeft: theme.spacing.md,
-        paddingRight: theme.spacing.md,
+        flexDirection: 'row',
+        gap: theme.spacing.md,
+        marginTop: theme.spacing.md,
 
-        [theme.fn.smallerThan('xs')]: {
-            flexDirection: 'column',
-        },
-    },
-
-    stack: {
-        alignItems: 'flex-end',  // Alineación del contenido al borde derecho
-        justifyContent: 'flex-end',
-        width: '60%', // Opción para que ocupe toda la línea y el contenido esté a la derecha
-        marginRight: 20,
-    },
-    control: {
-        fontSize: theme.fontSizes.md,
-
-        '&:not(:first-of-type)': {
-            marginLeft: theme.spacing.md,
-        },
-
-        [theme.fn.smallerThan('xs')]: {
-            '&:not(:first-of-type)': {
-                marginTop: theme.spacing.md,
-                marginLeft: 0,
-            },
-        },
-    },
-
-    secondaryControl: {
-        color: theme.white,
-        backgroundColor: 'rgba(255, 255, 255, .4)',
-
-        '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, .45) !important',
+        [theme.fn.smallerThan('sm')]: {
+            flexDirection: 'row',
+            gap: theme.spacing.sm,
         },
     },
 
@@ -124,7 +102,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const imageProps: ImageProps = {
-    height: 80,
+    height: rem(80),
     fit: "contain",
     py: "xl"
 }
@@ -142,19 +120,17 @@ const HeroLandingSection = ({ title, subtitle }: Props) => {
             <Overlay color="#000" opacity={0.45} zIndex={1} />
 
             <div className={classes.inner}>
-
-                <Stack spacing="xl" className={classes.stack}>
+                <div className={classes.contentContainer} >
                     <Title className={classes.title}>
                         {title}
                     </Title>
                     <Title className={classes.subtitle}>
                         {subtitle}
                     </Title>
-                </Stack>
-
-                <div className={classes.controls}>
-                    <Image src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/corfo.png?alt=media&token=80b6baa6-97b0-4d42-90fc-2b5dcde28d27" {...imageProps} />
-                    <Image src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/financiado.png?alt=media&token=37731610-9f90-4c32-9373-a0fb589793ad" {...imageProps} />
+                    <div className={classes.controls}>
+                        <Image src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/corfo.png?alt=media&token=80b6baa6-97b0-4d42-90fc-2b5dcde28d27" {...imageProps} />
+                        <Image src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/financiado.png?alt=media&token=37731610-9f90-4c32-9373-a0fb589793ad" {...imageProps} />
+                    </div>
                 </div>
             </div>
         </div >

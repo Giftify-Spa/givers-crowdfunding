@@ -1,6 +1,6 @@
 /* eslint-disable no-unsafe-optional-chaining */
 import { useRef } from "react";
-import { StandaloneSearchBox, LoadScript, Libraries } from "@react-google-maps/api";
+import { StandaloneSearchBox, Libraries, useJsApiLoader } from "@react-google-maps/api";
 import { TextInput } from "@mantine/core";
 
 
@@ -13,6 +13,11 @@ const libraries: Libraries = ["places"]; // Define libraries outside the compone
 const GooglePlace = ({ updateAddress }: Props) => {
     const inputRef = useRef<google.maps.places.SearchBox | null>(null);
 
+    const { isLoaded, loadError } = useJsApiLoader({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string,
+        libraries,
+    });
+
     const handlePlaceChanged = () => {
         const [place] = inputRef.current?.getPlaces();
 
@@ -24,18 +29,22 @@ const GooglePlace = ({ updateAddress }: Props) => {
         }
 
     }
+
+    if (loadError) {
+        return <div>Error al cargar Google Maps</div>;
+    }
+
+    if (!isLoaded) {
+        return null;
+    }
+
     return (
-        <LoadScript
-            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-            libraries={libraries}
+        <StandaloneSearchBox
+            onLoad={(ref) => (inputRef.current = ref)}
+            onPlacesChanged={handlePlaceChanged}
         >
-            <StandaloneSearchBox
-                onLoad={(ref) => (inputRef.current = ref)}
-                onPlacesChanged={handlePlaceChanged}
-            >
-                <TextInput label="Dirección" placeholder="Av condell, Antofagasta, Chile" />
-            </StandaloneSearchBox>
-        </LoadScript>
+            <TextInput label="Dirección" placeholder="Av condell, Antofagasta, Chile" />
+        </StandaloneSearchBox>
     )
 }
 

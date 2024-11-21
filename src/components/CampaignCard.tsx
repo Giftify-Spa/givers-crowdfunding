@@ -4,7 +4,6 @@ import {
     createStyles,
     Flex,
     getStylesRef,
-    Image,
     PaperProps,
     Progress,
     Stack,
@@ -82,9 +81,11 @@ const CampaignCard = ({ data, showActions }: IProps) => {
         description,
         cumulativeAmount,
         requestAmount,
-        multimedia,
+        initVideo,
+        endVideo,
         donorsCount,
         isCause,
+        isFinished
     } = data;
     const linkProps = (isAuthenticated && user.profile === "Admin")
         ? { to: `/admin/campaign/${id}`, rel: 'noopener noreferrer' }
@@ -95,7 +96,15 @@ const CampaignCard = ({ data, showActions }: IProps) => {
     return (
         <Card radius="sm" shadow="md" ml="xs" component={Link} {...linkProps} className={classes.card}>
             <Card.Section>
-                <Image src={multimedia[0]} height={280} className={classes.image} />
+                {/* <Image src={multimedia[0]} height={280} className={classes.image} /> */}
+                <iframe
+                    width="100%"
+                    height="100%"
+                    src={isFinished ? endVideo : initVideo}
+                    title={`Video campaign ${name}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; web-share; picture-in-picture"
+                    allowFullScreen
+                />
             </Card.Section>
 
             <Card.Section pt={0} px="md" pb="md">

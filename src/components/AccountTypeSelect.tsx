@@ -4,8 +4,8 @@ import { IBank } from "../types";
 
 const data = [
     {
-        id: 'CV',
-        name: 'Cuenta Vista'
+        id: 'CE',
+        name: 'Chequera Electrónica'
     },
     {
         id: 'CC',

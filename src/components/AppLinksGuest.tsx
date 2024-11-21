@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, createStyles, Flex, FlexProps, getStylesRef, rem } from '@mantine/core';
-import { IconBuildingWarehouse, IconUserCircle } from '@tabler/icons-react';
+import { IconBuildingWarehouse } from '@tabler/icons-react';
 import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -24,9 +24,9 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         textDecoration: 'none',
-        fontSize: theme.fontSizes.sm,
+        fontSize: 16,
         color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[0],
-        padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+        padding: `8 ${theme.spacing.sm}`,
         borderRadius: theme.radius.sm,
         fontWeight: 500,
 
@@ -59,8 +59,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data = [
-    { link: '/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
-    { link: '/login', label: 'Iniciar Sesion', icon: IconUserCircle },
+    { link: '/campaigns', label: 'Nuestros Proyectos', icon: IconBuildingWarehouse },
+    { link: '/login', label: 'Iniciar Sesion'},
     { link: '/register', label: 'Regístrate' },
     { link: '/registerFoundation', label: 'Regístrar Organización' },
 ];

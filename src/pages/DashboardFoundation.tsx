@@ -69,13 +69,14 @@ const DashboardFoundationPage = () => {
     return (
         <GiversLayout>
             <Helmet>
-                <title>Dashboard</title>
+                <title>{foundation && `Gestión ${foundation?.name}`}</title>
             </Helmet>
             <Box>
                 <Container fluid my="xl">
                     <Stack spacing="xl">
+                        <Title order={3}>Gestión Organización</Title>
                         <Flex align="center" justify="space-between">
-                            <Title order={3}>{foundation && `Fundación ${foundation?.name}`}</Title>
+                            <Title order={3}>{foundation && `${foundation?.name}`}</Title>
                             <Button
                                 leftIcon={<IconEdit size={18} />}
                                 component={Link}
@@ -95,7 +96,7 @@ const DashboardFoundationPage = () => {
                                     <Button
                                         leftIcon={<IconPlus size={18} />}
                                         component={Link}
-                                        to="/admin/create-campaign"
+                                        to={`/panel/my-foundation/create-campaign/${id}`}
                                     >
                                         Crear una campaña
                                     </Button>

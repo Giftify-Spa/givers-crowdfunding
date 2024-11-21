@@ -24,11 +24,11 @@ const iconMap = {
 const mockData = [
     {
         icon: 'IconHeartHandshake',
-        name: 'Campañas',
+        name: 'CAUSAS',
     },
     {
         icon: 'IconComet',
-        name: 'Experiencias',
+        name: 'EXPERIENCIAS',
     }
 ]
 

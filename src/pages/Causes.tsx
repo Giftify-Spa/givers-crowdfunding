@@ -1,12 +1,13 @@
 import { Box, BoxProps, Container, createStyles, rem, SimpleGrid, Stack, Title } from '@mantine/core';
 import { CampaignCard } from "../components";
 import { useEffect, useState } from "react";
-import { getCampaignsWithCauses } from "../firebase/services/CampaignServices";
+import { getCampaignsByType } from '../firebase/services/CampaignServices';
 import LoadingSpinner from "../components/LoadingSpinner";
 import HeroSection from '../sections/Home/HeroSection';
+import { Campaign } from '../interfaces/Campaign';
 
 const CausesPage = (): JSX.Element => {
-    const [campaigns, setCampaigns] = useState([]);
+    const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [loading, setLoading] = useState(true);
 
     const boxProps: BoxProps = {
@@ -40,32 +41,19 @@ const CausesPage = (): JSX.Element => {
         },
     }));
 
-
     useEffect(() => {
-
-        const chargedCampaigns = async () => {
-            try {
-                const response = await getCampaignsWithCauses(0);
-                return response;
-            } catch (error) {
-                console.error("Error getting documents: ", error);
-                throw error; // Re-lanza el error para que pueda ser capturado por el caller
-            }
-        };
-
         const fetchData = async () => {
             try {
-                const campaigns = await chargedCampaigns();
+                const { campaigns } = await getCampaignsByType('cause');
                 setCampaigns(campaigns);
-                setLoading(false);
             } catch (error) {
-                // Manejar errores aquí, por ejemplo, establecer un estado de error
-                console.error("Failed to fetch foundations: ", error);
+                console.error("Failed to fetch campaigns: ", error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchData();
-
     }, []);
 
     const { classes } = useStyles();

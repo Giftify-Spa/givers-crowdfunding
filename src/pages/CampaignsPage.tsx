@@ -6,6 +6,7 @@ import HeroSection from "../sections/Home/HeroSection";
 import { Box, BoxProps, Button, Container, Flex, SimpleGrid, Stack } from "@mantine/core";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { getCampaignsByType } from "../firebase/services/CampaignServices";
+import EmptyState from "../components/EmptyState";
 
 const Campaignspage = (): JSX.Element => {
     // State to store campaigns, loading status, filter type, etc.
@@ -151,7 +152,7 @@ const Campaignspage = (): JSX.Element => {
                                 </Flex>
                                 {loading ? (
                                     <LoadingSpinner position={'start'} /> // Show loading spinner if loading
-                                ) : (
+                                ) : (campaigns.length > 0) ? (
                                     <div className="animate__animated animate__fadeIn animate__fast">
                                         <SimpleGrid
                                             cols={3}
@@ -170,6 +171,8 @@ const Campaignspage = (): JSX.Element => {
                                         )}
                                         {loadingMore && <LoadingSpinner position={"start"} />} {/* Show spinner if loading more */}
                                     </div>
+                                ) : (
+                                    <EmptyState title="No hay campañas disponibles" description="En este momento no podemos mostrarte nuestras campañas. Intentalo más tarde." /> // Reemplazo del mensaje
                                 )}
                             </Box>
                         </Stack>

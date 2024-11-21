@@ -8,7 +8,6 @@ import {
     DrawerProps,
     Flex,
     Group,
-    Image,
     NumberInput,
     Paper,
     PaperProps,
@@ -27,10 +26,12 @@ import {
 } from "@tabler/icons-react";
 import * as yup from 'yup';
 import { Campaign } from '../interfaces/Campaign';
-import { useNavigate } from 'react-router-dom';
 import { formattingToCLPNumber } from '../helpers/formatCurrency';
-import { addOrder } from '../firebase/service';
-import { checkUser } from '../firebase/services/UserServices';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
+import axios from 'axios';
+
+
+
 interface IProps extends Pick<DrawerProps, 'opened' | 'onClose' | 'size'> {
     campaign?: Campaign
     iconSize: number
@@ -46,7 +47,29 @@ const validationDonationSchema = yup.object().shape({
 
 const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
 
-    const navigate = useNavigate();
+    const [preference_id, setPreference_id] = useState<string | null>(null);
+
+    initMercadoPago(import.meta.env.VITE_MERCADO_PAGO_KEY_DEV, {
+        locale: "es-CL"
+    });
+
+    const createPreference = async () => {
+        try {
+            const response = await axios.post("http://127.0.0.1:5001/givers-48277/us-central1/mercadoPagoGivers/create-preference", {
+                title: "Donación",
+                price: 1000,
+                quantity: 1
+            });
+            const { id } = response.data;
+            console.log(id);
+            setPreference_id(id);
+            // return id;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // const navigate = useNavigate();
 
     const [formValues, setFormValues] = useState<{ name: string, lastname: string, email: string, amount: number | string, payment: string }>({
         name: '',
@@ -91,29 +114,41 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
     }
 
     const onCreateDonation = async () => {
-        const isValid = await isValidForm();
-        if (isValid) {
-            try {
-
-                const userId = await checkUser(formValues);
-
-                const formattedOrderData = {
-                    contributionAmount: Number(formValues.amount),
-                    status: 'INITIALIZED',
-                    os: 'WEB',
-                    userId,
-                    campaignId: campaign.id
-                };
-
-                const { success, order } = await addOrder(formattedOrderData);
-
-                if (success) {
-                    navigate('/transbank/request', { state: { order, campaignId: campaign?.id, userId: formattedOrderData.userId } });
-                }
-            } catch (error) {
-                console.log(error);
+        try {
+            const isValid = await isValidForm();
+            if (isValid) {
+                console.log('Formulario válido');
             }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            console.log('Finalizado');
         }
+        // const isValid = await isValidForm();
+        // if (isValid) {
+        //     try {
+
+        //         const userId = await checkUser(formValues);
+
+        //         const formattedOrderData = {
+        //             contributionAmount: Number(formValues.amount),
+        //             status: 'INITIALIZED',
+        //             os: 'WEB',
+        //             userId,
+        //             campaignId: campaign.id
+        //         };
+
+        //         const { success, order } = await addOrder(formattedOrderData);
+
+        //         if (success) {
+        //             navigate('/transbank/request', { state: { order, campaignId: campaign?.id, userId: formattedOrderData.userId } });
+        //         }
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
+
+
     }
     return (
         <Drawer
@@ -126,8 +161,7 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
             <Container>
                 <Stack>
                     <Flex gap="xs" align="center">
-                        <Image src={campaign?.multimedia[0]} height={96} width={120} fit="contain" radius="sm" />
-                        <Text>Tu aporte a la <b>{campaign?.name}</b></Text>
+                        <Text>Tu aporte a <b>{campaign?.name}</b></Text>
                     </Flex>
                     <NumberInput
                         size="md"
@@ -192,6 +226,13 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                                     value="gpay"
                                     label={<Group spacing="xs"><IconCash size={iconSize} /><Text>Webpay Transbank</Text></Group>} />
                             </Group>
+
+                            <Group mt="sm">
+                                <Radio
+                                    onClick={createPreference}
+                                    value="gpay"
+                                    label={<Group spacing="xs"><IconCash size={iconSize} /><Text>Mercado Pago</Text></Group>} />
+                            </Group>
                         </Radio.Group>
                     </Paper>
 
@@ -224,6 +265,7 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                     </Paper>
                 </Stack>
             </Container >
+            {preference_id && <Wallet initialization={{ preferenceId: preference_id, redirectMode: 'blank' }} />}
         </Drawer >
     );
 };

@@ -12,13 +12,13 @@ import {
     getDoc,
     doc,
     addDoc,
+    updateDoc,
+    orderBy,
+    startAfter,
 } from "firebase/firestore";
 
 import { getAuth } from "firebase/auth";
 import { Campaign } from "../../interfaces/Campaign";
-
-
-// Get Operations
 
 export const countUsers = async (): Promise<number> => {
     try {
@@ -36,7 +36,6 @@ export const countUsers = async (): Promise<number> => {
         throw new Error("No se pudo contar los usuarios");
     }
 };
-
 
 export const getUserByUid = async (uid: string): Promise<User | null> => {
     try {
@@ -139,7 +138,7 @@ const getAuthenticatedUserId = async (): Promise<string | null> => {
  * Retrieves the list of contributions made by the authenticated user.
  * @returns {Promise<Array>} An array of contribution objects containing details of each contribution and its related campaign.
  */
-export const getDonorsByUser = async () => {
+export const getDonorsByUser = async (): Promise<Array<any>> => {
     try {
         // Get the authenticated user's ID
         const userId = await getAuthenticatedUserId();
@@ -197,7 +196,6 @@ export const getDonorsByUser = async () => {
         return contributions.filter(contribution => contribution !== null);
 
     } catch (error) {
-        console.error("Error getting documents: ", error);
         return []
     }
 }
@@ -230,3 +228,90 @@ export async function checkUser(data: User) {
         console.log(error);
     }
 }
+
+/**
+ * Disables a user by updating their status in Firestore.
+ * @param {string} userId - The ID of the user to disable.
+ * @returns {Promise<void>} - A promise that resolves when the user is successfully disabled.
+ * @throws {Error} - If there is an issue updating the user status.
+ */
+export const disableUser = async (userId: string): Promise<void> => {
+    try {
+        // Reference the specific user's document in Firestore
+        const userRef = doc(FirebaseDB, 'users', userId);
+
+        // Update the user's status to disabled (e.g., set "status" to false or "status" to "disabled")
+        await updateDoc(userRef, {
+            status: false, // Adjust this field to match your data structure (e.g., use "status: 'disabled'" if applicable)
+        });
+
+        console.log(`User with ID ${userId} has been disabled.`);
+    } catch (error) {
+        console.error("Error disabling user:", error);
+        throw new Error("Unable to disable the user. Please try again later.");
+    }
+};
+
+/**
+ * Toggles a user's status (enables or disables) by updating their status in Firestore.
+ * @param {string} userId - The ID of the user.
+ * @param {boolean} status - The desired status for the user (true to enable, false to disable).
+ * @returns {Promise<void>} - A promise that resolves when the user's status is updated.
+ * @throws {Error} - If there is an issue updating the user status.
+ */
+export const toggleUserStatus = async (userId: string, status: boolean): Promise<void> => {
+    try {
+        // Reference the specific user's document in Firestore
+        const userRef = doc(FirebaseDB, 'users', userId);
+
+        // Update the user's status in Firestore
+        await updateDoc(userRef, {
+            status: status,
+        });
+
+        console.log(`User with ID ${userId} has been ${status ? 'enabled' : 'disabled'}.`);
+    } catch (error) {
+        console.error(`Error ${status ? 'enabling' : 'disabling'} user:`, error);
+        throw new Error(`Unable to ${status ? 'enable' : 'disable'} the user. Please try again later.`);
+    }
+};
+
+/**
+ * Fetches a paginated list of users from Firestore.
+ * @param {number} pageSize - The number of users per page.
+ * @param {any} lastDoc - The last document from the previous page (for pagination).
+ * @returns {Promise<{ users: User[], lastDoc: any }>} A promise that resolves to an object containing the array of user objects and the last document.
+ */
+export const getPaginatedUsers = async (limit: number, lastDoc: any = null): Promise<{ users: User[], lastDoc: any }> => {
+    try {
+        // Construye la consulta Firestore con filtros y paginación
+        let baseQuery = query(
+            collection(FirebaseDB, "users"),
+            orderBy("name"), // Ordena por nombre para paginación
+            ...(limit > 0 ? [firestorelimit(limit)] : []) // Apply limit if specified
+        );
+
+        // Si lastDoc existe, agrégalo a la consulta
+        if (lastDoc) {
+            baseQuery = query(baseQuery, startAfter(lastDoc));
+        }
+
+        // Ejecuta la consulta y obtiene los documentos
+        const querySnapshot = await getDocs(baseQuery);
+
+        // Mapea cada documento a un objeto User
+        const users: User[] = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        } as User));
+
+        // Retorna los usuarios y el último documento para paginación
+        return {
+            users,
+            lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
+        };
+    } catch (error) {
+        console.error("Error fetching paginated users:", error);
+        return { users: [], lastDoc: null };
+    }
+};

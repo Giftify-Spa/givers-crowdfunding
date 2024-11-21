@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Timestamp } from "firebase/firestore"
+import { DocumentReference, Timestamp } from "firebase/firestore"
 
 export interface Campaign {
     id?: string;
     name: string;
     description: string;
     initVideo: string;
-    initDate: Date;
-    endDate: Date;
+    endVideo?: string;
+    initDate: Timestamp | Date | string;
+    endDate: Timestamp | Date | string;
     isCause: boolean;
     isExperience: boolean;
     isFinished?: boolean;
+    isExecute?: boolean;
     cumulativeAmount?: number;
     requestAmount: number;
-    multimedia?: any[];
     status?: boolean;
+    delete?: boolean;
     donorsCount?: number;
-    createdAt?: Timestamp;
-    category: any;
-    foundation: any;
-    responsible: any;
+    createdAt?: Timestamp | null;
+    category?: DocumentReference | string | any;
+    foundation?: any;
+    responsible?: DocumentReference | string | any;
     createdBy?: any;
 }

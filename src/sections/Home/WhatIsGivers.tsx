@@ -1,4 +1,4 @@
-import { AspectRatio, Box, BoxProps, createStyles, rem, Text, TextProps, Title, TitleProps } from "@mantine/core";
+import { AspectRatio, Box, BoxProps, Container, createStyles, rem, SimpleGrid, Text, TextProps, Title, TitleProps } from "@mantine/core";
 
 interface IProps {
     boxProps: BoxProps
@@ -36,7 +36,7 @@ const useStyles = createStyles((theme) => ({
         paddingLeft: theme.spacing.sm,
         paddingRight: theme.spacing.sm,
         color: theme.black,
-        marginTop: theme.spacing.sm,
+        marginTop: theme.spacing.xl,
         marginBottom: theme.spacing.sm,
         marginLeft: theme.spacing.md,
         marginRight: theme.spacing.md,
@@ -69,30 +69,35 @@ const WhatIsGiversSection = ({ boxProps }: IProps) => {
                 marginLeft: '-50vw',
                 marginRight: '-50vw',
                 backgroundColor: '#08857f',
+                padding: '2rem 0',
             }}
         >
-            <Box mb="lg">
-                <Title className={classes.title}>
-                    ¿Qué es Givers?
-                </Title>
-            </Box>
-            <AspectRatio ratio={16 / 9} mx="auto" sx={{ maxWidth: rem(480) }}> {/* Cambia aquí el tamaño máximo */}
-                <iframe
-                    width="100%"
-                    height="100%"
-                    src="https://www.youtube.com/embed/fJ9rUzIMcZQ"
-                    title="What is Givers?"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                />
-            </AspectRatio>
-            <Text className={classes.subtitle}>
-                Haz la diferencia y súmate a la nueva forma de donar.
-                <Text component="span" weight={700} style={{ fontStyle: 'italic' }}>
-                    Da esperanza, se un Giver.
-                </Text>
-            </Text>
+            <Container>
+                <SimpleGrid cols={2} spacing="xl" breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
+                    <AspectRatio ratio={16 / 9} mx="auto" sx={{ width: "100%" }}>
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src="https://www.youtube.com/embed/fJ9rUzIMcZQ"
+                            title="What is Givers?"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                        />
+                    </AspectRatio>
+                    <Box mb="lg">
+                        <Title className={classes.title}>
+                            ¿Por qué elegir Givers?
+                        </Title>
+                        <Text className={classes.subtitle}>
+                            Haz la diferencia y súmate a la nueva forma de donar.
+                            <Text weight={700} style={{ fontStyle: 'italic' }}>
+                                Da esperanza, se un Giver.
+                            </Text>
+                        </Text>
+                    </Box>
+                </SimpleGrid>
+            </Container>
         </Box>
     );
 };

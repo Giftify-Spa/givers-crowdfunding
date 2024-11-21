@@ -8,18 +8,24 @@ import {
     Paper,
     PaperProps,
     SimpleGrid,
+    Stack,
+    Loader,
+    Overlay,
     Text,
+    Textarea,
     TextInput,
     Title,
     TitleProps,
-    useMantineTheme
+    useMantineTheme,
+    List
 } from "@mantine/core";
 import { useState } from "react";
 
 import {
+    IconCheck,
     IconPlus
 } from "@tabler/icons-react";
-import { CountrySelect } from "../../components";
+import { CountrySelect, FileDropzone } from "../../components";
 
 import { Link as LinkRouter, useNavigate } from "react-router-dom";
 
@@ -30,10 +36,11 @@ import { addFoundation } from "../../firebase/services/FoundationServices";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import GiversLayout from "../../layout/GiversLayout";
 import { validationFoundationSchema } from "../../schemas/foundation/createSchema";
+import { showNotification } from "@mantine/notifications";
 
 const CreateFoundationPage = () => {
 
-    const [formValues, setFormValues] = useState<{ name: string; description: string; country: string; city: string, address: string, lat: string, lng: string, confidenceLevel: number, fono: string, responsible: string }>({
+    const [formValues, setFormValues] = useState<{ name: string; description: string; country: string; city: string; address: string; lat: string; lng: string; confidenceLevel: number; fono: string; responsible: string; multimediaCount: number; }>({
         name: '',
         description: '',
         country: '',
@@ -44,26 +51,20 @@ const CreateFoundationPage = () => {
         confidenceLevel: 0,
         fono: '',
         responsible: '',
+        multimediaCount: 0,
     });
+
+    const [files, setFiles] = useState<File[]>([]);
 
     const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
 
     const [countrySelect, setCountrySelect] = useState<string>('');
 
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const theme = useMantineTheme()
-    // const [active, setActive] = useState(0);
-    // const [target, setTarget] = useState('deadline');
-    // const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
-    // const [donationType, setDonationType] = useState('any');
-    // const [minimumCheck, setMinimumCheck] = useState(false);
-
-
-    // const nextStep = () => setActive((current: number) => (current < 4 ? current + 1 : current));
-    // const prevStep = () => setActive((current: number) => (current > 0 ? current - 1 : current));
-
 
     const titleProps: TitleProps = {
         size: 24,
@@ -104,7 +105,7 @@ const CreateFoundationPage = () => {
         setFormValues({ ...formValues, responsible: value });
     }
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.currentTarget;
         setFormValues({
             ...formValues,
@@ -113,33 +114,46 @@ const CreateFoundationPage = () => {
     }
 
     const onCreateFoundation = async () => {
+        setIsLoading(true);
+        setError(null);
 
-        console.log(error);
+        try {
+            const isValid = await isValidForm();
+            if (isValid) {
+                // Format data
+                const foundationData = {
+                    name: formValues.name,
+                    description: formValues.description,
+                    country: countrySelect,
+                    city: formValues.city,
+                    address: formValues.address,
+                    lat: formValues.lat,
+                    lng: formValues.lng,
+                    confidenceLevel: formValues.confidenceLevel,
+                    fono: formValues.fono,
+                    multimedia: files,
+                    responsible: formValues.responsible,
+                }
 
-        const isValid = await isValidForm();
+                const response = await addFoundation(foundationData);
 
-        if (isValid) {
-            // Format data
-            const foundationData = {
-                name: formValues.name,
-                description: formValues.description,
-                country: countrySelect,
-                city: formValues.city,
-                address: formValues.address,
-                lat: formValues.lat,
-                lng: formValues.lng,
-                confidenceLevel: formValues.confidenceLevel,
-                fono: formValues.fono,
-                responsible: formValues.responsible,
+                if (!response.success) return setError('ocurrió un error al crear la fundación');
+
+                // Show success notification
+                showNotification({
+                    title: 'Fundación Creada',
+                    message: 'La fundación se ha creado exitosamente.',
+                    color: 'green',
+                    icon: <IconCheck size={18} />,
+                });
+
+                // Redirect to dashboard
+                navigate('/panel/dashboard');
             }
-
-            const response = await addFoundation(foundationData);
-
-            if (!response.success) return setError('ocurrió un error al crear la fundación');
-
-            // Redirect to dashboard
-            navigate('/panel/dashboard');
-
+        } catch (error) {
+            setError('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -156,6 +170,11 @@ const CreateFoundationPage = () => {
             return false;
         }
     }
+
+    const updateHandleDrop = (dropFiles: File[]) => {
+        setFiles(dropFiles)
+        setFormValues({ ...formValues, multimediaCount: dropFiles.length })
+    }
     return (
         <GiversLayout>
             <Helmet>
@@ -168,7 +187,7 @@ const CreateFoundationPage = () => {
                     <div>
                         <Title {...titleProps}>Información Fundación</Title>
                         <Paper {...paperProps}>
-                            <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
+                            <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]} sx={{ marginBottom: 20 }}>
                                 <TextInput
                                     label="Nombre"
                                     placeholder="Ingresar nombre de la fundación"
@@ -178,14 +197,7 @@ const CreateFoundationPage = () => {
                                     error={errorMessages.name}
                                     required />
 
-                                <TextInput
-                                    label="Descripción"
-                                    placeholder="Ingrese la descripción de la fundación"
-                                    name='description'
-                                    value={formValues.description}
-                                    onChange={handleChange}
-                                    error={errorMessages.description}
-                                    required />
+                                <ResponsibleSelect errorResponsible={errorMessages.responsible} handleSelectResponsible={updateResponsible} />
 
                                 <TextInput
                                     label="Teléfono"
@@ -194,10 +206,22 @@ const CreateFoundationPage = () => {
                                     value={formValues.fono}
                                     onChange={handleChange}
                                     error={errorMessages.fono}
+                                    disabled={isLoading}
                                     required />
                                 <ConfidenceSelect errorConfidence={errorMessages.confidenceLevel} updateSelectedConfidence={updateConfidenceLevel} />
-                                <ResponsibleSelect errorResponsible={errorMessages.responsible} handleSelectResponsible={updateResponsible} />
                             </SimpleGrid>
+
+                            <Textarea
+                                label="Descripción"
+                                name="description"
+                                value={formValues.description}
+                                onChange={handleChange}
+                                minRows={2}
+                                maxRows={5}
+                                error={errorMessages.description}
+                                disabled={isLoading}
+                                required
+                            />
                         </Paper>
                         <Paper {...paperProps}>
                             <Title {...subTitleProps}>Localización campaña</Title>
@@ -213,106 +237,27 @@ const CreateFoundationPage = () => {
                                     value={formValues.city}
                                     onChange={handleChange}
                                     error={errorMessages.city}
+                                    disabled={isLoading}
                                     required />
                                 <GooglePlace updateAddress={updateAddressReferences} />
                             </SimpleGrid>
                         </Paper>
-                        {/* <Paper {...paperProps}>
+
+                        <Paper {...paperProps}>
+                            <Title {...subTitleProps}>Imágen de Perfil</Title>
                             <Stack spacing="sm">
-                                <Title {...subTitleProps}>Información de Donación</Title>
-                                <CurrencySelect />
-                                <Radio.Group
-                                    label="What kind of fundraiser would you like to create?"
-                                    value={target}
-                                    onChange={setTarget}
-                                >
-                                    <Group mt="xs">
-                                        <Radio value="deadline" label="Fundraiser with a specific end date?" />
-                                        <Radio value="no-deadline" label="Ongoing (no deadline) fundraiser?" />
-                                    </Group>
-                                </Radio.Group>
-                                <Paper {...paperProps}>
-                                    {target === 'deadline' ?
-                                        <Stack spacing="xs">
-                                            <Text size="sm">Fundraiser with a specific end date?</Text>
-                                            <Text size="sm">This creates urgency and should always be used when
-                                                money is needed before a certain time.</Text>
-                                            <DateInput
-                                                value={deadlineDate}
-                                                onChange={setDeadlineDate}
-                                                label="Deadline"
-                                                placeholder="Date input"
-                                                icon={<IconCalendar size={18} />}
-                                            />
-                                            <NumberInput
-                                                label="Target amount"
-                                                icon={<IconCurrencyDollar size={18} />} />
-                                            <Checkbox
-                                                label="Allow your fundraiser to be funded over the needed amount?" />
-                                        </Stack> :
-                                        <Stack spacing="xs">
-                                            <Text size="sm">Ongoing (no deadline) fundraiser?</Text>
-                                            <Text size="sm">This should be used if you are collecting money on a
-                                                regular
-                                                basis.</Text>
-                                            <Checkbox
-                                                checked={minimumCheck}
-                                                onChange={(event) => setMinimumCheck(event.currentTarget.checked)}
-                                                label="Select this if you would like to set a specific a minimum financial target" />
-                                            {minimumCheck &&
-                                                <NumberInput
-                                                    label="Target amount"
-                                                    icon={<IconCurrencyDollar size={18} />}
-                                                />}
-                                        </Stack>}
-                                </Paper>
-                            </Stack>
-                        </Paper> */}
-                        {/* <Paper {...paperProps}>
-                            <Title {...subTitleProps}>Tipo de donación</Title>
-                            <SegmentedControl
-                                size="md"
-                                value={donationType}
-                                onChange={setDonationType}
-                                data={[
-                                    { label: 'Any (popular option)', value: 'any' },
-                                    { label: 'Minimum', value: 'minimum' },
-                                    { label: 'Fixed', value: 'fixed' },
-                                ]}
-                                mb="sm"
-                            />
-                            {donationType === 'minimum' ?
-                                <NumberInput label="Minimum amount(s)" /> :
-                                <NumberInput label="Fixed amount(s)" />}
-                            <Checkbox
-                                label="Would you like your fundraising page shown in more than one language?"
-                                mt="sm"
-                            />
-                        </Paper> */}
-                        {/* <Paper {...paperProps}>
-                            <Stack spacing="sm">
-                                <Title {...subTitleProps}>Fund & Registration details</Title>
-                                <Text size="sm">*Name of the person receiving funds. For organizations, the legal
-                                    representative
-                                    name (this can be amended later).</Text>
-                                <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
-                                    <TextInput label="First name" />
-                                    <TextInput label="Last name" />
-                                </SimpleGrid>
                                 <FileDropzone
-                                    label="Upload your profile picture"
-                                    description="This picture will be shown next to your name"
+                                    label="Sube la imágen de perfil de la fundación"
+                                    description="Esta imágen se mostrarán junto a su nombre"
+                                    handleDropFile={updateHandleDrop}
+                                    multiple={false}
                                 />
-                                <Checkbox label={
-                                    <>
-                                        I agree to the Givers{' '}
-                                        <Anchor href="#" target="_blank">
-                                            terms and conditions & privacy policy
-                                        </Anchor>
-                                    </>
-                                } />
+                                {
+                                    errorMessages.multimediaCount &&
+                                    <Text color="red" size="sm">{errorMessages.multimediaCount}</Text>
+                                }
                             </Stack>
-                        </Paper> */}
+                        </Paper>
 
                         <Card.Section mb="lg">
                             <Flex align="center" justify="center">
@@ -321,6 +266,7 @@ const CreateFoundationPage = () => {
                                     component={LinkRouter}
                                     to="/panel/dashboard"
                                     style={{ marginRight: 20 }}
+                                    disabled={isLoading}
                                 >
                                     Volver
                                 </Button>
@@ -332,9 +278,41 @@ const CreateFoundationPage = () => {
                                     Crear una fundación
                                 </Button>
                             </Flex>
+                            {
+                                error && (
+                                    <List style={{ marginTop: 10 }}>
+                                        <List.Item
+                                            style={{ color: '#ad3838' }}
+                                        >
+                                            {error}
+                                        </List.Item>
+                                    </List>
+                                )
+                            }
                         </Card.Section>
                     </div>
                 </Container>
+
+                {isLoading && (
+                    <Overlay
+                        opacity={0.6}
+                        color="#000"
+                        zIndex={1000}
+                        styles={{
+                            root: {
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                            },
+                        }}
+                    >
+                        <Flex justify="center" align="center" style={{ height: '100vh' }}>
+                            <Loader size="xl" color="blue" />
+                        </Flex>
+                    </Overlay>
+                )}
             </Box>
         </GiversLayout>
     );
