@@ -21,38 +21,33 @@ import {
     useMantineTheme
 } from "@mantine/core";
 import React, { useContext, useState } from "react";
-import { DateInput } from "@mantine/dates";
 import { CategorySelect } from "../../components";
 
 import { Link as LinkRouter } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import FoundationSelect from "../../components/FoundationSelect";
 
-import { IconCalendar, IconCheck, IconCurrencyDollar } from "@tabler/icons-react";
+import { IconCheck, IconCurrencyDollar } from "@tabler/icons-react";
 import { addCampaign } from "../../firebase/services/CampaignServices";
 import GiversLayout from "../../layout/GiversLayout";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import { AuthContext } from "../../context/auth/AuthContext";
 import { getYouTubeEmbedUrl } from "../../helpers/getYoutubeEmbedUrl";
-import { validationCampaignSchema } from "../../schemas/campaign/admin/createSchema";
 import { showNotification } from "@mantine/notifications";
+import { validationCampaignSchema } from "../../schemas/campaign/admin/createSchema";
 
 const CreateCampaignPage = () => {
-
-
     const { user } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
-    const [formValues, setFormValues] = useState<{ name: string; description: string; requestAmount: number; category: string; foundation: string; responsible: string; initVideo: string; initDate: Date; finishDate: Date; isCause: boolean; isExperience: boolean }>({
+    const [formValues, setFormValues] = useState<{ name: string; description: string; requestAmount: number; category: string; foundation: string; responsible: string; initVideo: string; isCause: boolean; isExperience: boolean }>({
         name: '',
         description: '',
         category: '',
         foundation: '',
         responsible: '',
         initVideo: '',
-        initDate: null,
-        finishDate: null,
         isCause: false,
         isExperience: false,
         requestAmount: 0
@@ -65,7 +60,6 @@ const CreateCampaignPage = () => {
 
 
     const theme = useMantineTheme()
-    const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
     const titleProps: TitleProps = {
         size: 24,
@@ -124,14 +118,12 @@ const CreateCampaignPage = () => {
                     description: formValues.description,
                     category: formValues.category,
                     foundation: formValues.foundation,
-                    initDate: formValues.initDate,
-                    initVideo: getYouTubeEmbedUrl(formValues.initVideo),
-                    endDate: formValues.finishDate,
                     isCause: formValues.isCause,
                     isExperience: formValues.isExperience,
                     requestAmount: formValues.requestAmount,
                     responsible: formValues.responsible,
                     createdBy: user.id,
+                    initVideo: getYouTubeEmbedUrl(formValues.initVideo),
                 }
 
                 const response = await addCampaign(campaignData, "Admin");
@@ -234,34 +226,6 @@ const CreateCampaignPage = () => {
                                 <Title {...subTitleProps}>Información de Donación</Title>
                                 <Paper {...paperProps}>
                                     <Stack spacing="xs">
-                                        <DateInput
-                                            name="initDate"
-                                            value={formValues.initDate}
-                                            onChange={(value) => setFormValues({ ...formValues, initDate: value })}
-                                            label="Fecha inicial campaña"
-                                            placeholder="Fecha inicial"
-                                            lang="es"
-                                            icon={<IconCalendar size={18} />}
-                                            error={errorMessages.initDate}
-                                            disabled={isLoading}
-                                            required
-                                        />
-
-                                        <DateInput
-                                            value={deadlineDate}
-                                            onChange={(value) => {
-                                                setFormValues({ ...formValues, finishDate: value })
-                                                setDeadlineDate(value)
-                                            }}
-                                            label="Fecha final campaña"
-                                            placeholder="Fecha final"
-                                            lang="es"
-                                            icon={<IconCalendar size={18} />}
-                                            error={errorMessages.finishDate}
-                                            disabled={isLoading}
-                                            required
-                                        />
-
                                         <NumberInput
                                             label="Monto a recaudar"
                                             icon={<IconCurrencyDollar size={18} />}

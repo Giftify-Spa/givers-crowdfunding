@@ -7,8 +7,8 @@ export interface Campaign {
     description: string;
     initVideo: string;
     endVideo?: string;
-    initDate: Timestamp | Date | string;
-    endDate: Timestamp | Date | string;
+    initDate?: Timestamp | Date | string;
+    endDate?: Timestamp | Date | string;
     isCause: boolean;
     isExperience: boolean;
     isFinished?: boolean;

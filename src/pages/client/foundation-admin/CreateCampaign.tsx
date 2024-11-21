@@ -18,13 +18,12 @@ import {
     useMantineTheme
 } from "@mantine/core";
 import React, { useContext, useState } from "react";
-import { DateInput } from "@mantine/dates";
 import { CategorySelect, FileDropzone } from "../../../components";
 
 import { Link as LinkRouter, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { IconCalendar, IconCurrencyDollar } from "@tabler/icons-react";
+import { IconCurrencyDollar } from "@tabler/icons-react";
 import { addCampaign } from "../../../firebase/services/CampaignServices";
 import GiversLayout from "../../../layout/GiversLayout";
 import { AuthContext } from "../../../context/auth/AuthContext";
@@ -33,23 +32,19 @@ import { validationAdminFoundationCampaignSchema } from '../../../schemas/campai
 
 
 const FoundationAdminCreateCampaignPage = () => {
-
-
     const { user } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
-    const [formValues, setFormValues] = useState<{ name: string; description: string; requestAmount: number; category: string; initVideo: string; initDate: Date; finishDate: Date; isCause: boolean; isExperience: boolean, multimediaCount: number }>({
+    const [formValues, setFormValues] = useState<{ name: string; description: string; requestAmount: number; category: string; initVideo: string; isCause: boolean; isExperience: boolean, multimediaCount: number }>({
         name: '',
         description: '',
         category: '',
-        initVideo: '',
-        initDate: null,
-        finishDate: null,
         isCause: false,
         isExperience: false,
         requestAmount: 0,
         multimediaCount: 0,
+        initVideo: '',
     });
 
     const [files, setFiles] = useState<File[]>([]);
@@ -60,7 +55,6 @@ const FoundationAdminCreateCampaignPage = () => {
     const { id } = useParams<{ id: string }>();
 
     const theme = useMantineTheme()
-    const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
     const titleProps: TitleProps = {
         size: 24,
@@ -106,9 +100,7 @@ const FoundationAdminCreateCampaignPage = () => {
                     description: formValues.description,
                     category: formValues.category,
                     foundation: user.foundation,
-                    initDate: formValues.initDate,
                     initVideo: getYouTubeEmbedUrl(formValues.initVideo),
-                    endDate: formValues.finishDate,
                     isCause: formValues.isCause,
                     isExperience: formValues.isExperience,
                     requestAmount: formValues.requestAmount,
@@ -201,32 +193,6 @@ const FoundationAdminCreateCampaignPage = () => {
                                 <Title {...subTitleProps}>Información de Donación</Title>
                                 <Paper {...paperProps}>
                                     <Stack spacing="xs">
-                                        <DateInput
-                                            name="initDate"
-                                            value={formValues.initDate}
-                                            onChange={(value) => setFormValues({ ...formValues, initDate: value })}
-                                            label="Fecha inicial campaña"
-                                            placeholder="Fecha inicial"
-                                            lang="es"
-                                            icon={<IconCalendar size={18} />}
-                                            error={errorMessages.initDate}
-                                            required
-                                        />
-
-                                        <DateInput
-                                            value={deadlineDate}
-                                            onChange={(value) => {
-                                                setFormValues({ ...formValues, finishDate: value })
-                                                setDeadlineDate(value)
-                                            }}
-                                            label="Fecha final campaña"
-                                            placeholder="Fecha final"
-                                            lang="es"
-                                            icon={<IconCalendar size={18} />}
-                                            error={errorMessages.finishDate}
-                                            required
-                                        />
-
                                         <NumberInput
                                             label="Monto a recaudar"
                                             icon={<IconCurrencyDollar size={18} />}
