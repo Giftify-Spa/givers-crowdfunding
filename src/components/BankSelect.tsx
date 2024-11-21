@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useState } from 'react';
 import { Group, Select, Text } from "@mantine/core";
 import { IBank } from "../types";
 import { getBanks } from '../firebase/service';
+import { Bank } from '../interfaces/Bank';
 
 const BankSelectItem = forwardRef<HTMLDivElement, IBank>(
     ({ name, ...others }: IBank, ref) => (
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const BankSelect = ({ handleSelectBank, errorBank }: Props) => {
-    const [banks, setBanks] = useState([]);
+    const [banks, setBanks] = useState<Bank[]>([]);
 
     useEffect(() => {
         getInstitutions();
@@ -29,8 +30,16 @@ const BankSelect = ({ handleSelectBank, errorBank }: Props) => {
 
 
     const getInstitutions = async () => {
-        const response = await getBanks();
-        setBanks(response);
+        try {
+            const response = await getBanks();
+            if (Array.isArray(response)) {
+                setBanks(response);
+            } else {
+                setBanks([]);
+            }
+        } catch (error) {
+            setBanks([]);
+        }
     }
 
     return (

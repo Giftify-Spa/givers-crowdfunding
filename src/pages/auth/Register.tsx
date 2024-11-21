@@ -151,6 +151,7 @@ const RegisterPage = () => {
                             value={formValues.password}
                             onChange={handleChange}
                             error={errorMessages.password}
+                            type="password"
                             required
                             mt="md" />
                         <Group position="center" mt="lg">

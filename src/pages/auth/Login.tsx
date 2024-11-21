@@ -143,6 +143,7 @@ const LoginPage = () => {
                             onChange={handleChange}
                             error={errorMessages.password}
                             disabled={loading || loadingGoogle}
+                            type="password"
                             required
                             mt="md" />
                         <Group position="apart" mt="lg">
