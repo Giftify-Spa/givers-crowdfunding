@@ -7,46 +7,34 @@ import {
     Checkbox,
     Container,
     Flex,
+    List,
+    Loader,
     NumberInput,
+    Overlay,
     Paper,
     PaperProps,
     SimpleGrid,
     Stack,
-    Text,
     TextInput,
     Title,
     TitleProps,
     useMantineTheme
 } from "@mantine/core";
 import React, { useContext, useEffect, useState } from "react";
-import { DateInput } from "@mantine/dates";
-import { CategorySelect, FileDropzone } from "../../components";
+import { CategorySelect } from "../../components";
 
 import { Link as LinkRouter, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import FoundationSelect from "../../components/FoundationSelect";
 
-import * as yup from 'yup';
-import { IconCalendar, IconCurrencyDollar } from "@tabler/icons-react";
-import { addCampaign, getCampaign } from "../../firebase/services/CampaignServices";
+import { IconCheck, IconCurrencyDollar } from "@tabler/icons-react";
+import { getCampaign } from "../../firebase/services/campaigns/getCampaign";
+import { editCampaign } from "../../firebase/services/campaigns/editCampaign";
 import GiversLayout from "../../layout/GiversLayout";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import { AuthContext } from "../../context/auth/AuthContext";
-
-const validationCampaignSchema = yup.object().shape({
-    name: yup.string().required('El nombre de la campaña es requerido'),
-    description: yup.string().required('La descripción de la campaña es requerida'),
-    category: yup.string().required('La categoría de la campaña es requerida'),
-    foundation: yup.string().required('La fundación de la campaña es requerida'),
-    responsible: yup.string().required('El responsable de la campaña es requerido'),
-    initDate: yup.string().required('La fecha de inicio de la campaña es requerida'),
-    initVideo: yup.string().required('El enlace del vídeo inicial de campaña es requerido'),
-    finishDate: yup.string().required('La fecha de finalización de la campaña es requerida'),
-    isCause: yup.boolean().required('El tipo de campaña es requerido'),
-    isExperience: yup.boolean().required('El tipo de campaña es requerido'),
-    requestAmount: yup.number().required('El monto de la campaña es requerido').min(1000, 'El monto de la campaña debe ser mayor a 1000'),
-    multimediaCount: yup.number().required('El contenido multimedia es requerido').min(1, 'Al menos una imagen es requerida')
-});
+import { showNotification } from "@mantine/notifications";
+import { validationEditCampaignSchema } from "../../schemas/campaign/admin/editSchema";
 
 const EditCampaignPage = () => {
 
@@ -55,29 +43,34 @@ const EditCampaignPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [formValues, setFormValues] = useState<{ name: string; description: string; requestAmount: number; category: string; foundation: string; responsible: string; initVideo: string; initDate: Date; finishDate: Date; isCause: boolean; isExperience: boolean, multimediaCount: number }>({
+    const [formValues, setFormValues] = useState<{
+        name: string;
+        description: string;
+        requestAmount: number;
+        category: string;
+        foundation: string;
+        responsible: string;
+        initVideo: string;
+        isCause: boolean;
+        isExperience: boolean
+    }>({
         name: '',
         description: '',
         category: '',
         foundation: '',
         responsible: '',
         initVideo: '',
-        initDate: null,
-        finishDate: null,
         isCause: false,
         isExperience: false,
         requestAmount: 0,
-        multimediaCount: 0,
     });
-
-    const [files, setFiles] = useState<File[]>([]);
 
     const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
 
+    const [isLoading, setIsLoading] = useState(false);
 
     const theme = useMantineTheme()
-    const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
     const titleProps: TitleProps = {
         size: 24,
@@ -124,42 +117,51 @@ const EditCampaignPage = () => {
         });
     }
 
-    console.log(error);
+    const onEditCampaign = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const isValid = await isValidForm();
+            if (isValid) {
+                // Format data
+                const campaignData = {
+                    name: formValues.name,
+                    description: formValues.description,
+                    category: formValues.category,
+                    foundation: formValues.foundation,
+                    initVideo: formValues.initVideo,
+                    isCause: formValues.isCause,
+                    isExperience: formValues.isExperience,
+                    requestAmount: formValues.requestAmount,
+                    responsible: formValues.responsible,
+                    createdBy: user.uid,
+                }
 
-    const onCreateCampaign = async () => {
-        const isValid = await isValidForm();
+                const response = await editCampaign(id, campaignData, "Admin");
 
-        if (isValid) {
-            // Format data
-            const campaignData = {
-                name: formValues.name,
-                description: formValues.description,
-                category: formValues.category,
-                foundation: formValues.foundation,
-                initDate: formValues.initDate,
-                initVideo: formValues.initVideo,
-                endDate: formValues.finishDate,
-                isCause: formValues.isCause,
-                isExperience: formValues.isExperience,
-                requestAmount: formValues.requestAmount,
-                multimedia: files,
-                responsible: formValues.responsible,
-                createdBy: user.uid,
+                if (!response.success) return setError('ocurrió un error al editar la campaña');
+
+                // Show success notification
+                showNotification({
+                    title: 'Campaña Editada',
+                    message: 'La campaña se ha editado exitosamente.',
+                    color: 'green',
+                    icon: <IconCheck size={18} />,
+                });
+
+                // Redirect to dashboard
+                navigate('/panel/dashboard');
             }
-
-            const response = await addCampaign(campaignData, "Admin");
-
-            if (!response.success) return setError('ocurrió un error al editar la campaña');
-
-            // Redirect to dashboard
-            navigate('/panel/dashboard');
-
+        } catch (error) {
+            setError('Ocurrió un error inesperado. Por favor, intenta de nuevo.');
+        } finally {
+            setIsLoading(false);
         }
     }
 
     const isValidForm = async (): Promise<boolean> => {
         try {
-            await validationCampaignSchema.validate(formValues, { abortEarly: false });
+            await validationEditCampaignSchema.validate(formValues, { abortEarly: false });
             return true;
         } catch (error) {
             const errors: Record<string, string> = {};
@@ -171,25 +173,28 @@ const EditCampaignPage = () => {
         }
     }
 
-    const updateHandleDrop = (dropFiles: File[]) => {
-        setFiles(dropFiles)
-        setFormValues({ ...formValues, multimediaCount: dropFiles.length })
-    }
-
     useEffect(() => {
-
         const fetchCampaign = async () => {
-            console.log(id);
-            const campaign = await getCampaign(id);
-            setFormValues({
-                ...formValues,
-                name: campaign.name,
-                description: campaign.description,
-                initVideo: campaign.initVideo,
-                isCause: campaign.isCause,
-                isExperience: campaign.isExperience,
-                requestAmount: campaign.requestAmount,
-            })
+            try {
+                const campaign = await getCampaign(id);
+                console.log(campaign);
+                if (campaign && typeof campaign === 'object') {
+                    setFormValues({
+                        ...formValues,
+                        name: campaign.name,
+                        description: campaign.description,
+                        initVideo: campaign.initVideo,
+                        isCause: campaign.isCause,
+                        isExperience: campaign.isExperience,
+                        requestAmount: campaign.requestAmount,
+                        category: campaign.category.id,
+                        foundation: campaign.foundation.id,
+                        responsible: campaign.responsible.id,
+                    });
+                }
+            } catch (error) {
+                setError("No se pudo cargar la campaña");
+            }
         }
         fetchCampaign();
     }, [id])
@@ -223,11 +228,11 @@ const EditCampaignPage = () => {
                                     error={errorMessages.description}
                                     required
                                 />
-                                <CategorySelect errorCategory={errorMessages.category} handleSelectCategory={updateCategory} />
-                                <FoundationSelect errorFoundation={errorMessages.foundation} handleSelectFoundation={updateFoundation} />
+                                <CategorySelect value={formValues.category} errorCategory={errorMessages.category} handleSelectCategory={updateCategory} />
+                                <FoundationSelect value={formValues.foundation} errorFoundation={errorMessages.foundation} handleSelectFoundation={updateFoundation} />
                             </SimpleGrid>
 
-                            <ResponsibleSelect errorResponsible={errorMessages.responsible} handleSelectResponsible={updateResponsible} />
+                            <ResponsibleSelect value={formValues.responsible} errorResponsible={errorMessages.responsible} handleSelectResponsible={updateResponsible} />
 
                             <SimpleGrid cols={2} style={{ marginTop: 25 }} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
                                 <Checkbox
@@ -250,32 +255,6 @@ const EditCampaignPage = () => {
                                 <Title {...subTitleProps}>Información de Donación</Title>
                                 <Paper {...paperProps}>
                                     <Stack spacing="xs">
-                                        <DateInput
-                                            name="initDate"
-                                            value={formValues.initDate}
-                                            onChange={(value) => setFormValues({ ...formValues, initDate: value })}
-                                            label="Fecha inicial campaña"
-                                            placeholder="Fecha inicial"
-                                            lang="es"
-                                            icon={<IconCalendar size={18} />}
-                                            error={errorMessages.initDate}
-                                            required
-                                        />
-
-                                        <DateInput
-                                            value={deadlineDate}
-                                            onChange={(value) => {
-                                                setFormValues({ ...formValues, finishDate: value })
-                                                setDeadlineDate(value)
-                                            }}
-                                            label="Fecha final campaña"
-                                            placeholder="Fecha final"
-                                            lang="es"
-                                            icon={<IconCalendar size={18} />}
-                                            error={errorMessages.finishDate}
-                                            required
-                                        />
-
                                         <NumberInput
                                             label="Monto a recaudar"
                                             icon={<IconCurrencyDollar size={18} />}
@@ -289,18 +268,7 @@ const EditCampaignPage = () => {
                             </Stack>
                         </Paper>
                         <Paper {...paperProps}>
-                            <Stack spacing="sm">
-                                <Title {...subTitleProps}>Contenido Multimedia</Title>
-                                <FileDropzone
-                                    label="Sube las fotos de tu campaña"
-                                    description="Estas imágenes se mostrarán junto a su nombre"
-                                    handleDropFile={updateHandleDrop}
-                                />
-                                {
-                                    errorMessages.multimediaCount &&
-                                    <Text color="red" size="sm">{errorMessages.multimediaCount}</Text>
-                                }
-                            </Stack>
+                            <Title {...subTitleProps}>Contenido Multimedia</Title>
                             <TextInput
                                 label="Enlace vídeo inicial de campaña"
                                 name="initVideo"
@@ -309,10 +277,10 @@ const EditCampaignPage = () => {
                                 onChange={handleChange}
                                 error={errorMessages.initVideo}
                                 style={{ marginTop: 20 }}
+                                disabled={isLoading}
                                 required
                             />
                         </Paper>
-
                         <Card.Section mb="lg">
                             <Flex align="center" justify="center">
                                 <Button
@@ -327,14 +295,45 @@ const EditCampaignPage = () => {
                                     to=""
                                     // leftIcon={<IconPlus size={18} />}
                                     component={LinkRouter}
-                                    onClick={onCreateCampaign}
+                                    onClick={onEditCampaign}
                                 >
                                     Editar campaña
                                 </Button>
                             </Flex>
+                            {
+                                error && (
+                                    <List style={{ marginTop: 10 }}>
+                                        <List.Item
+                                            style={{ color: '#ad3838' }}
+                                        >
+                                            {error}
+                                        </List.Item>
+                                    </List>
+                                )
+                            }
                         </Card.Section>
                     </div>
                 </Container>
+                {isLoading && (
+                    <Overlay
+                        opacity={0.6}
+                        color="#000"
+                        zIndex={1000}
+                        styles={{
+                            root: {
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                            },
+                        }}
+                    >
+                        <Flex justify="center" align="center" style={{ height: '100vh' }}>
+                            <Loader size="xl" color="blue" />
+                        </Flex>
+                    </Overlay>
+                )}
             </Box>
         </GiversLayout>
     );

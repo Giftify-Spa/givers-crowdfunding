@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Button, createStyles, Flex, FlexProps, getStylesRef, rem } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconBuildingWarehouse, IconDoorExit, IconFolderPlus, IconHome, IconUser } from '@tabler/icons-react';
+import { IconBuildingWarehouse, IconDoorExit, IconHome, IconUser } from '@tabler/icons-react';
 import { Link } from "react-router-dom";
 import { AuthContext } from '../context/auth/AuthContext';
 
@@ -62,8 +62,8 @@ const useStyles = createStyles((theme) => ({
 
 const dataAdmin = [
     { link: '/admin/dashboard', label: 'Mi Dashboard', icon: IconHome },
-    { link: '/admin/create-campaign', label: 'Crear Nueva Campaña', icon: IconFolderPlus },
-    { link: '/admin/create-foundation', label: 'Crear Nueva Fundación', icon: IconFolderPlus },
+    // { link: '/admin/create-campaign', label: 'Crear Nueva Campaña', icon: IconFolderPlus },
+    // { link: '/admin/create-foundation', label: 'Crear Nueva Fundación', icon: IconFolderPlus },
     { link: '/admin/campaigns', label: 'Nuestros proyectos', icon: IconBuildingWarehouse },
 ];
 

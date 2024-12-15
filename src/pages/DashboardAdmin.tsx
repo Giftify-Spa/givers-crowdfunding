@@ -1,10 +1,3 @@
-/**
- * DashboardAdminPage
- *
- * This is the administration dashboard page for Givers. It allows users with an admin profile
- * to view key metrics such as user count, active campaigns, pending campaigns for approval, and completed campaigns.
- * It also provides interfaces for managing campaigns and foundations.
- */
 
 import {
     Box,
@@ -39,6 +32,28 @@ import { AuthContext } from "../context/auth/AuthContext";
 import FoundationsTable from "../components/FoundationsTable";
 import useAdminDashboardData from "../hooks/useAdminDashboardData";
 
+
+const getLinkProps = (profile: string, count: number, path: string) => {
+    if (profile === "Admin" && count > 0) {
+        return { to: path };
+    } else {
+        return { to: "#" };
+    }
+};
+
+/**
+ * DashboardAdminPage component renders the admin dashboard page.
+ * 
+ * This component retrieves user data from the AuthContext and uses a custom hook
+ * `useAdminDashboardData` to fetch various dashboard metrics such as user count,
+ * foundation count, and campaign counts (pending approval, active, executed, and finished).
+ * 
+ * The component displays these metrics in a grid of cards, each card showing a specific metric.
+ * It also includes sections for managing campaigns and foundations, with buttons to create new
+ * campaigns and foundations.
+ * 
+ * @returns {JSX.Element} The rendered admin dashboard page.
+ */
 const DashboardAdminPage = () => {
     // Retrieve user data from AuthContext
     const { user } = useContext(AuthContext);
@@ -67,9 +82,12 @@ const DashboardAdminPage = () => {
         mb: "sm"
     };
 
-    // Conditional link props for pending campaigns (only for Admin profile)
-    const linkProps = (user.profile === "Admin") && { to: "/admin/pending-campaigns" };
-    const linkPropsManagement = (user.profile === "Admin") && { to: "/admin/management-users" };
+    const linkProps = getLinkProps(user.profile, pendingApprovedCampaignsCount, "/admin/pending-campaigns");
+    const linkPropsManagement = getLinkProps(user.profile, usersCount, "/admin/management-users");
+    const linkPropsManagementFoundations = getLinkProps(user.profile, foundationsCount, "/admin/management-foundations");
+    const linkPropsManagementActiveCampaigns = getLinkProps(user.profile, activeCampaignsCount, "/admin/management-active-campaigns");
+    const linkPropsManagementExecuteCampaigns = getLinkProps(user.profile, executedCampaignsCount, "/admin/management-execute-campaigns");
+    const linkPropsManagementCompletedCampaigns = getLinkProps(user.profile, finishCampaignsCount, "/admin/management-completed-campaigns");
 
     return (
         <GiversLayout>
@@ -123,7 +141,7 @@ const DashboardAdminPage = () => {
                                 shadow="sm"
                                 padding="xl"
                                 component={Link}
-                                {...linkPropsManagement}
+                                {...linkPropsManagementFoundations}
                                 radius="md"
                                 withBorder
                                 sx={(theme) => ({
@@ -166,10 +184,9 @@ const DashboardAdminPage = () => {
                             <Card
                                 shadow="sm"
                                 padding="xl"
-                                component="a"
+                                component={Link}
                                 radius="md"
-                                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Example link
-                                target="_blank"
+                                {...linkPropsManagementActiveCampaigns}
                                 withBorder
                                 sx={(theme) => ({
                                     borderWidth: '2px',
@@ -189,13 +206,12 @@ const DashboardAdminPage = () => {
                             <Card
                                 shadow="sm"
                                 padding="xl"
-                                component="a"
+                                component={Link}
                                 radius="md"
-                                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Example link
-                                target="_blank"
+                                {...linkPropsManagementExecuteCampaigns}
                                 withBorder
                                 sx={(theme) => ({
-                                    borderWidth: '2px',
+                                    borderWidth: '2px', 
                                     borderColor: theme.colors.gray[3],
                                 })}
                             >
@@ -212,9 +228,8 @@ const DashboardAdminPage = () => {
                             <Card
                                 shadow="sm"
                                 padding="xl"
-                                component="a"
-                                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" // Example link
-                                target="_blank"
+                                component={Link}
+                                {...linkPropsManagementCompletedCampaigns}
                                 radius="md"
                                 withBorder
                                 sx={(theme) => ({

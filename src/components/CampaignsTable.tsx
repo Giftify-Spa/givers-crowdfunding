@@ -3,7 +3,8 @@
 import { Avatar, Group, Text, Button, Grid } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
-import { deleteCampaign, getCampaigns } from "../firebase/services/CampaignServices";
+import { getCampaigns } from "../firebase/services/campaigns/getCampaigns";
+import { deleteCampaign } from "../firebase/services/campaigns/deleteCampaign";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 import { Link } from 'react-router-dom';
@@ -139,6 +140,16 @@ const CampaignsTable = () => {
                                         leftIcon={<IconPencil size={18} />}
                                         component={Link}
                                         to={`/admin/edit-campaign/${id}`}
+                                        color='yellow'
+                                        variant='outline'
+                                        sx={(theme) => ({
+                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                            '&:hover': {
+                                                backgroundColor: theme.colors.yellow[6],
+                                                borderColor: theme.colors.yellow[6],
+                                                color: theme.white,
+                                            },
+                                        })}
                                     >
                                         Editar
                                     </Button>
@@ -148,8 +159,16 @@ const CampaignsTable = () => {
                                     <Button
                                         onClick={() => handleApprove(id)}
                                         leftIcon={<IconTrash size={18} />}
-                                        variant="outline"
                                         color="red"
+                                        variant='outline'
+                                        sx={(theme) => ({
+                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                            '&:hover': {
+                                                backgroundColor: theme.colors.red[6],
+                                                borderColor: theme.colors.red[6],
+                                                color: theme.white,
+                                            },
+                                        })}
                                     >
                                         Eliminar
                                     </Button>
@@ -166,7 +185,7 @@ const CampaignsTable = () => {
                 onPageChange={(p) => setPage(p)}
                 highlightOnHover
                 verticalSpacing="sm"
-                
+
 
             />
         </div >

@@ -28,13 +28,13 @@ import { useNavigate } from "react-router-dom";
 import FoundationSelect from "../../components/FoundationSelect";
 
 import { IconCheck, IconCurrencyDollar } from "@tabler/icons-react";
-import { addCampaign } from "../../firebase/services/CampaignServices";
+import { addCampaign } from "../../firebase/services/campaigns/addCampaign";
 import GiversLayout from "../../layout/GiversLayout";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import { AuthContext } from "../../context/auth/AuthContext";
 import { getYouTubeEmbedUrl } from "../../helpers/getYoutubeEmbedUrl";
 import { showNotification } from "@mantine/notifications";
-import { validationCampaignSchema } from "../../schemas/campaign/admin/createSchema";
+import { validationAdminCreateCampaignSchema } from "../../schemas/campaign/admin/createSchema";
 
 const CreateCampaignPage = () => {
     const { user } = useContext(AuthContext);
@@ -151,7 +151,7 @@ const CreateCampaignPage = () => {
 
     const isValidForm = async (): Promise<boolean> => {
         try {
-            await validationCampaignSchema.validate(formValues, { abortEarly: false });
+            await validationAdminCreateCampaignSchema.validate(formValues, { abortEarly: false });
             return true;
         } catch (error) {
             const errors: Record<string, string> = {};
@@ -266,9 +266,6 @@ const CreateCampaignPage = () => {
                                 </Button>
 
                                 <Button
-                                    to=""
-                                    // leftIcon={<IconPlus size={18} />}
-                                    component={LinkRouter}
                                     onClick={onCreateCampaign}
                                     disabled={isLoading}
                                 >

@@ -24,6 +24,7 @@ import {
 import { useContext, useState } from "react";
 import { AppLinks, BrandName, SearchDrawer } from "./index";
 import { AuthContext } from '../context/auth/AuthContext';
+import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -38,7 +39,6 @@ const useStyles = createStyles((theme) => ({
 
         '&:hover': {
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.primary[7],
-            color: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
         },
 
         [theme.fn.smallerThan('sm')]: {
@@ -48,7 +48,7 @@ const useStyles = createStyles((theme) => ({
     },
 
     userActive: {
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+        // backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
     },
 
     link: {
@@ -160,7 +160,6 @@ const AppNavbar = ({ ...others }: IProps) => {
     const [searchOpened, { close: closeSearchDrawer }] = useDisclosure(false);
     const matchesMobile = useMediaQuery('(max-width: 600px)');
 
-
     return (
         <Box {...others}>
             <Header
@@ -219,7 +218,19 @@ const AppNavbar = ({ ...others }: IProps) => {
                                 </Menu.Target>
                                 <Menu.Dropdown>
                                     <Menu.Label>Ajustes</Menu.Label>
-                                    <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
+                                    <Menu.Item 
+                                        icon={<IconSettings  size="0.9rem" stroke={1.5} />}
+                                        component={Link}
+                                        to="/admin/profile-settings"
+                                        styles={{
+                                            item: {
+                                              '&:hover': {
+                                                backgroundColor: 'transparent', // Elimina el color de fondo en hover
+                                                color: 'inherit',               // Mantiene el color de texto original
+                                              },
+                                            },
+                                          }}
+                                    >
                                         Ajustes de Cuenta
                                     </Menu.Item>
                                     <Menu.Item

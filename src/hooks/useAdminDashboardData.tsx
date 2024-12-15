@@ -1,9 +1,36 @@
 import { useState, useEffect, useCallback } from "react";
-import { countActiveCampaigns, countExecuteCampaigns, countFinishedCampaigns, countPendingApprovedCampaigns } from "../firebase/services/CampaignServices";
+import { countActiveCampaigns, countExecuteCampaigns, countFinishedCampaigns, countPendingApprovedCampaigns } from "../firebase/services/campaigns/index";
 import { countUsers } from "../firebase/services/UserServices";
 import { countFoundations } from "../firebase/services/FoundationServices";
 
-const useAdminDashboardData = () => {
+/**
+ * Custom hook to fetch and manage admin dashboard data.
+ *
+ * @returns {Object} The admin dashboard data.
+ * - `usersCount` (number | null): The count of users.
+ * - `foundationsCount` (number | null): The count of foundations.
+ * - `pendingApprovedCampaignsCount` (number | null): The count of pending approved campaigns.
+ * - `activeCampaignsCount` (number | null): The count of active campaigns.
+ * - `executedCampaignsCount` (number | null): The count of executed campaigns.
+ * - `finishCampaignsCount` (number | null): The count of finished campaigns.
+ * - `loading` (boolean): Indicates if the data is currently being loaded.
+ * - `error` (string | null): Error message if data fetching fails.
+ * - `refreshData` (Function): Function to manually refresh the data.
+ */
+
+interface AdminDashboardData {
+    usersCount: number;
+    foundationsCount: number;
+    pendingApprovedCampaignsCount: number;
+    activeCampaignsCount: number;
+    executedCampaignsCount: number;
+    finishCampaignsCount: number;
+    loading: boolean;
+    error: string| null;
+    refreshData: () => void;
+  }
+
+const useAdminDashboardData = (): AdminDashboardData => {
     const [data, setData] = useState({
         usersCount: null,
         foundationsCount: null,

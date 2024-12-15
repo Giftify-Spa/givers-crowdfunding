@@ -24,11 +24,11 @@ import { Link as LinkRouter, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { IconCurrencyDollar } from "@tabler/icons-react";
-import { addCampaign } from "../../../firebase/services/CampaignServices";
+import { addCampaign } from "../../../firebase/services/campaigns/addCampaign";
 import GiversLayout from "../../../layout/GiversLayout";
 import { AuthContext } from "../../../context/auth/AuthContext";
 import { getYouTubeEmbedUrl } from "../../../helpers/getYoutubeEmbedUrl";
-import { validationAdminFoundationCampaignSchema } from '../../../schemas/campaign/admin-foundation/createSchema';
+import { validationAdminFoundationCreateCampaignSchema } from "../../../schemas/campaign/client/createSchema";
 
 
 const FoundationAdminCreateCampaignPage = () => {
@@ -123,7 +123,7 @@ const FoundationAdminCreateCampaignPage = () => {
 
     const isValidForm = async (): Promise<boolean> => {
         try {
-            await validationAdminFoundationCampaignSchema.validate(formValues, { abortEarly: false });
+            await validationAdminFoundationCreateCampaignSchema.validate(formValues, { abortEarly: false });
             return true;
         } catch (error) {
             const errors: Record<string, string> = {};

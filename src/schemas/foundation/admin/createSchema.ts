@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const validationFoundationSchema = yup.object().shape({
+export const validationAdminCreateFoundationSchema = yup.object().shape({
     name: yup.string()
         .min(3, 'El nombre debe tener al menos 3 caracteres')
         .max(50, 'El nombre no puede exceder los 50 caracteres')

@@ -3,7 +3,7 @@
 // import { Button } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
-import { getCampaignsWithFoundation } from "../firebase/services/CampaignServices";
+import { getCampaignsWithFoundation } from "../firebase/services/campaigns/getCampaigns";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 // import { Link } from 'react-router-dom';
@@ -26,6 +26,7 @@ const FoundationCampaignsTable = ({ id }: Props) => {
 
         const chargedCampaigns = async () => {
             try {
+                console.log(id);
                 const response = await getCampaignsWithFoundation(id);
 
                 const newCampaigns = response.filter(campaign =>
@@ -88,7 +89,7 @@ const FoundationCampaignsTable = ({ id }: Props) => {
                     },
                     {
                         accessor: 'status', title: 'Estado',
-                        render: ({ status }) => (status) ? 'En curso' : 'Pendiente de Aprobación',
+                        render: ({ status, isFinished, isExecute }) => (!status) ? 'Pendiente de Aprobación' : ((!isFinished && !isExecute && status) ? 'Activa' : ((isExecute && !isFinished) ? 'En Ejecución' : (isFinished) && 'Finalizada')),
                     },
                     // {
                     //     accessor: 'actions', title: 'Acciones',
@@ -98,7 +99,6 @@ const FoundationCampaignsTable = ({ id }: Props) => {
                     //         to={`/admin/edit-campaign/${id}`}
                     //     ></Button>,
                     // }
-
                 ]}
                 records={paginatedRecords}
                 totalRecords={records.length}

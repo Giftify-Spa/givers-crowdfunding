@@ -20,6 +20,7 @@ import {
 import { getAuth } from "firebase/auth";
 import { Campaign } from "../../interfaces/Campaign";
 
+
 export const countUsers = async (): Promise<number> => {
     try {
 
@@ -315,3 +316,45 @@ export const getPaginatedUsers = async (limit: number, lastDoc: any = null): Pro
         return { users: [], lastDoc: null };
     }
 };
+
+/**
+ * Edits an existing user in the Firestore database.
+ *
+ * @param {string} id - The ID of the user to edit.
+ * @param {User} data - The new data for the user.
+ * @returns {Promise<{ success: boolean, message?: string }>} - An object indicating the success of the operation and an optional message.
+ *
+ * @throws Will throw an error if the update operation fails.
+ */
+export const editUser = async (id: string, data: User): Promise<{ success: boolean; message?: string; }> => {
+    try {
+        const {
+            rut,
+            lastname,
+            phone,
+        } = data;
+
+        // Reference to the existing campaign document
+        const userRef = doc(FirebaseDB, 'users', id);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            console.error("User does not exist");
+            return { success: false, message: "User does not exist" };
+        }
+
+        const updatedUserData: Partial<User> = {
+            rut,
+            lastname,
+            phone,
+        };
+
+        // Update the user document in Firestore
+        await updateDoc(userRef, updatedUserData);
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error edit user: ", error);
+        return { success: false };
+    }
+}

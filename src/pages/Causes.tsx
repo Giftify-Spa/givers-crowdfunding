@@ -1,7 +1,7 @@
 import { Box, BoxProps, Container, createStyles, rem, SimpleGrid, Stack, Title } from '@mantine/core';
 import { CampaignCard } from "../components";
 import { useEffect, useState } from "react";
-import { getCampaignsByType } from '../firebase/services/CampaignServices';
+import { getCampaignsByType } from '../firebase/services/campaigns/getCampaigns';
 import LoadingSpinner from "../components/LoadingSpinner";
 import HeroSection from '../sections/Home/HeroSection';
 import { Campaign } from '../interfaces/Campaign';

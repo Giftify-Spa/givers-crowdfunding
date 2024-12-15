@@ -26,7 +26,7 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { BackButton, DonationDrawer, ShareModal, UserCard } from "../components";
 import { Helmet } from "react-helmet";
 import { Campaign } from "../interfaces/Campaign";
-import { getCampaign } from "../firebase/services/CampaignServices";
+import { getCampaign } from "../firebase/services/campaigns/getCampaign";
 import { formattingToCLPNumber } from "../helpers/formatCurrency";
 import { calculatePercentage, calculatePercentageString } from '../helpers/percentageCampaign';
 import LoadingSpinner from "../components/LoadingSpinner";

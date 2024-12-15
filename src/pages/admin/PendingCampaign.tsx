@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getPendingCampaigns, approveCampaign } from '../../firebase/services/CampaignServices';
+import { getPendingCampaigns, getApproveCampaigns } from '../../firebase/services/campaigns/getCampaigns';
 import { Table, Button, Text, Container, Title, Center, Paper, Stack } from '@mantine/core';
 import { Campaign } from '../../interfaces/Campaign';
 import GiversLayout from '../../layout/GiversLayout';
@@ -28,7 +28,7 @@ const PendingCampaignPage = () => {
     const handleApprove = async (campaignId: string) => {
         setApproving(campaignId);  // Indica que estamos aprobando esta campaña
         try {
-            await approveCampaign(campaignId);
+            await getApproveCampaigns(campaignId);
             setPendingCampaigns(prevCampaigns => prevCampaigns.filter(campaign => campaign.id !== campaignId));
         } catch (error) {
             console.error("Error approving campaign:", error);

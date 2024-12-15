@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { forwardRef, useEffect, useState } from 'react';
-import { Group, Select, Text } from "@mantine/core";
+import { Group, Loader, Select, Text } from "@mantine/core";
 import { getUsersSelect } from '../firebase/services/UserServices';
 
 const ResponsibleSelectItem = forwardRef<HTMLDivElement, any>(
@@ -18,21 +18,27 @@ const ResponsibleSelectItem = forwardRef<HTMLDivElement, any>(
 interface Props {
     handleSelectResponsible: (value: string) => void;
     errorResponsible: string;
+    value?: string;
+    disabled?: boolean;
 }
 
-const ResponsibleSelect = ({ handleSelectResponsible, errorResponsible }: Props) => {
+const ResponsibleSelect = ({ handleSelectResponsible, errorResponsible, value, disabled }: Props) => {
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         chargedUsers();
     }, []);
 
     const chargedUsers = async () => {
+        setLoading(true);
         try {
             const response = await getUsersSelect();
             setUsers(response);
         } catch (error) {
             console.error('Error fetching users:', error);
+        } finally {
+            setLoading(false);
         }
     }
     return (
@@ -45,8 +51,12 @@ const ResponsibleSelect = ({ handleSelectResponsible, errorResponsible }: Props)
             clearable
             maxDropdownHeight={300}
             nothingFound="No se encontró nada"
-            onChange={(value) => handleSelectResponsible(value)}
+            onChange={(val) => handleSelectResponsible(val)}
             error={errorResponsible}
+            value={value}
+            defaultValue={value}
+            disabled={disabled || loading || users.length === 0}
+            rightSection={loading ? <Loader size={16} /> : null}
         />
     );
 };

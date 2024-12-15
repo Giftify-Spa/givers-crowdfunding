@@ -19,6 +19,7 @@ type AuthContextProps = {
     startLoginWithEmailAndPasssword: (email: string, password: string) => Promise<AuthResponse>,
     startLogout: () => void,
     startCreatingUserWithEmailAndPassword: (email: string, password: string, name: string) => Promise<AuthResponse>
+    refreshUser: (user: User) => Promise<AuthResponse>
 }
 
 const authInitialState: AuthState = {
@@ -216,7 +217,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
         const { success, displayName, email, uid, photoURL, errorMessage } = await loginWithEmailAndPassword(emailUser, password);
 
         if (!success) return { success, errorMessage };
-        
+
         if (!success) {
             dispatch({
                 type: "not-authenticated",
@@ -265,7 +266,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
 
     const startLogout = async () => {
         await logoutFirebase();
-        dispatch({type: "logout"});
+        dispatch({ type: "logout" });
+    }
+
+    const refreshUser = async (user: User) : Promise<AuthResponse>  => {
+        try {
+            dispatch({
+                type: "refresh-user",
+                payload: {
+                    user: {
+                        ...user,
+                        rut: user.rut,
+                        lastname: user.lastname,
+                        name: user.name,
+                        phone: user.phone,
+                    }
+                }
+            });
+
+            return {
+                success: true
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                success: false,
+            }
+        }
     }
 
     return (
@@ -275,11 +302,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }: any) => 
                 startGoogleSignIn,
                 startLoginWithEmailAndPasssword,
                 startLogout,
-                startCreatingUserWithEmailAndPassword
+                startCreatingUserWithEmailAndPassword,
+                refreshUser
             }}
         >
             {children}
         </AuthContext.Provider >
     )
-
-}
+};

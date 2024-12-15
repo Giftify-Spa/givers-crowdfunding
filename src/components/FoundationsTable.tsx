@@ -4,9 +4,10 @@ import { getFoundations } from "../firebase/services/FoundationServices";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 import { randomId, useDisclosure } from "@mantine/hooks";
 import { Button, Grid } from "@mantine/core";
-import { DetailModal } from "./DetailModal";
+import { FundsTransferModal } from "./modals/FundsTransferModal";
 import { Foundation } from "../interfaces/Foundation";
 import { IconCash, IconPencil } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 5;
 
@@ -50,7 +51,7 @@ const FoundationsTable = () => {
 
     const handleOpenModal = (foundation: Foundation) => {
         setSelectedFoundation(foundation);
-        open(); // Abre el modal
+        open(); // Open the modal
     };
 
     if (isLoading) {
@@ -85,8 +86,19 @@ const FoundationsTable = () => {
                                 <Grid.Col span={6} xs={12}>
                                     <Button
                                         size="xs"
-                                        onClick={() => handleOpenModal(foundation)}
                                         leftIcon={<IconPencil size={18} />}
+                                        component={Link}
+                                        to={`/admin/edit-foundation/${foundation.id}`}
+                                        color="yellow"
+                                        variant='outline'
+                                        sx={(theme) => ({
+                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                            '&:hover': {
+                                                backgroundColor: theme.colors.yellow[6],
+                                                borderColor: theme.colors.yellow[6],
+                                                color: theme.white,
+                                            },
+                                        })}
                                     >
                                         Editar
                                     </Button>
@@ -97,6 +109,15 @@ const FoundationsTable = () => {
                                         size="xs"
                                         onClick={() => handleOpenModal(foundation)}
                                         leftIcon={<IconCash size={18} />}
+                                        variant='outline'
+                                        sx={(theme) => ({
+                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                            '&:hover': {
+                                                backgroundColor: theme.colors.primary[6],
+                                                borderColor: theme.colors.primary[6],
+                                                color: theme.white,
+                                            },
+                                        })}
                                     >
                                         Ver Datos Bancarios
                                     </Button>
@@ -115,7 +136,7 @@ const FoundationsTable = () => {
                 key={randomId()}
             />
 
-            <DetailModal
+            <FundsTransferModal
                 opened={opened}
                 closeModal={close}
                 foundation={selectedFoundation} // Pasar la fundación seleccionada al modal

@@ -10,7 +10,7 @@ const CountrySelectItem = forwardRef<HTMLDivElement, ICountry>(
                 <Avatar src={image} />
 
                 <div>
-                    <Text size="sm">{name}</Text>
+                    <Text size="sm">{name} ({code})</Text>
                     <Text size="xs" opacity={0.65}>
                         {code}
                     </Text>
@@ -19,23 +19,20 @@ const CountrySelectItem = forwardRef<HTMLDivElement, ICountry>(
         </div>
     )
 );
-
-
 interface Props {
     handleSelectCountry: (name: string) => void;
     errorCountry: string;
+    value?: string;
 }
 
-const CountrySelect = ({ handleSelectCountry, errorCountry }: Props) => {
+const CountrySelect = ({ handleSelectCountry, errorCountry, value }: Props) => {
+
     return (
         <Select
             label="País"
             itemComponent={CountrySelectItem}
-            data={countriesData.data.map(c => ({ value: c.name, label: c.name, ...c }))}
-            onSelect={(v) => {
-                const event = v.target as HTMLSelectElement;
-                handleSelectCountry(event.value)
-            }}
+            data={countriesData.data.map(c => ({ value: c.code, label: c.name, ...c }))}
+            onChange={(val) =>handleSelectCountry(val)}
             searchable
             clearable
             maxDropdownHeight={300}
@@ -45,6 +42,8 @@ const CountrySelect = ({ handleSelectCountry, errorCountry }: Props) => {
                 item?.code?.toLowerCase().includes(value?.toLowerCase().trim())
             }
             error={errorCountry}
+            value={value}
+            defaultValue={value}
         />
     );
 };

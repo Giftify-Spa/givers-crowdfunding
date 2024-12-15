@@ -9,7 +9,7 @@ import {
     Stack
 } from "@mantine/core";
 import { CampaignCard } from "../components";
-import { getCampaignsWithFoundation } from "../firebase/services/CampaignServices";
+import { getCampaignsWithFoundation } from "../firebase/services/campaigns/getCampaigns";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const FoundationCampaignsPage = (): JSX.Element => {

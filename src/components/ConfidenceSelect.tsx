@@ -36,9 +36,11 @@ const mockdata = [
 interface Props {
     updateSelectedConfidence: (value: string) => void;
     errorConfidence: string;
+    value?: string;
+    disabled?: boolean;
 }
 
-const ConfidenceSelect = ({ updateSelectedConfidence, errorConfidence }: Props) => {
+const ConfidenceSelect = ({ updateSelectedConfidence, errorConfidence, value }: Props) => {
     return (
         <Select
             label="Nivel de confianza"
@@ -54,6 +56,8 @@ const ConfidenceSelect = ({ updateSelectedConfidence, errorConfidence }: Props) 
             }
             onChange={updateSelectedConfidence}
             error={errorConfidence}
+            value={value}
+            defaultValue={value}
         />
     );
 };

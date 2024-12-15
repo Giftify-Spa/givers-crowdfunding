@@ -5,7 +5,7 @@ import { CampaignCard } from "../components";
 import HeroSection from "../sections/Home/HeroSection";
 import { Box, BoxProps, Button, Container, Flex, SimpleGrid, Stack } from "@mantine/core";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { getCampaignsByType } from "../firebase/services/CampaignServices";
+import { getCampaignsByType } from "../firebase/services/campaigns/getCampaigns";
 import EmptyState from "../components/EmptyState";
 
 const Campaignspage = (): JSX.Element => {

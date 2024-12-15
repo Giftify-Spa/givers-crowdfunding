@@ -35,8 +35,8 @@ import ConfidenceSelect from "../../components/ConfidenceSelect";
 import { addFoundation } from "../../firebase/services/FoundationServices";
 import ResponsibleSelect from "../../components/ResponsibleSelect";
 import GiversLayout from "../../layout/GiversLayout";
-import { validationFoundationSchema } from "../../schemas/foundation/createSchema";
 import { showNotification } from "@mantine/notifications";
+import { validationAdminCreateFoundationSchema } from "../../schemas/foundation/admin/createSchema";
 
 const CreateFoundationPage = () => {
 
@@ -159,7 +159,7 @@ const CreateFoundationPage = () => {
 
     const isValidForm = async (): Promise<boolean> => {
         try {
-            await validationFoundationSchema.validate(formValues, { abortEarly: false });
+            await validationAdminCreateFoundationSchema.validate(formValues, { abortEarly: false });
             return true;
         } catch (error) {
             const errors: Record<string, string> = {};

@@ -1,6 +1,7 @@
 import { createStyles, Image, rem, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
+import logoGivers from '../assets/logos/logo givers_blanco.svg'
 
 const useStyles = createStyles((theme) => ({
     imageContainer: {
@@ -35,7 +36,7 @@ const Brand = () => {
         <UnstyledButton component={Link} to="/" className={classes.imageContainer}>
             {!isSmallOrMedium && (
                 <Image
-                    src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/logo%20givers_blanco.svg?alt=media&token=c314e77a-5dd2-4da4-874c-b17808dc5563"
+                    src={logoGivers}
                     className={classes.image}
                     alt="Givers Logo"
                 />

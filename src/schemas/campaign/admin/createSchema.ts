@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const validationCampaignSchema = yup.object().shape({
+export const validationAdminCreateCampaignSchema = yup.object().shape({
     name: yup.string().required('El nombre de la campaña es requerido'),
     description: yup.string().required('La descripción de la campaña es requerida'),
     category: yup.string().required('La categoría de la campaña es requerida'),

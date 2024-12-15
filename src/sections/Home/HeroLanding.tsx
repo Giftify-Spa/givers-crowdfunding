@@ -1,5 +1,8 @@
 import { createStyles, Image, ImageProps, Overlay, rem, Title } from '@mantine/core';
 
+import corfoImage from '../../assets/logos/corfo.png';
+import finaciadoImage from '../../assets/logos/financiado.png';
+
 const useStyles = createStyles((theme) => ({
     wrapper: {
         position: 'relative',
@@ -128,8 +131,8 @@ const HeroLandingSection = ({ title, subtitle }: Props) => {
                         {subtitle}
                     </Title>
                     <div className={classes.controls}>
-                        <Image src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/corfo.png?alt=media&token=80b6baa6-97b0-4d42-90fc-2b5dcde28d27" {...imageProps} />
-                        <Image src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/financiado.png?alt=media&token=37731610-9f90-4c32-9373-a0fb589793ad" {...imageProps} />
+                        <Image src={corfoImage} {...imageProps} />
+                        <Image src={finaciadoImage} {...imageProps} />
                     </div>
                 </div>
             </div>

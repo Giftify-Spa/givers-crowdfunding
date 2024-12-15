@@ -47,8 +47,15 @@ export interface IBank {
     type: string;
 }
 
+export interface ICampaignResponse {
+    success: boolean;
+    message?: string;
+    error?: any;
+}
+
 export interface IFoundationResponse {
     success: boolean;
+    message?: string;
     error?: any;
 }
 

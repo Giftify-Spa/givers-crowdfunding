@@ -15,8 +15,13 @@ import {
     GeoPoint,
     addDoc,
     updateDoc,
+    deleteField,
+    limit as firestorelimit,
+    orderBy,
+    startAfter,
 } from "firebase/firestore";
 import { uploadFile } from "../service";
+import { FoundationInput } from '../../interfaces/FoundationInput';
 
 export const countFoundations = async (): Promise<number> => {
     try {
@@ -60,6 +65,10 @@ export const getFoundation = async (id: string): Promise<Foundation | null> => {
                 multimedia
             } = docSnapshot.data();
 
+            // Obtain Responsible
+            const responsibleDoc = await getDoc(responsible);
+            const responsibleData = responsibleDoc.exists() ? responsibleDoc.data() as User : null;
+
             return {
                 id: docSnapshot.id,
                 name,
@@ -67,7 +76,7 @@ export const getFoundation = async (id: string): Promise<Foundation | null> => {
                 fono,
                 country,
                 status,
-                responsible,
+                responsible: { id: responsibleDoc.id, ...responsibleData },
                 confidenceLevel,
                 city,
                 address,
@@ -165,10 +174,10 @@ export const getFoundationsSelect = async (): Promise<Array<any>> => {
  * @param {Foundation} data - An object containing the foundation details to be added.
  * @returns {Promise<Object>} An object indicating success if the foundation was added successfully.
  */
-export const addFoundation = async (data: Foundation): Promise<IFoundationResponse> => {
+export const addFoundation = async (data: FoundationInput): Promise<IFoundationResponse> => {
     try {
 
-        const { name, fono, lat, lng, country, city, address, confidenceLevel, responsible, multimedia } = data;
+        const { name, description, fono, lat, lng, country, city, address, confidenceLevel, responsible, multimedia } = data;
 
         // Convert location to a GeoPoint
         const latitude = parseFloat(lat);
@@ -186,12 +195,15 @@ export const addFoundation = async (data: Foundation): Promise<IFoundationRespon
 
         const newFoundationData: Partial<Foundation> = {
             name,
+            description,
             fono,
             country,
             city,
             address,
             confidenceLevel,
             location: geoPoint,
+            lat: latitude,
+            lng: longitude,
             status: true,
             responsible: responsibleRef,
             multimedia: uploadedFiles,
@@ -201,8 +213,8 @@ export const addFoundation = async (data: Foundation): Promise<IFoundationRespon
 
         const responsibleDoc = await getDoc(responsibleRef);
 
-         // Perform the update in Firestore to responsible
-         await updateDoc(doc(FirebaseDB, 'users', responsibleDoc.id), {
+        // Perform the update in Firestore to responsible
+        await updateDoc(doc(FirebaseDB, 'users', responsibleDoc.id), {
             foundation: foundationRef.id
         });
 
@@ -216,6 +228,126 @@ export const addFoundation = async (data: Foundation): Promise<IFoundationRespon
         console.error("Error adding document: ", e);
     }
 }
+
+/**
+ * Edits an existing foundation document in Firestore with the provided foundation details.
+ * @param {string} id - The ID of the foundation to edit.
+ * @param {Foundation} data - An object containing the foundation details to be updated.
+ * @returns {Promise<IFoundationResponse>} An object indicating success if the foundation was updated successfully.
+ */
+export const editFoundation = async (id: string, data: FoundationInput): Promise<IFoundationResponse> => {
+    try {
+        const {
+            name,
+            description,
+            fono,
+            country,
+            city,
+            address,
+            confidenceLevel,
+            responsible,
+            // multimedia
+        } = data;
+
+        // Parse latitude and longitude to numbers
+        // const latitude = parseFloat(lat);
+        // const longitude = parseFloat(lng);
+
+        // Create a GeoPoint for the location
+        // const geoPoint = new GeoPoint(latitude, longitude);
+
+        // Reference to the existing foundation document
+        const foundationRef = doc(FirebaseDB, 'foundations', id);
+        const foundationSnap = await getDoc(foundationRef);
+
+        if (!foundationSnap.exists()) {
+            console.error("Foundation does not exist");
+            return { success: false, message: "Foundation does not exist" };
+        }
+
+        const existingFoundation = foundationSnap.data() as Foundation;
+
+        // Determine if the responsible user has changed
+        const oldResponsibleId = existingFoundation.responsible?.id || null;
+        const newResponsibleId = responsible || null;
+
+        if (oldResponsibleId !== newResponsibleId) {
+            if (oldResponsibleId) {
+                // Remove the foundation reference from the old responsible user
+                await updateDoc(doc(FirebaseDB, 'users', oldResponsibleId), {
+                    foundation: deleteField()
+                });
+            }
+
+            if (newResponsibleId) {
+                // Set the foundation reference in the new responsible user
+                await updateDoc(doc(FirebaseDB, 'users', newResponsibleId), {
+                    foundation: doc(FirebaseDB, 'foundations', id)
+                });
+            }
+        }
+
+        // Handle multimedia files
+        // let uploadedFiles: string[] = [];
+
+        // if (multimedia && multimedia.length > 0) {
+        //     // Optional: Delete old multimedia files from Storage
+        //     if (existingFoundation.multimedia && existingFoundation.multimedia.length > 0) {
+        //         await Promise.all(existingFoundation.multimedia.map(url => deleteFile(url)));
+        //     }
+
+        //     // Upload new multimedia files
+        //     uploadedFiles = await Promise.all(multimedia.map(file => uploadFile(file, `foundations/${name}/${file.name}`)));
+        // } else {
+        //     // If no new files are provided, retain existing multimedia
+        //     uploadedFiles = existingFoundation.multimedia || [];
+        // }
+
+        // Create a reference to the responsible user if defined
+        const responsibleRef = newResponsibleId ? doc(FirebaseDB, 'users', newResponsibleId) : null;
+
+        // Prepare the updated foundation data
+        const updatedFoundationData: Partial<Foundation> = {
+            name,
+            description,
+            fono,
+            country,
+            city,
+            address,
+            confidenceLevel,
+            // location: geoPoint,
+            // lat: latitude,
+            // lng: longitude,
+            responsible: responsibleRef,
+            // multimedia: uploadedFiles,
+            // Add other fields if necessary
+        };
+
+        // Update the foundation document in Firestore
+        await updateDoc(foundationRef, updatedFoundationData);
+
+        return { success: true };
+    } catch (e) {
+        console.error("Error editing foundation: ", e);
+        return { success: false, message: "Error editing foundation" };
+    }
+}
+
+/**
+ * Deleted a foundation by updating its status to false.
+ * @param {string} foundationId - The ID of the foundation to delete.
+ * @returns {Promise<{ success: boolean }>} A promise that resolves to an object indicating success.
+ */
+export const deleteFoundation = async (foundationId: string): Promise<{ success: boolean }> => {
+    try {
+        const foundationRef = doc(FirebaseDB, "foundations", foundationId);
+        await updateDoc(foundationRef, { status: false });
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting foundation:", error);
+        return { success: false };
+    }
+};
 
 /**
  * Updates only the payment information of an existing foundation document.
@@ -260,5 +392,97 @@ export const updateFoundationPaymentInfo = async (foundationId: string, paymentD
             success: false,
             error: e
         };
+    }
+};
+
+/**
+ * Fetches a paginated list of users from Firestore.
+ * @param {number} pageSize - The number of users per page.
+ * @param {any} lastDoc - The last document from the previous page (for pagination).
+ * @returns {Promise<{ foundations: Foundation[], lastDoc: any }>} A promise that resolves to an object containing the array of user objects and the last document.
+ */
+export const getPaginatedFoundations = async (limit: number, lastDoc: any = null): Promise<{ foundations: Foundation[], lastDoc: any }> => {
+    try {
+        // Construye la consulta Firestore con filtros y paginación
+        let baseQuery = query(
+            collection(FirebaseDB, "foundations"),
+            orderBy("name"), // Ordena por nombre para paginación
+            ...(limit > 0 ? [firestorelimit(limit)] : []) // Apply limit if specified
+        );
+
+        // Si lastDoc existe, agrégalo a la consulta
+        if (lastDoc) {
+            baseQuery = query(baseQuery, startAfter(lastDoc));
+        }
+
+        // Ejecuta la consulta y obtiene los documentos
+        const querySnapshot = await getDocs(baseQuery);
+
+        const foundationPromises = querySnapshot.docs.map(async (doc) => {
+            const {
+                name,
+                description,
+                confidenceLevel,
+                country,
+                city,
+                address,
+                fono,
+                responsible,
+                image,
+                fundsTransferData,
+                status
+            } = doc.data() as Foundation;
+
+            // Obtain Responsible
+            const responsibleDoc = await getDoc(responsible);
+            const responsibleData = responsibleDoc.exists() ? responsibleDoc.data() as User : null;
+
+            return {
+                id: doc.id,
+                name,
+                description,
+                confidenceLevel,
+                country,
+                city,
+                address,
+                fono,
+                responsible: { id: responsibleDoc.id, ...responsibleData },
+                image,
+                fundsTransferData,
+                status
+            };
+        });
+
+        const foundations = await Promise.all(foundationPromises);
+
+        return {
+            foundations,
+            lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null,
+        };
+    } catch (error) {
+        console.error("Error fetching paginated users:", error);
+        return { foundations: [], lastDoc: null };
+    }
+};
+
+/**
+ * Toggles a foundation's status (enables or disables) by updating their status in Firestore.
+ * @param {string} foundationId - The ID of the foundation.
+ * @param {boolean} status - The desired status for the foundation (true to enable, false to disable).
+ * @returns {Promise<void>} - A promise that resolves when the foundation's status is updated.
+ * @throws {Error} - If there is an issue updating the foundation status.
+ */
+export const toggleFoundationStatus = async (foundationId: string, status: boolean): Promise<void> => {
+    try {
+        // Reference the specific foundation's document in Firestore
+        const foundationRef = doc(FirebaseDB, 'foundations', foundationId);
+
+        // Update the foundation's status in Firestore
+        await updateDoc(foundationRef, {
+            status: status,
+        });
+    } catch (error) {
+        console.error(`Error ${status ? 'enabling' : 'disabling'} foundation:`, error);
+        throw new Error(`Unable to ${status ? 'enable' : 'disable'} the foundation. Please try again later.`);
     }
 };
