@@ -137,7 +137,7 @@ const EditCampaignPage = () => {
                     createdBy: user.uid,
                 }
 
-                const response = await editCampaign(id, campaignData, "Admin");
+                const response = await editCampaign(id, campaignData);
 
                 if (!response.success) return setError('ocurrió un error al editar la campaña');
 
