@@ -16,7 +16,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
  *
  * @throws Will throw an error if the campaign does not exist or if there is an issue updating the campaign.
  */
-export const editCampaign = async (id: string, data: Campaign, user: string): Promise<ICampaignResponse> => {
+export const editCampaign = async (id: string, data: Campaign): Promise<ICampaignResponse> => {
     try {
         const {
             name,

@@ -2,7 +2,7 @@ import { Box, BoxProps, Container, createStyles, Flex, rem, Select, SimpleGrid, 
 import { CampaignCard } from "../components";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import { getCampaigns } from "../firebase/services/CampaignServices";
+import { getCampaigns } from "../firebase/services/campaigns";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const CampaignsLandingPage = (): JSX.Element => {
