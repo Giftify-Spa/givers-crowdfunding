@@ -4,10 +4,12 @@ import {
     Button,
     Card,
     Container,
+    createStyles,
     Flex,
     Loader,
     Paper,
     PaperProps,
+    rem,
     SimpleGrid,
     Stack,
     Text,
@@ -41,6 +43,27 @@ const getLinkProps = (profile: string, count: number, path: string) => {
     }
 };
 
+const useStyles = createStyles((theme) => ({
+    title: {
+        fontWeight: 700,
+        fontSize: rem(32),
+        letterSpacing: rem(-1),
+        color: theme.black,
+        textAlign: 'start',
+
+        [theme.fn.smallerThan('md')]: {
+            fontSize: rem(28),
+        },
+
+        [theme.fn.smallerThan('sm')]: {
+            fontSize: rem(24),
+            textAlign: 'center',
+            fontWeight: 700,
+            padding: 0,
+        },
+    },
+}));
+
 /**
  * DashboardAdminPage component renders the admin dashboard page.
  * 
@@ -57,6 +80,7 @@ const getLinkProps = (profile: string, count: number, path: string) => {
 const DashboardAdminPage = () => {
     // Retrieve user data from AuthContext
     const { user } = useContext(AuthContext);
+    const { classes } = useStyles();
 
     // Get dashboard data and loading states using the custom hook useAdminDashboardData
     const {
@@ -98,7 +122,7 @@ const DashboardAdminPage = () => {
                 <Container fluid my="xl">
                     <Stack spacing="xl">
                         {/* Greeting message displaying the user's name */}
-                        <Title order={3}>Hola, {user.name}</Title>
+                        <Title className={classes.title} order={3}>Hola, {user.name}</Title>
 
                         {/* Grid displaying key metrics as cards */}
                         <SimpleGrid
@@ -211,7 +235,7 @@ const DashboardAdminPage = () => {
                                 {...linkPropsManagementExecuteCampaigns}
                                 withBorder
                                 sx={(theme) => ({
-                                    borderWidth: '2px', 
+                                    borderWidth: '2px',
                                     borderColor: theme.colors.gray[3],
                                 })}
                             >
@@ -250,18 +274,22 @@ const DashboardAdminPage = () => {
                         {/* Campaigns management section */}
                         <Paper {...paperProps}>
                             <Card.Section mb="lg">
+                                <Button
+                                    leftIcon={<IconPlus size={18} />}
+                                    component={Link}
+                                    to="/admin/create-campaign"
+                                    sx={{
+                                        marginBottom: "1rem",
+                                        marginRight: "1rem"
+                                    }}
+                                >
+                                    Crear Campaña
+                                </Button>
                                 <Flex align="center" justify="space-between">
                                     <Box>
                                         <Title {...subTitleProps}>Campañas</Title>
                                         <Text size="sm">Gestiona tus Campañas</Text>
                                     </Box>
-                                    <Button
-                                        leftIcon={<IconPlus size={18} />}
-                                        component={Link}
-                                        to="/admin/create-campaign"
-                                    >
-                                        Crear Campaña
-                                    </Button>
                                 </Flex>
                             </Card.Section>
                             <Card.Section>
@@ -272,18 +300,22 @@ const DashboardAdminPage = () => {
                         {/* Foundations management section */}
                         <Paper {...paperProps}>
                             <Card.Section mb="lg">
+                                <Button
+                                    leftIcon={<IconPlus size={18} />}
+                                    component={Link}
+                                    to="/admin/create-foundation"
+                                    sx={{ 
+                                        marginBottom: "1rem",
+                                        marginRight: "1rem"
+                                     }}
+                                >
+                                    Crear Organización
+                                </Button>
                                 <Flex align="center" justify="space-between">
                                     <Box>
-                                        <Title {...subTitleProps}>Fundaciones</Title>
+                                        <Title {...subTitleProps}>Organizaciones</Title>
                                         <Text size="sm">Gestiona las Organizaciones</Text>
                                     </Box>
-                                    <Button
-                                        leftIcon={<IconPlus size={18} />}
-                                        component={Link}
-                                        to="/admin/create-foundation"
-                                    >
-                                        Crear Organización
-                                    </Button>
                                 </Flex>
                             </Card.Section>
                             <Card.Section>

@@ -22,10 +22,9 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(28),
-            textAlign: 'left',
+            textAlign: 'center',
             fontWeight: 800,
             padding: 0,
-            marginLeft: theme.spacing.md,
         },
     },
 }));

@@ -11,7 +11,9 @@ import FoundationPage from "../../pages/Foundation";
 export const authRoutes = [
     {
         path: "",
-        element: <HomeLanding />
+        element: <GiversLayoutGuest>
+            <HomeLanding />
+        </GiversLayoutGuest>
     },
     {
         path: "login",

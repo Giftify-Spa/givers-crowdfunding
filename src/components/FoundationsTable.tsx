@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getFoundations } from "../firebase/services/FoundationServices";
 import LoadingSpinnerTable from "./LoadingSpinnerTable";
 import { randomId, useDisclosure } from "@mantine/hooks";
-import { Button, Grid } from "@mantine/core";
+import { Button, SimpleGrid } from "@mantine/core";
 import { FundsTransferModal } from "./modals/FundsTransferModal";
 import { Foundation } from "../interfaces/Foundation";
 import { IconCash, IconPencil } from "@tabler/icons-react";
@@ -62,7 +62,6 @@ const FoundationsTable = () => {
     return (
         <div className="animate__animated animate__fadeIn animate__fast">
             <DataTable
-
                 columns={[
                     { accessor: 'name', title: 'Nombre' },
                     { accessor: 'city', title: 'Ciudad' },
@@ -82,47 +81,53 @@ const FoundationsTable = () => {
                         accessor: 'actions',
                         title: 'Acciones',
                         render: (foundation) => (
-                            <Grid gutter="xs">
-                                <Grid.Col span={6} xs={12}>
-                                    <Button
-                                        size="xs"
-                                        leftIcon={<IconPencil size={18} />}
-                                        component={Link}
-                                        to={`/admin/edit-foundation/${foundation.id}`}
-                                        color="yellow"
-                                        variant='outline'
-                                        sx={(theme) => ({
-                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
-                                            '&:hover': {
-                                                backgroundColor: theme.colors.yellow[6],
-                                                borderColor: theme.colors.yellow[6],
-                                                color: theme.white,
-                                            },
-                                        })}
-                                    >
-                                        Editar
-                                    </Button>
-                                </Grid.Col>
+                            <SimpleGrid
+                                cols={2}
+                                spacing="sm"
+                                breakpoints={[
+                                    { maxWidth: 'lg', cols: 1 },
+                                    { maxWidth: 'md', cols: 1 },
+                                    { maxWidth: 'sm', cols: 1 },
+                                    { maxWidth: 'xs', cols: 1 }
+                                ]}
+                            >
+                                <Button
+                                    size="xs"
+                                    leftIcon={<IconPencil size={18} />}
+                                    component={Link}
+                                    to={`/admin/edit-foundation/${foundation.id}`}
+                                    color="yellow"
+                                    variant='outline'
+                                    sx={(theme) => ({
+                                        transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.yellow[6],
+                                            borderColor: theme.colors.yellow[6],
+                                            color: theme.white,
+                                        },
+                                    })}
+                                >
+                                    Editar
+                                </Button>
 
-                                <Grid.Col span={6} xs={12}>
-                                    <Button
-                                        size="xs"
-                                        onClick={() => handleOpenModal(foundation)}
-                                        leftIcon={<IconCash size={18} />}
-                                        variant='outline'
-                                        sx={(theme) => ({
-                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
-                                            '&:hover': {
-                                                backgroundColor: theme.colors.primary[6],
-                                                borderColor: theme.colors.primary[6],
-                                                color: theme.white,
-                                            },
-                                        })}
-                                    >
-                                        Ver Datos Bancarios
-                                    </Button>
-                                </Grid.Col>
-                            </Grid>
+                                <Button
+                                    size="xs"
+                                    onClick={() => handleOpenModal(foundation)}
+                                    leftIcon={<IconCash size={18} />}
+                                    variant='outline'
+                                    sx={(theme) => ({
+                                        transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.primary[6],
+                                            borderColor: theme.colors.primary[6],
+                                            color: theme.white,
+                                        },
+                                    })}
+                                >
+                                    Ver Datos Bancarios
+                                </Button>
+                            </SimpleGrid>
+
                         )
                     }
                 ]}

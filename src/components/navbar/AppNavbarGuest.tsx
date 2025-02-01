@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { AppLinks, BrandName, SearchDrawer } from '..';
 import AppLinksGuest from '../AppLinksGuest';
+import logoGivers from '../../assets/logos/logo givers_blanco.svg';
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -136,10 +137,14 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('md')]: {
             width: `${rem(100)} !important`, // Tamaño más pequeño en pantallas medianas
+            marginTop: 10,
+            marginBottom: 10,
         },
 
         [theme.fn.smallerThan('sm')]: {
             width: `${rem(80)} !important`, // Tamaño más pequeño en pantallas pequeñas
+            marginTop: 10,
+            marginBottom: 10,
         },
     },
 }));
@@ -201,14 +206,14 @@ const AppNavbarGuest = ({ ...others }: IProps) => {
                 onClose={closeDrawer}
                 size="100%"
                 padding="md"
-                title="Main Menu"
+                title=""
                 className={classes.hiddenDesktop}
                 classNames={{ header: classes.drawerHeader, close: classes.close }}
                 zIndex={1000000}
             >
                 <ScrollArea h={`calc(100vh - ${rem(0)})`} mx="-md" sx={{ backgroundColor: theme.colors.primary[6] }}>
                     <Image
-                        src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/logo%20givers_blanco.svg?alt=media&token=c314e77a-5dd2-4da4-874c-b17808dc5563"
+                        src={logoGivers}
                         className={classes.image}
                         alt="Givers Logo"
                     />

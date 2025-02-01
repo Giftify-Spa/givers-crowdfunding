@@ -13,7 +13,7 @@ const UserCard = ({ responsibleData, ...others }: IProps) => {
     return (
         <Paper{...others}>
             <Flex gap="lg" align="center">
-                <Avatar src={photoURL ? photoURL : ''} size={120} radius={120} />
+                <Avatar src={photoURL ? photoURL : ''} size={80} radius={120} />
                 <Stack spacing="xs" align="flex-start">
                     <Button component={Link} to={`/foundation/${id}`}>
                         <Text ta="center" fz="lg" weight={500}>

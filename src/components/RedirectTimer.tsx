@@ -24,7 +24,7 @@ const RedirectTimer: React.FC<RedirectTimerProps> = ({ redirectTo, delayInSecond
 
   return (
     <div>
-      <p>Redirecting in {secondsLeft} segundos...</p>
+      <p>Redireccíon en {secondsLeft} segundos...</p>
     </div>
   );
 };

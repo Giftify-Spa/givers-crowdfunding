@@ -11,8 +11,6 @@ const useStyles = createStyles((theme) => ({
         fontWeight: 800,
         fontSize: rem(36),
         letterSpacing: rem(-1),
-        paddingLeft: theme.spacing.md,
-        paddingRight: theme.spacing.md,
         color: theme.black,
         textAlign: 'center',
 
@@ -22,10 +20,9 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(28),
-            textAlign: 'left',
+            textAlign: 'center',
             fontWeight: 800,
             padding: 0,
-            marginLeft: theme.spacing.md,
         },
     },
     subtitle: {
@@ -43,12 +40,10 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(16),
-            textAlign: 'left',
+            textAlign: 'center',
             padding: 0,
             marginTop: theme.spacing.sm,
             marginBottom: theme.spacing.sm,
-            marginLeft: theme.spacing.sm,
-            marginRight: theme.spacing.sm,
         },
     },
 }));

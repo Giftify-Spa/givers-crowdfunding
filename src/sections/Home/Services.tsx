@@ -141,10 +141,9 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(28),
-            textAlign: 'left',
+            textAlign: 'center',
             fontWeight: 800,
             padding: 0,
-            marginLeft: theme.spacing.md,
         },
     },
 }));
@@ -173,19 +172,7 @@ const mockdata = [
         icon: 'https://icons.unsplash.com/photo-1574607383476-f517f260d30b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
         title: 'Beneficios',
         description: 'Obten regalías en comercios locales. ¡Te premiamos por donar!',
-    },
-    // {
-    //     id: 4,
-    //     icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    //     title: 'Crea tus propios proyectos',
-    //     description: 'Podrás subir tus causas o experiencias.',
-    // },
-    // {
-    //     id: 5,
-    //     icon: 'https://icons.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-    //     title: 'Conecta con otros Givers',
-    //     description: 'Construyendo comunidad o incluso proyectos en conjunto.',
-    // }
+    }
 ];
 
 function Service({ title, description }: ServiceProps) {
@@ -205,7 +192,6 @@ function Service({ title, description }: ServiceProps) {
                         />
                     </Stack>
                 </Stack>
-                {/* <Image src={image} height={240} fit="cover"/> */}
             </Card.Section>
             <Stack spacing="sm" mt="md">
                 <Title order={4}>{title}</Title>
@@ -236,7 +222,17 @@ const ServicesSection = ({ boxProps }: IProps) => {
                 </Text>
             </Title>
             <SimpleGrid cols={3} spacing="lg" breakpoints={[{ maxWidth: 'md', cols: 2, spacing: 'sm' }]} sx={{ marginBottom: 20 }} >
-                {items}
+                {items[0]}
+                {items[1]}
+                <Box
+                    sx={(theme) => ({
+                        [theme.fn.smallerThan('md')]: {
+                            gridColumn: '1 / span 2',
+                        },
+                    })}
+                >
+                    {items[2]}
+                </Box>
             </SimpleGrid>
         </Box>
     );

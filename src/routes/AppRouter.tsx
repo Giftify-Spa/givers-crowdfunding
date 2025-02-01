@@ -7,8 +7,8 @@ import { GiversRouter } from "./givers/GiversRouter";
 import RoleProtectedRoute from "./RoleProtectedRoute";
 import { clientRoutes } from "./client/clientRoutes";
 import { adminRoutes } from "./admin/adminRoutes";
-import { TransbankRouter } from "./transbank/TransbankRouter";
-import { transbankRoutes } from "./transbank/transbankRoutes";
+import { MercadopagoRouter } from "./mercadopago/MercadopagoRouter";
+import { mercadopagoRoutes } from "./mercadopago/mercadopagoRoutes";
 
 const router = createBrowserRouter([
     // Public Routes
@@ -45,11 +45,11 @@ const router = createBrowserRouter([
     },
 
 
-    // Transbank Routes
+    // Mercado Pago Routes
     {
-        path: "/transbank/*",
-        element: <TransbankRouter />,
-        children: transbankRoutes,
+        path: "/mercadopago/*",
+        element: <MercadopagoRouter />,
+        children: mercadopagoRoutes,
         errorElement: <><h2>ERROR</h2></>
 
     }

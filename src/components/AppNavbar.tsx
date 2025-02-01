@@ -25,6 +25,7 @@ import { useContext, useState } from "react";
 import { AppLinks, BrandName, SearchDrawer } from "./index";
 import { AuthContext } from '../context/auth/AuthContext';
 import { Link } from 'react-router-dom';
+import logoGivers from '../assets/logos/logo givers_blanco.svg';
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -257,7 +258,7 @@ const AppNavbar = ({ ...others }: IProps) => {
             >
                 <ScrollArea h={`calc(100vh - ${rem(0)})`} mx="-md" sx={{ backgroundColor: theme.colors.primary[6] }}>
                     <Image
-                        src="https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/logo%20givers_blanco.svg?alt=media&token=c314e77a-5dd2-4da4-874c-b17808dc5563"
+                        src={logoGivers}
                         className={classes.image}
                         alt="Givers Logo"
                     />

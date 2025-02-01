@@ -60,7 +60,9 @@ const CampaignDetailsPage = (): JSX.Element => {
     const subTitleProps: TextProps = {
         size: 20,
         weight: 600,
-        sx: { lineHeight: '28px' }
+        sx: {
+            lineHeight: '28px',
+        }
     }
 
     const iconSize = 18;
@@ -238,7 +240,7 @@ const CampaignDetailsPage = (): JSX.Element => {
                                                 <iframe
                                                     width="100%"
                                                     height="100%"
-                                                    src="https://www.youtube.com/embed/fJ9rUzIMcZQ"
+                                                    src={campaign.isFinished ? campaign.endVideo : campaign.initVideo}
                                                     title="What is Givers?"
                                                     frameBorder="0"
                                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

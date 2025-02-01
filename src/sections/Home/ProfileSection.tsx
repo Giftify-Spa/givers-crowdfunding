@@ -1,11 +1,11 @@
 import { Container, createStyles, Group, Image, Overlay, rem, Stack, Text, Title } from '@mantine/core';
 import { Foundation } from '../../interfaces/Foundation';
+import foundationBanner from '../../assets/img/background-landing.png';
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
         position: 'relative',
-        backgroundImage:
-            'url(https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/background-landing.png?alt=media&token=f90d63f0-526f-4e13-9a7c-24eabfea4dbe)',
+        backgroundImage: `url(${foundationBanner})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: rem(320),
@@ -14,10 +14,12 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('md')]: {
             height: rem(200),
+            marginTop: rem(50),
         },
 
         [theme.fn.smallerThan('sm')]: {
             paddingBottom: rem(50),
+            marginTop: rem(60),
         },
     },
 
@@ -66,7 +68,7 @@ const useStyles = createStyles((theme) => ({
         },
 
         [theme.fn.smallerThan('sm')]: {
-            fontSize: rem(12),
+            fontSize: rem(16),
             textAlign: 'left',
             fontWeight: 700,
             padding: 0,

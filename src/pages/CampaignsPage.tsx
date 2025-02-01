@@ -28,7 +28,6 @@ const Campaignspage = (): JSX.Element => {
     const boxProps: BoxProps = {
         mt: 36,
         mb: 0,
-        py: 48
     }
 
     // Function to fetch campaigns based on the filter type
@@ -113,72 +112,70 @@ const Campaignspage = (): JSX.Element => {
 
     return (
         <>
-            <>
-                {/* <HeroSection title="Nuestros proyectos" /> Render HeroSection with title */}
-                <HeroSection
-                    title={filter === "cause" ? "Causas" : "Experiencias"}
-                    subtitle={subtitle}
-                /> {/* Dynamic title based on filter */}
+            {/* <HeroSection title="Nuestros proyectos" /> Render HeroSection with title */}
+            <HeroSection
+                title={filter === "cause" ? "Causas" : "Experiencias"}
+                subtitle={subtitle}
+            /> {/* Dynamic title based on filter */}
 
-                <Box
-                    sx={{
-                        ...boxProps.sx,
-                        width: '100vw', // Full viewport width
-                        position: 'relative',
-                        left: '50%',
-                        right: '50%',
-                        marginLeft: '-50vw',
-                        marginRight: '-50vw',
-                        backgroundColor: '#FFF', // White background
-                    }}
-                >
-                    <Container size="lg"> {/* Container for content */}
-                        <Stack>
-                            <Box {...boxProps}>
-                                <Flex justify="start" gap={8} style={{ marginBottom: 10 }}>
-                                    {/* Filter buttons for cause and experience */}
-                                    <Button
-                                        variant={filter === "cause" ? "filled" : "default"}
-                                        onClick={() => setFilter("cause")} // Set filter to cause
+            <Box
+                sx={{
+                    ...boxProps.sx,
+                    width: '100vw', // Full viewport width
+                    position: 'relative',
+                    left: '50%',
+                    right: '50%',
+                    marginLeft: '-50vw',
+                    marginRight: '-50vw',
+                    backgroundColor: '#FFF', // White background
+                }}
+            >
+                <Container size="lg"> {/* Container for content */}
+                    <Stack>
+                        <Box {...boxProps}>
+                            <Flex justify="start" gap={8} style={{ marginBottom: 10 }}>
+                                {/* Filter buttons for cause and experience */}
+                                <Button
+                                    variant={filter === "cause" ? "filled" : "default"}
+                                    onClick={() => setFilter("cause")} // Set filter to cause
+                                >
+                                    Causas
+                                </Button>
+                                <Button
+                                    variant={filter === "experience" ? "filled" : "default"}
+                                    onClick={() => setFilter("experience")} // Set filter to experience
+                                >
+                                    Experiencias
+                                </Button>
+                            </Flex>
+                            {loading ? (
+                                <LoadingSpinner position={'start'} /> // Show loading spinner if loading
+                            ) : (campaigns.length > 0) ? (
+                                <div className="animate__animated animate__fadeIn animate__fast">
+                                    <SimpleGrid
+                                        cols={3}
+                                        spacing="lg"
+                                        breakpoints={[
+                                            { maxWidth: 'md', cols: 2, spacing: 'md' },
+                                            { maxWidth: 'sm', cols: 1, spacing: 0 },
+                                        ]}
                                     >
-                                        Causas
-                                    </Button>
-                                    <Button
-                                        variant={filter === "experience" ? "filled" : "default"}
-                                        onClick={() => setFilter("experience")} // Set filter to experience
-                                    >
-                                        Experiencias
-                                    </Button>
-                                </Flex>
-                                {loading ? (
-                                    <LoadingSpinner position={'start'} /> // Show loading spinner if loading
-                                ) : (campaigns.length > 0) ? (
-                                    <div className="animate__animated animate__fadeIn animate__fast">
-                                        <SimpleGrid
-                                            cols={3}
-                                            spacing="lg"
-                                            breakpoints={[
-                                                { maxWidth: 'md', cols: 2, spacing: 'md' },
-                                                { maxWidth: 'sm', cols: 1, spacing: 0 },
-                                            ]}
-                                        >
-                                            {items} {/* Render campaign cards */}
-                                        </SimpleGrid>
-                                        {hasMore && !loadingMore && (
-                                            <Button onClick={loadMoreCampaigns} mt="lg">
-                                                Cargar más {/* Button to load more campaigns */}
-                                            </Button>
-                                        )}
-                                        {loadingMore && <LoadingSpinner position={"start"} />} {/* Show spinner if loading more */}
-                                    </div>
-                                ) : (
-                                    <EmptyState title="No hay campañas disponibles" description="En este momento no podemos mostrarte nuestras campañas. Intentalo más tarde." /> // Reemplazo del mensaje
-                                )}
-                            </Box>
-                        </Stack>
-                    </Container>
-                </Box>
-            </>
+                                        {items} {/* Render campaign cards */}
+                                    </SimpleGrid>
+                                    {hasMore && !loadingMore && (
+                                        <Button onClick={loadMoreCampaigns} mt="lg">
+                                            Cargar más {/* Button to load more campaigns */}
+                                        </Button>
+                                    )}
+                                    {loadingMore && <LoadingSpinner position={"start"} />} {/* Show spinner if loading more */}
+                                </div>
+                            ) : (
+                                <EmptyState title="No hay campañas disponibles" description="En este momento no podemos mostrarte nuestras campañas. Intentalo más tarde." /> // Reemplazo del mensaje
+                            )}
+                        </Box>
+                    </Stack>
+                </Container>
+            </Box>
         </>
     );
 };

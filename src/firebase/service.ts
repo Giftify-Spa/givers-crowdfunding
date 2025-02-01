@@ -20,7 +20,8 @@ import { Contribution } from "../interfaces/Contribution";
 
 export const addDocument = async (collectionName: string, data: any) => {
   try {
-    await addDoc(collection(FirebaseDB, collectionName), data);
+    const { id } = await addDoc(collection(FirebaseDB, collectionName), data);
+    return id;
   } catch (e) {
     console.error("Error adding document: ", e);
   }

@@ -101,10 +101,9 @@ const useStyles = createStyles((theme) => ({
 
         [theme.fn.smallerThan('sm')]: {
             fontSize: rem(28),
-            textAlign: 'left',
+            textAlign: 'center',
             fontWeight: 800,
             padding: 0,
-            marginLeft: theme.spacing.md,
         },
     },
 }));
@@ -143,7 +142,7 @@ const CategoriesSection = ({ boxProps }: IProps) => {
                     cols={2}
                     spacing="sm"
                     breakpoints={[
-                        { maxWidth: 'md', cols: 3, spacing: 'md' },
+                        { maxWidth: 'md', cols: 2, spacing: 'md' },
                         { maxWidth: 'sm', cols: 2, spacing: 'sm' },
                     ]}
                 >

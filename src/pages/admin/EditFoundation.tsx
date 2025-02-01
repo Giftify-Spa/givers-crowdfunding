@@ -283,19 +283,19 @@ const EditFoundationPage = () => {
                                     required />
 
 
-                                    <Text
-                                        size={'sm'}
-                                        weight={500}
-                                    >
-                                        Dirección Actual:
-                                    </Text>
-                                    <Text
-                                        size={'sm'}
-                                        weight={500}
-                                        color={'gray'}
-                                    >
-                                        {formValues.address}
-                                    </Text>
+                                <Text
+                                    size={'sm'}
+                                    weight={500}
+                                >
+                                    Dirección Actual:
+                                </Text>
+                                <Text
+                                    size={'sm'}
+                                    weight={500}
+                                    color={'gray'}
+                                >
+                                    {formValues.address}
+                                </Text>
 
                                 <GooglePlace updateAddress={updateAddressReferences} />
                             </SimpleGrid>
@@ -308,7 +308,16 @@ const EditFoundationPage = () => {
                                 {existingMultimedia.length > 0 && (
                                     <div>
                                         <Text size="sm" mb="xs">Imágenes Existentes:</Text>
-                                        <SimpleGrid cols={6} spacing="sm">
+                                        <SimpleGrid
+                                            cols={6}
+                                            spacing="sm"
+                                            breakpoints={[
+                                                { maxWidth: 'lg', cols: 4 },
+                                                { maxWidth: 'md', cols: 3 },
+                                                { maxWidth: 'sm', cols: 2 },
+                                                { maxWidth: 'xs', cols: 1 }
+                                            ]}
+                                        >
                                             {existingMultimedia.map((imageUrl, index) => (
                                                 <Card key={index} shadow="sm" padding="xs" radius="md" withBorder>
                                                     <Image src={imageUrl} alt={`Multimedia ${index + 1}`} height={100} width={100} sx={{ margin: 'auto' }} fit="cover" />

@@ -1,36 +1,46 @@
-import { createStyles, Image, ImageProps, Overlay, rem, Title } from '@mantine/core';
+import { createStyles, Image, ImageProps, rem, Title } from '@mantine/core';
 
 import corfoImage from '../../assets/logos/corfo.png';
 import finaciadoImage from '../../assets/logos/financiado.png';
+import fondoGivers from '../../assets/img/fondogivers2.png';
 
 const useStyles = createStyles((theme) => ({
     wrapper: {
         position: 'relative',
-        backgroundImage:
-            'url(https://firebasestorage.googleapis.com/v0/b/givers-48277.appspot.com/o/fondogivers2.png?alt=media&token=1576a23b-4824-405a-a027-850db3280c0b)',
+        backgroundImage: `url(${fondoGivers})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center 5%',
         height: rem(755),
+        width: '100%',
         margin: 0,
         padding: 0,
 
-        [theme.fn.smallerThan('md')]: {
-            height: rem(560),
+        '&::before': {
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            zIndex: 1,
         },
 
         [theme.fn.smallerThan('sm')]: {
-            paddingTop: rem(80),
-            paddingBottom: rem(50),
+            backgroundPosition: 'left center',
+            paddingRight: theme.spacing.md,
         },
+        [theme.fn.smallerThan('md')]: {
+            paddingTop: rem(80),
+            minHeight: rem(560),
+        }
+
     },
 
     inner: {
         position: 'relative',
-        zIndex: 1,
-        height: '100%', // Asegurarse de que ocupe toda la altura del wrapper
+        zIndex: 2,
+        height: '100%',
         display: 'flex',
-        alignItems: 'center', // Centrar verticalmente el contenido
-        justifyContent: 'flex-end', // Centrar horizontalmente el contenido
+        alignItems: 'center',
+        justifyContent: 'flex-end',
         padding: theme.spacing.md,
 
         [theme.fn.smallerThan('md')]: {
@@ -41,15 +51,14 @@ const useStyles = createStyles((theme) => ({
     contentContainer: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end', // Centrar horizontalmente los elementos
-        justifyContent: 'center', // Centrar verticalmente los elementos
+        alignItems: 'flex-end',
+        justifyContent: 'center',
         width: '100%',
         maxWidth: rem(800),
         padding: theme.spacing.md,
 
         [theme.fn.smallerThan('sm')]: {
             width: '100%',
-            padding: `${theme.spacing.sm} 0`,
         },
     },
 
@@ -60,8 +69,8 @@ const useStyles = createStyles((theme) => ({
         textAlign: 'end',
 
         [theme.fn.smallerThan('sm')]: {
-            fontSize: rem(28),
-            fontWeight: 700,
+            fontSize: rem(32),
+            fontWeight: 800,
             textAlign: 'center',
             padding: 0,
             marginBottom: theme.spacing.md,
@@ -83,15 +92,40 @@ const useStyles = createStyles((theme) => ({
         },
     },
 
-    controls: {
+    footerDesktop: {
         display: 'flex',
         flexDirection: 'row',
         gap: theme.spacing.md,
         marginTop: theme.spacing.md,
 
+        [theme.fn.smallerThan('md')]: {
+            opacity: 0,
+        },
+
         [theme.fn.smallerThan('sm')]: {
-            flexDirection: 'row',
-            gap: theme.spacing.sm,
+            opacity: 0,
+        },
+    },
+
+    footerLogos: {
+        position: 'relative',
+        zIndex: 2,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: theme.spacing.md,
+        marginTop: theme.spacing.lg,
+        opacity: 0,
+
+        [theme.fn.smallerThan('md')]: {
+            opacity: 1,
+        },
+
+        [theme.fn.smallerThan('sm')]: {
+            position: 'absolute',
+            bottom: theme.spacing.lg,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            opacity: 1,
         },
     },
 
@@ -120,8 +154,6 @@ const HeroLandingSection = ({ title, subtitle }: Props) => {
 
     return (
         <div className={classes.wrapper}>
-            <Overlay color="#000" opacity={0.45} zIndex={1} />
-
             <div className={classes.inner}>
                 <div className={classes.contentContainer} >
                     <Title className={classes.title}>
@@ -130,11 +162,15 @@ const HeroLandingSection = ({ title, subtitle }: Props) => {
                     <Title className={classes.subtitle}>
                         {subtitle}
                     </Title>
-                    <div className={classes.controls}>
-                        <Image src={corfoImage} {...imageProps} />
-                        <Image src={finaciadoImage} {...imageProps} />
+                    <div className={classes.footerDesktop}>
+                        <Image src={corfoImage} {...imageProps} alt='corfo-desktop'/>
+                        <Image src={finaciadoImage} {...imageProps} alt='financed-desktop'/>
                     </div>
                 </div>
+            </div>
+            <div className={classes.footerLogos}>
+                <Image src={corfoImage} {...imageProps} alt='corfo'/>
+                <Image src={finaciadoImage} {...imageProps} alt='financed'/>
             </div>
         </div >
     );

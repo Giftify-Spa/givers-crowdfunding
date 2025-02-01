@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar, Group, Text, Button, Grid } from '@mantine/core';
+import { Avatar, Group, Text, Button, SimpleGrid } from '@mantine/core';
 import { DataTable } from "mantine-datatable";
 import { useEffect, useState } from "react";
 import { getCampaigns } from "../firebase/services/campaigns/getCampaigns";
@@ -134,46 +134,53 @@ const CampaignsTable = () => {
                     {
                         accessor: 'actions', title: 'Acciones',
                         render: ({ id }) =>
-                            <Grid gutter="xs">
-                                <Grid.Col span={6} xs={12}>
-                                    <Button
-                                        leftIcon={<IconPencil size={18} />}
-                                        component={Link}
-                                        to={`/admin/edit-campaign/${id}`}
-                                        color='yellow'
-                                        variant='outline'
-                                        sx={(theme) => ({
-                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
-                                            '&:hover': {
-                                                backgroundColor: theme.colors.yellow[6],
-                                                borderColor: theme.colors.yellow[6],
-                                                color: theme.white,
-                                            },
-                                        })}
-                                    >
-                                        Editar
-                                    </Button>
-                                </Grid.Col>
+                            <SimpleGrid
+                                cols={2}
+                                spacing="sm"
+                                breakpoints={[
+                                    { maxWidth: 'lg', cols: 1 },
+                                    { maxWidth: 'md', cols: 1 },
+                                    { maxWidth: 'sm', cols: 1 },
+                                    { maxWidth: 'xs', cols: 1 }
+                                ]}
+                            >
+                                <Button
+                                    size='xs'
+                                    leftIcon={<IconPencil size={18} />}
+                                    component={Link}
+                                    to={`/admin/edit-campaign/${id}`}
+                                    color='yellow'
+                                    variant='outline'
+                                    sx={(theme) => ({
+                                        transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.yellow[6],
+                                            borderColor: theme.colors.yellow[6],
+                                            color: theme.white,
+                                        },
+                                    })}
+                                >
+                                    Editar
+                                </Button>
 
-                                <Grid.Col span={6} xs={12}>
-                                    <Button
-                                        onClick={() => handleApprove(id)}
-                                        leftIcon={<IconTrash size={18} />}
-                                        color="red"
-                                        variant='outline'
-                                        sx={(theme) => ({
-                                            transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
-                                            '&:hover': {
-                                                backgroundColor: theme.colors.red[6],
-                                                borderColor: theme.colors.red[6],
-                                                color: theme.white,
-                                            },
-                                        })}
-                                    >
-                                        Eliminar
-                                    </Button>
-                                </Grid.Col>
-                            </Grid>
+                                <Button
+                                    size='xs'
+                                    onClick={() => handleApprove(id)}
+                                    leftIcon={<IconTrash size={18} />}
+                                    color="red"
+                                    variant='outline'
+                                    sx={(theme) => ({
+                                        transition: 'background-color 0.3s, border-color 0.3s, color 0.3s',
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.red[6],
+                                            borderColor: theme.colors.red[6],
+                                            color: theme.white,
+                                        },
+                                    })}
+                                >
+                                    Eliminar
+                                </Button>
+                            </SimpleGrid>
                     }
 
                 ]}

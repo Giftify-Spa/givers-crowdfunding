@@ -1,5 +1,7 @@
 import { createStyles } from "@mantine/core";
-import RedirectTimer from "../RedirectTimer";
+// import RedirectTimer from "../RedirectTimer";
+import { Contribution } from "../../interfaces/Contribution";
+import { formattingToCLPNumber } from "../../helpers/formatCurrency";
 
 
 const useStyles = createStyles(() => ({
@@ -58,29 +60,13 @@ const useStyles = createStyles(() => ({
     },
 }));
 
-interface TransbankStatusResponse {
-    vci: string;
-    amount: number;
-    status: string;
-    buy_order: string;
-    session_id: string;
-    card_detail: {
-        card_number: string;
-    };
-    accounting_date: string;
-    transaction_date: string;
-    authorization_code: string;
-    payment_type_code: string;
-    response_code: number;
-    installments_number: number;
-}
-
 interface OrderProps {
-    transbankResp: TransbankStatusResponse | null,
+    donationResp: Contribution | null,
 }
 
-const OrderSuccess = ({ transbankResp }: OrderProps) => {
+const OrderSuccess = ({ donationResp }: OrderProps) => {
     const { classes } = useStyles();
+    console.log("donationResp", donationResp);
     return (
         <>
             <div className={classes.container}>
@@ -90,10 +76,11 @@ const OrderSuccess = ({ transbankResp }: OrderProps) => {
                 </div>
                 <div className={classes.orderDetails}>
                     <h2 className={classes.sectionTitle}>Detalles de la Donación</h2>
-                    <p><strong>Número de Orden:</strong> #{transbankResp.session_id}</p>
-                    <p><strong>Fecha:</strong> 3 de Septiembre, 2024</p>
-                    <p><strong>Nombre:</strong> Juan Pérez</p>
-                    <p><strong>Número de Tarjeta:</strong> XXXXXXXXXXXX{transbankResp.card_detail.card_number} </p>
+                    <p><strong>Número de Orden: </strong> #</p>
+                    <p><strong>Fecha: </strong> 3 de Septiembre, 2024</p>
+                    <p><strong>Nombre: </strong>{donationResp.user.name}</p>
+                    <p><strong>Tipo de Pago: </strong> {donationResp.mp_response.payment_type === "account_money" ? "Cartera Mercadopago" : "Tarjeta"} </p>
+                    <p><strong>Número de Tarjeta: </strong> {donationResp.mp_response.payment_type === "account_money" ? "No aplica" : "XXXXXX"} </p>
                 </div>
                 <div className={classes.orderSummary}>
                     <h2 className={classes.sectionTitle}>Resumen de la Donación</h2>
@@ -107,21 +94,21 @@ const OrderSuccess = ({ transbankResp }: OrderProps) => {
                         </thead>
                         <tbody>
                             <tr>
-                                <td className={classes.tableCell}>Campaña example</td>
-                                <td className={classes.tableCell}>Fundación 1</td>
-                                <td className={classes.tableCell}>${transbankResp.amount}</td>
+                                <td className={classes.tableCell}>{donationResp.campaign.name}</td>
+                                <td className={classes.tableCell}>{donationResp.foundation.name}</td>
+                                <td className={classes.tableCell}>{formattingToCLPNumber(donationResp.amount)}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div className={classes.footer}>
-                    <h3>Total: ${transbankResp.amount}</h3>
+                    <h3>Total: {formattingToCLPNumber(donationResp.amount)}</h3>
                 </div>
                 <div className={classes.footer}>
                     <p>Si tienes alguna pregunta, no dudes en <a href="mailto:soporte@tienda.com">contactarnos</a>.</p>
                 </div>
 
-                <RedirectTimer delayInSeconds={10} redirectTo="/" />
+                {/* <RedirectTimer delayInSeconds={15} redirectTo="/" /> */}
             </div>
         </>
     )

@@ -5,13 +5,11 @@ import {
     Button,
     Container,
     Drawer,
-    DrawerProps,
     Flex,
     Group,
+    Loader,
     NumberInput,
     Paper,
-    PaperProps,
-    Radio,
     ScrollArea,
     Stack,
     Text,
@@ -20,167 +18,191 @@ import {
     useMantineTheme
 } from "@mantine/core";
 import {
-    IconCash,
     IconCurrencyDollar,
     IconShieldCheckFilled
 } from "@tabler/icons-react";
 import * as yup from 'yup';
 import { Campaign } from '../interfaces/Campaign';
 import { formattingToCLPNumber } from '../helpers/formatCurrency';
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react'
+import { initMercadoPago } from '@mercadopago/sdk-react';
 import axios from 'axios';
+import { addDocument } from '../firebase/service';
+import { useDisclosure } from '@mantine/hooks';
+import PaymentModal from './PaymentModal';
 
-
-
-interface IProps extends Pick<DrawerProps, 'opened' | 'onClose' | 'size'> {
-    campaign?: Campaign
-    iconSize: number
-}
-
-const validationDonationSchema = yup.object().shape({
+// Validate form with Yup
+const donationSchema = yup.object().shape({
     name: yup.string().required('El nombre es requerido'),
     lastname: yup.string().required('El apellido es requerido'),
-    email: yup.string().required('El correo electrónico es requerido').email('El correo electrónico no es válido'),
-    payment: yup.string().required('El método de pago es requerido'),
-    amount: yup.number().required('El monto es requerido').min(1, 'El monto debe ser mayor a 0')
+    email: yup
+        .string()
+        .email('El correo electrónico no es válido')
+        .required('El correo electrónico es requerido'),
+    amount: yup
+        .number()
+        .min(1, 'El monto debe ser mayor a 0')
+        .required('El monto es requerido'),
 });
 
-const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
+interface IProps {
+    campaign?: Campaign;
+    iconSize: number;
+    opened: boolean;
+    onClose: () => void;
+    size?: string | number;
+}
 
-    const [preference_id, setPreference_id] = useState<string | null>(null);
+const DonationDrawer = ({ campaign, iconSize, opened, onClose, size }: IProps) => {
+    const theme = useMantineTheme();
 
-    initMercadoPago(import.meta.env.VITE_MERCADO_PAGO_KEY_DEV, {
-        locale: "es-CL"
-    });
-
-    const createPreference = async () => {
-        try {
-            const response = await axios.post("http://127.0.0.1:5001/givers-48277/us-central1/mercadoPagoGivers/create-preference", {
-                title: "Donación",
-                price: 1000,
-                quantity: 1
-            });
-            const { id } = response.data;
-            console.log(id);
-            setPreference_id(id);
-            // return id;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // const navigate = useNavigate();
-
-    const [formValues, setFormValues] = useState<{ name: string, lastname: string, email: string, amount: number | string, payment: string }>({
+    const [formValues, setFormValues] = useState({
         name: '',
         lastname: '',
         email: '',
         amount: 0,
-        payment: ''
     });
 
+    // Manage Yup errors
     const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
-    // const [error, setError] = useState<string | null>(null);
 
-    const theme = useMantineTheme()
+    // Loader while the preference is being created
+    const [loadingMP, setLoadingMP] = useState(false);
 
-    const paperProps: PaperProps = {
-        p: "md",
+    // Save the preferenceId when it is ready and control the opening of the modal
+    const [preferenceId, setPreferenceId] = useState<string | null>(null);
+    const [paymentModalOpened, { open: openPaymentModal, close: closePaymentModal }] = useDisclosure(false);
+
+    // Initialize MercadoPago
+    initMercadoPago(import.meta.env.VITE_MERCADO_PAGO_KEY_DEV, { locale: 'es-CL' });
+
+    // Styles for Paper
+    const paperProps = {
+        p: 'md',
         withBorder: true,
-        sx: { backgroundColor: theme.white }
-    }
+        sx: { backgroundColor: theme.white },
+    } as const;
 
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Function to handle changes in text and number inputs
+    const handleChange = (
+        event: React.ChangeEvent<HTMLInputElement> | { currentTarget: { name: string; value: any } }
+    ) => {
         const { name, value } = event.currentTarget;
-        setFormValues({
-            ...formValues,
-            [name]: value,
-        });
-    }
+        setFormValues((prev) => ({ ...prev, [name]: value }));
+    };
 
-    const isValidForm = async (): Promise<boolean> => {
+    // Validate form with Yup
+    const validateForm = async () => {
         try {
-            await validationDonationSchema.validate(formValues, { abortEarly: false });
+            await donationSchema.validate(formValues, { abortEarly: false });
             return true;
-        } catch (error) {
-            const errors: Record<string, string> = {};
-            error.inner.forEach((err) => {
-                errors[err.path] = err.message;
+        } catch (error: any) {
+            const fieldErrors: Record<string, string> = {};
+            error.inner.forEach((err: any) => {
+                fieldErrors[err.path] = err.message;
             });
-            setErrorMessages(errors);
+            setErrorMessages(fieldErrors);
             return false;
         }
-    }
+    };
 
-    const onCreateDonation = async () => {
+    // Call your backend to create the MercadoPago preference
+    const createPreference = async (orderId: string) => {
         try {
-            const isValid = await isValidForm();
-            if (isValid) {
-                console.log('Formulario válido');
-            }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            console.log('Finalizado');
+            const { data } = await axios.post(
+                'https://us-central1-givers-48277.cloudfunctions.net/transbankWebpayGiversProd/create-preference',
+                {
+                    orderId,
+                    campaignId: campaign?.id,
+                    userId: 'Y0wTza0DEVJLBF6yuAkw',
+                    title: `Donación a campaña ${campaign?.name}`,
+                    price: formValues.amount,
+                    quantity: 1,
+                }
+            );
+            return data.id as string;
+        } catch {
+            return null;
         }
-        // const isValid = await isValidForm();
-        // if (isValid) {
-        //     try {
+    };
 
-        //         const userId = await checkUser(formValues);
+    // Principal action: validate, create contribution, get preferenceId and open PaymentModal
+    const onCreateDonation = async () => {
+        if (!(await validateForm())) return;
 
-        //         const formattedOrderData = {
-        //             contributionAmount: Number(formValues.amount),
-        //             status: 'INITIALIZED',
-        //             os: 'WEB',
-        //             userId,
-        //             campaignId: campaign.id
-        //         };
+        setErrorMessages({});
 
-        //         const { success, order } = await addOrder(formattedOrderData);
+        // Check if the amount is less than the requestAmount
+        const newAmount = formValues.amount + campaign.cumulativeAmount;
+        if (newAmount > campaign.requestAmount) {
+            setErrorMessages({ amount: 'El monto supera la meta de la campaña' });
+            return;
+        }
 
-        //         if (success) {
-        //             navigate('/transbank/request', { state: { order, campaignId: campaign?.id, userId: formattedOrderData.userId } });
-        //         }
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
+        try {
+            setLoadingMP(true);
 
+            // Create contribution in Firestore
+            const docRef = await addDocument('contributions', {
+                ...formValues,
+                campaignId: campaign?.id,
+                userId: 'Y0wTza0DEVJLBF6yuAkw',
+                createdAt: new Date(),
+                status: 'INITIALIZED',
+                os: 'WEB',
+            });
 
-    }
+            // Create the preference in your backend
+            const newPrefId = await createPreference(docRef);
+            setLoadingMP(false);
+
+            if (newPrefId) {
+                setPreferenceId(newPrefId);
+                openPaymentModal();
+            }
+        } catch {
+            setLoadingMP(false);
+        }
+    };
+
     return (
         <Drawer
+            opened={opened}
+            onClose={onClose}
             position="bottom"
+            size={size || '100%'}
             title=""
-            size="100%"
             scrollAreaComponent={ScrollArea.Autosize}
-            {...others}
         >
             <Container>
                 <Stack>
                     <Flex gap="xs" align="center">
-                        <Text>Tu aporte a <b>{campaign?.name}</b></Text>
+                        <Text>
+                            Tu aporte a <b>{campaign?.name}</b> - <b>Meta de la campaña {formattingToCLPNumber(campaign?.requestAmount)}</b>
+                        </Text>
                     </Flex>
+
+                    {/* Amount of donation */}
                     <NumberInput
                         size="md"
                         label="Ingresa el monto de donación"
                         name="amount"
-                        value={typeof formValues.amount === 'string' ? parseFloat(formValues.amount) : formValues.amount}
-                        onChange={(value) => handleChange({ currentTarget: { name: 'amount', value } } as any)}
+                        value={
+                            typeof formValues.amount === 'string'
+                                ? parseFloat(formValues.amount)
+                                : formValues.amount
+                        }
+                        onChange={(value) =>
+                            handleChange({ currentTarget: { name: 'amount', value } })
+                        }
                         precision={0}
                         rightSection={<IconCurrencyDollar size={iconSize} />}
                         error={errorMessages.amount}
-                        placeholder='0'
+                        placeholder="0"
                         required
                     />
-                    <Paper
-                        p="md"
-                        radius="sm"
-                        mt="sm"
-                        {...paperProps}
-                    >
+
+                    {/* Information of the donor */}
+                    <Paper p="md" radius="sm" mt="sm" {...paperProps}>
                         <Stack sx={{ width: '100%' }}>
                             <TextInput
                                 label="Correo electrónico"
@@ -213,60 +235,62 @@ const DonationDrawer = ({ campaign, iconSize, ...others }: IProps) => {
                             </Group>
                         </Stack>
                     </Paper>
-                    <Paper {...paperProps}>
-                        <Radio.Group
-                            name="payment"
-                            label="Método de pago"
-                            value={formValues.payment}
-                            onChange={(value) => handleChange({ currentTarget: { name: 'payment', value } } as any)}
-                            mb="md"
-                        >
-                            <Group mt="sm">
-                                <Radio
-                                    value="gpay"
-                                    label={<Group spacing="xs"><IconCash size={iconSize} /><Text>Webpay Transbank</Text></Group>} />
-                            </Group>
 
-                            <Group mt="sm">
-                                <Radio
-                                    onClick={createPreference}
-                                    value="gpay"
-                                    label={<Group spacing="xs"><IconCash size={iconSize} /><Text>Mercado Pago</Text></Group>} />
-                            </Group>
-                        </Radio.Group>
-                    </Paper>
-
+                    {/* Summary and continue button */}
                     <Paper {...paperProps}>
                         <Stack>
-                            <Text fw={700} size="lg">Tu donación</Text>
-                            <Group position="apart">
-                                <Text>Tu donación</Text>
-                                <Text fw={500}>{formattingToCLPNumber(Number(formValues.amount))}</Text>
-                            </Group>
+                            <Text fw={700} size="lg">
+                                Tu donación
+                            </Text>
                             <Group position="apart">
                                 <Text>Total</Text>
-                                <Text fw={500}>{formattingToCLPNumber(Number(formValues.amount))}</Text>
+                                <Text fw={500}>
+                                    {formattingToCLPNumber(Number(formValues.amount))}
+                                </Text>
                             </Group>
-                            <Button onClick={onCreateDonation} size="lg">Ir al pago</Button>
+
+                            <Button size="lg" onClick={onCreateDonation} disabled={loadingMP}>
+                                Continuar el pago
+                            </Button>
+
+                            {loadingMP && (
+                                <Flex justify="center" align="center">
+                                    <Loader size="sm" color="blue" />
+                                </Flex>
+                            )}
                         </Stack>
                     </Paper>
+
+                    {/* Terms */}
                     <Paper {...paperProps}>
                         <Stack>
-                            <Text size="sm">Al continuar, aceptas los <Anchor>términos de Givers</Anchor> y el <Anchor>aviso de privacidad.</Anchor></Text>
-                            <Text size="sm">Aprende más sobre <Anchor>precios y tarifas.</Anchor></Text>
+                            <Text size="sm">
+                                Al continuar, aceptas los <Anchor>términos de Givers</Anchor> y el{" "}
+                                <Anchor>aviso de privacidad.</Anchor>
+                            </Text>
+                            <Text size="sm">
+                                Aprende más sobre <Anchor>precios y tarifas.</Anchor>
+                            </Text>
                             <Flex gap="sm">
                                 <ThemeIcon size="lg" variant="light" color="blue">
                                     <IconShieldCheckFilled size={18} />
                                 </ThemeIcon>
-                                <Text size="sm">Te garantizamos un reembolso completo hasta por un año en el raro caso de que ocurra un fraude.&nbsp;<Anchor>Consulta nuestra Garantía de Donación de Givers.</Anchor>
+                                <Text size="sm">
+                                    Te garantizamos un reembolso completo hasta por un año en caso de fraude.&nbsp;
+                                    <Anchor>Consulta nuestra Garantía de Donación.</Anchor>
                                 </Text>
                             </Flex>
                         </Stack>
                     </Paper>
                 </Stack>
-            </Container >
-            {preference_id && <Wallet initialization={{ preferenceId: preference_id, redirectMode: 'blank' }} />}
-        </Drawer >
+            </Container>
+
+            <PaymentModal
+                opened={paymentModalOpened}
+                onClose={closePaymentModal}
+                preferenceId={preferenceId}
+            />
+        </Drawer>
     );
 };
 

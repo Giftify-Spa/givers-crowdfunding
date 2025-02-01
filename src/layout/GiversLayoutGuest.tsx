@@ -1,10 +1,8 @@
-import { AppShell, useMantineTheme } from '@mantine/core';
+import { AppShell } from '@mantine/core';
 import AppNavbarGuest from '../components/navbar/AppNavbarGuest';
 import { LandingFooter } from '../components';
 
 const GiversLayoutGuest = ({ children }) => {
-    const theme = useMantineTheme();
-
     const data = {
         title: 'Givers',
         links: [
@@ -19,15 +17,12 @@ const GiversLayoutGuest = ({ children }) => {
             <AppShell
                 styles={{
                     main: {
-                        background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[1],
+                        background: 'transparent',
                         padding: '0px',
                         minHeight: '100vh',
-                        margin: '0px',
-                        overflow: 'visible'
+                        overflow: 'auto'
                     },
                 }}
-                navbarOffsetBreakpoint="sm"
-                asideOffsetBreakpoint="sm"
                 navbar={<AppNavbarGuest />}
                 footer={<LandingFooter data={[data]} />}
             >
