@@ -1,9 +1,9 @@
-import MercadoPagoSuccess from "../../components/MercadoPagoSuccess";
+import MercadoPagoStatus from "../../components/MercadoPagoStatus";
 
 
 export const mercadopagoRoutes = [
     {
         path: "transaction-result",
-        element: <MercadoPagoSuccess />
+        element: <MercadoPagoStatus />
     }
 ];

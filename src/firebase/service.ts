@@ -18,10 +18,51 @@ import { Contribution } from "../interfaces/Contribution";
 
 
 
+export const callSendEmail = async (data: any) => {
+  try {
+    const response = await axios.post(import.meta.env.VITE_API_URL_SEND_EMAIL, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': import.meta.env.VITE_API_KEY_SEND_EMAIL,
+      }
+    });
+    if (response.data.statusCode === 200) {
+      const body = response.data;
+      console.log("Email sent successfully", body);
+      return {
+        success: true,
+        message: "Email sent successfully",
+      }
+    }
+    return {
+      success: false,
+      message: "Error sending email",
+    }
+
+  } catch (error) {
+    console.log(error);
+
+  }
+};
+
 export const addDocument = async (collectionName: string, data: any) => {
   try {
     const { id } = await addDoc(collection(FirebaseDB, collectionName), data);
     return id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+export const addUser = async (data: any) => {
+  try {
+    const checkEmail = await checkIfDocumentExists('users', 'email', data.email);
+    if (!checkEmail) {
+      const { id } = await addDoc(collection(FirebaseDB, 'users'), data);
+      return id;
+    }
+
+    return checkEmail;
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -33,11 +74,15 @@ export const checkIfDocumentExists = async (
   collectionName: string,
   fieldName: string,
   value: string
-): Promise<boolean> => {
+): Promise<string> => {
   const q = query(collection(FirebaseDB, collectionName), where(fieldName, '==', value));
   const querySnapshot = await getDocs(q);
 
-  return !querySnapshot.empty;
+  if (!querySnapshot.empty) {
+    return querySnapshot.docs[0].id;
+  }
+
+  return null;
 };
 
 /**
@@ -69,7 +114,7 @@ export const checkDocumentById = async (collectionName: string, documentId: stri
 export const addOrder = async (data: Contribution) => {
   try {
     const {
-      contributionAmount,
+      amount: contributionAmount,
       os,
       status,
       userId,

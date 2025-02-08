@@ -18,6 +18,7 @@ import { User } from "./User";
  * @property {Date | string} createdAt - The date and time when the contribution was made.
  * @property {string} mp_preference_id - The MercadoPago preference ID.
  * @property {MercadoPagoResponse} mp_response - The response details.
+ * @property {string} status - The status of the contribution.
  * @property {Campaign} campaign - The campaign to which the contribution was made.
  * @property {User} user - The user who made the contribution.
  * @property {Foundation} foundation - The foundation to which the contribution was made.
@@ -36,6 +37,7 @@ export interface Contribution {
   payment: string;
   createdAt: Date | string;
   mp_preference_id?: string;
+  status?: string;
   mp_response?: MercadoPagoResponse;
   campaign?: Campaign;
   user?: User;

@@ -1,3 +1,4 @@
+import GiversLayoutGuest from '../../layout/GiversLayoutGuest';
 import RedirectTimer from '../RedirectTimer';
 import { createStyles } from '@mantine/core';
 
@@ -81,7 +82,7 @@ interface OrderProps {
 const OrderFailed = ({ transbankResp }: OrderProps) => {
     const { classes } = useStyles();
     return (
-        <>
+        <GiversLayoutGuest>
             <div className={classes.container}>
                 <div className={classes.header}>
                     <h1 className={classes.headerTitle}>¡Ha ocurrido un error!</h1>
@@ -122,7 +123,7 @@ const OrderFailed = ({ transbankResp }: OrderProps) => {
 
                 <RedirectTimer delayInSeconds={10} redirectTo="/" />
             </div>
-        </>
+        </GiversLayoutGuest>
     )
 }
 

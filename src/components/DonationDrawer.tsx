@@ -26,7 +26,7 @@ import { Campaign } from '../interfaces/Campaign';
 import { formattingToCLPNumber } from '../helpers/formatCurrency';
 import { initMercadoPago } from '@mercadopago/sdk-react';
 import axios from 'axios';
-import { addDocument } from '../firebase/service';
+import { addDocument, addUser } from '../firebase/service';
 import { useDisclosure } from '@mantine/hooks';
 import PaymentModal from './PaymentModal';
 
@@ -106,14 +106,14 @@ const DonationDrawer = ({ campaign, iconSize, opened, onClose, size }: IProps) =
     };
 
     // Call your backend to create the MercadoPago preference
-    const createPreference = async (orderId: string) => {
+    const createPreference = async (orderId: string, userId: string) => {
         try {
             const { data } = await axios.post(
-                'https://us-central1-givers-48277.cloudfunctions.net/transbankWebpayGiversProd/create-preference',
+                `${import.meta.env.VITE_API_MERCADO_PAGO_PROD}/create-preference`,
                 {
                     orderId,
                     campaignId: campaign?.id,
-                    userId: 'Y0wTza0DEVJLBF6yuAkw',
+                    userId,
                     title: `Donación a campaña ${campaign?.name}`,
                     price: formValues.amount,
                     quantity: 1,
@@ -141,18 +141,28 @@ const DonationDrawer = ({ campaign, iconSize, opened, onClose, size }: IProps) =
         try {
             setLoadingMP(true);
 
+            const userId = await addUser({
+                ...formValues,
+                email: formValues.email,
+                name:   formValues.name,
+                status: true,
+                profile: 'Client'
+            });
+
+
             // Create contribution in Firestore
             const docRef = await addDocument('contributions', {
                 ...formValues,
                 campaignId: campaign?.id,
-                userId: 'Y0wTza0DEVJLBF6yuAkw',
+                userId: userId,
                 createdAt: new Date(),
                 status: 'INITIALIZED',
                 os: 'WEB',
             });
 
             // Create the preference in your backend
-            const newPrefId = await createPreference(docRef);
+            const newPrefId = await createPreference(docRef, userId);            
+            
             setLoadingMP(false);
 
             if (newPrefId) {

@@ -1,13 +1,12 @@
 import { createStyles } from "@mantine/core";
-// import RedirectTimer from "../RedirectTimer";
 import { Contribution } from "../../interfaces/Contribution";
 import { formattingToCLPNumber } from "../../helpers/formatCurrency";
-
+import GiversLayoutGuest from "../../layout/GiversLayoutGuest";
 
 const useStyles = createStyles(() => ({
     container: {
         maxWidth: '600px',
-        margin: '20px auto',
+        margin: '140px auto',
         backgroundColor: '#fff',
         padding: '20px',
         border: '1px solid #ddd',
@@ -58,6 +57,16 @@ const useStyles = createStyles(() => ({
         fontSize: '12px',
         color: '#777',
     },
+    downloadButton: {
+        display: 'block',
+        margin: '20px auto',
+        padding: '10px 20px',
+        backgroundColor: '#5cb85c',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+    }
 }));
 
 interface OrderProps {
@@ -66,9 +75,9 @@ interface OrderProps {
 
 const OrderSuccess = ({ donationResp }: OrderProps) => {
     const { classes } = useStyles();
-    console.log("donationResp", donationResp);
+
     return (
-        <>
+        <GiversLayoutGuest>
             <div className={classes.container}>
                 <div className={classes.header}>
                     <h1 className={classes.headerTitle}>¡Gracias por tu donación!</h1>
@@ -107,10 +116,8 @@ const OrderSuccess = ({ donationResp }: OrderProps) => {
                 <div className={classes.footer}>
                     <p>Si tienes alguna pregunta, no dudes en <a href="mailto:soporte@tienda.com">contactarnos</a>.</p>
                 </div>
-
-                {/* <RedirectTimer delayInSeconds={15} redirectTo="/" /> */}
             </div>
-        </>
+        </GiversLayoutGuest>
     )
 }
 
